@@ -4,7 +4,7 @@ version: 0.1
 type: documentation
 status: draft
 tags: [structure, repository, onboarding]
-lastmod: 2025-01-01
+lastmod: 2025-12-09
 description: "Структура репозитория extended-mind и назначение основных каталогов."
 ---
 
