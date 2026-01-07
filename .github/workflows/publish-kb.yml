@@ -1,0 +1,42 @@
+name: Publish Knowledge Base to Hugging Face
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "manifest/**"
+      - "patterns/**"
+      - "adr/**"
+      - "docs/**"
+      - "tools/kb_build/**"
+      - ".github/workflows/publish-kb.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r tools/kb_build/requirements.txt
+
+      - name: Build & publish KB
+        env:
+          HF_TOKEN: ${{ secrets.HF }}
+        run: |
+          python tools/kb_build/build_kb.py \
+            --dataset-repo "utemix/extended-mind-kb" \
+            --hf-token-env "HF_TOKEN" \
+            --include-dirs "manifest,patterns,adr,docs" \
+            --out-dir "dist/kb"
