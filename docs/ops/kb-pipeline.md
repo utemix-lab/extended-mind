@@ -53,3 +53,38 @@ Workflow GitHub Actions запускается при пуше в `main`,
 ```bash
 export HF_TOKEN="..."
 python tools/kb_build/build_kb.py --dataset-repo "utemix/extended-mind-kb"
+
+## Принцип
+
+Сначала делаем “умный поиск” (retrieval) как факт.
+Генерацию LLM добавляем позже как надстройку.
+
+
+---
+
+## 5) `docs/machine-log/README.md`
+
+```markdown
+# Machine Log
+
+Короткий журнал прогонов и изменений KB-пайплайна.
+Цель: не хранить память процесса в чате.
+
+## Как писать
+
+Одна запись = один прогон / один смысловой шаг.
+
+Шаблон:
+
+- Дата:
+- Цель:
+- Изменение (1–3 пункта):
+- Результат:
+- Ссылка на GitHub Actions run:
+- Если ошибка: кратко, что было в логе + следующий шаг
+
+## Где хранить
+
+Создавайте файлы в `docs/machine-log/`:
+
+- `YYYY-MM-DD-kb-pipeline.md`
