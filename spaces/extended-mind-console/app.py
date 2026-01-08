@@ -83,9 +83,16 @@ class KBSearch:
 
 
 KB = KBSearch()
+CARD_PREVIEW_CHARS = 400
 
 
-def _format_cards(results: List[Dict[str, Any]]) -> str:
+def _preview_text(text: str, max_chars: int) -> str:
+    if len(text) <= max_chars:
+        return text
+    return text[:max_chars].rstrip() + "..."
+
+
+def _format_cards(results: List[Dict[str, Any]], full_text: bool) -> str:
     lines = []
     for n, r in enumerate(results, 1):
         lines.append(f"### {n}) score={r['score']:.4f}")
@@ -93,7 +100,8 @@ def _format_cards(results: List[Dict[str, Any]]) -> str:
         if r["title_path"]:
             lines.append(f"- title: {r['title_path']}")
         lines.append("")
-        lines.append(r["text"])
+        text = r["text"] if full_text else _preview_text(r["text"], CARD_PREVIEW_CHARS)
+        lines.append(text)
         lines.append("\n---\n")
     return "\n".join(lines)
 
@@ -113,14 +121,60 @@ def _format_table(results: List[Dict[str, Any]]) -> str:
     return "\n".join(lines)
 
 
-def ui_search(query: str, top_k: int, view_mode: str):
+def _is_what_is_query(query: str) -> bool:
+    q = (query or "").strip().lower()
+    return q.startswith("what is") or q.startswith("что такое")
+
+
+def _apply_filters(
+    results: List[Dict[str, Any]],
+    min_score: float,
+    dedup: bool,
+    prefer_manifest_adr: bool,
+    query: str,
+) -> List[Dict[str, Any]]:
+    filtered = [r for r in results if r["score"] >= min_score]
+
+    if prefer_manifest_adr and _is_what_is_query(query):
+        def prefer_key(r: Dict[str, Any]) -> int:
+            rp = r.get("rel_path", "")
+            return 0 if rp.startswith("manifest/") or rp.startswith("adr/") else 1
+
+        filtered.sort(key=lambda r: (-r["score"], prefer_key(r)))
+    else:
+        filtered.sort(key=lambda r: -r["score"])
+
+    if dedup:
+        seen = set()
+        deduped = []
+        for r in filtered:
+            rp = r.get("rel_path")
+            if rp in seen:
+                continue
+            seen.add(rp)
+            deduped.append(r)
+        filtered = deduped
+
+    return filtered
+
+
+def ui_search(
+    query: str,
+    top_k: int,
+    view_mode: str,
+    min_score: float,
+    dedup_by_path: bool,
+    prefer_manifest_adr: bool,
+    full_text: bool,
+):
     res = KB.search(query, int(top_k))
+    res = _apply_filters(res, float(min_score), dedup_by_path, prefer_manifest_adr, query)
     if not res:
         return "No results found. Try a different query.", [], query
 
     if view_mode == "Table":
         return _format_table(res), res, query
-    return _format_cards(res), res, query
+    return _format_cards(res, full_text), res, query
 
 
 def ui_export_json(results: List[Dict[str, Any]]):
@@ -166,6 +220,16 @@ with gr.Blocks(title="extended-mind console") as demo:
             label="View mode",
         )
 
+    with gr.Row():
+        min_score = gr.Slider(0.0, 1.0, value=0.0, step=0.01, label="Min score")
+        dedup_by_path = gr.Checkbox(value=True, label="Deduplicate by rel_path")
+        prefer_manifest_adr = gr.Checkbox(
+            value=True, label='Prefer manifest/adr for "what is"'
+        )
+
+    with gr.Row():
+        full_text = gr.Checkbox(value=False, label="Show full text (cards)")
+
     btn = gr.Button("Search")
     out = gr.Markdown()
     results_state = gr.State([])
@@ -173,7 +237,15 @@ with gr.Blocks(title="extended-mind console") as demo:
 
     btn.click(
         fn=ui_search,
-        inputs=[query, top_k, view_mode],
+        inputs=[
+            query,
+            top_k,
+            view_mode,
+            min_score,
+            dedup_by_path,
+            prefer_manifest_adr,
+            full_text,
+        ],
         outputs=[out, results_state, query_state],
     )
 
