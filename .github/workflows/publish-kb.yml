@@ -47,16 +47,20 @@ jobs:
             --include-dirs "manifest,patterns,adr,docs" \
             --out-dir "dist/kb"
 
-      - name: Write machine-log entry
+      - name: Write machine log entry
         run: |
           python - <<'PY'
-          import os, json, datetime, pathlib, subprocess
+          import datetime
+          import json
+          import os
+          import pathlib
+          import subprocess
 
           def sh(cmd):
               return subprocess.check_output(cmd, text=True).strip()
 
           ts = datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
-          sha = sh(["git","rev-parse","HEAD"])[:7]
+          sha = sh(["git", "rev-parse", "HEAD"])[:7]
 
           build_info_path = pathlib.Path("dist/kb/build_info.json")
           chunks_path = pathlib.Path("dist/kb/chunks.jsonl")
@@ -72,42 +76,45 @@ jobs:
                       if line.strip():
                           n_chunks += 1
 
-          run_url = f"https://github.com/{os.environ.get('GITHUB_REPOSITORY')}/actions/runs/{os.environ.get('GITHUB_RUN_ID')}"
+          run_url = (
+              f"{os.environ.get('GITHUB_SERVER_URL', 'https://github.com')}/"
+              f"{os.environ.get('GITHUB_REPOSITORY')}/actions/runs/"
+              f"{os.environ.get('GITHUB_RUN_ID')}"
+          )
 
           out_dir = pathlib.Path("docs/machine-log/kb")
           out_dir.mkdir(parents=True, exist_ok=True)
-          fname = out_dir / f"{ts.replace(':','-')}-kb-update.md"
+          fname = out_dir / f"{ts.replace(':', '-')}-kb-update.md"
 
           include_dirs = build_info.get("include_dirs")
+          if isinstance(include_dirs, list):
+              include_dirs = ",".join(include_dirs)
+          if not include_dirs:
+              include_dirs = "manifest,patterns,adr,docs"
           emb_model = build_info.get("embedding_model")
 
           content = []
-          content.append(f"# KB update — {ts}")
+          content.append(f"# KB update {ts}")
           content.append("")
           content.append(f"- git: `{sha}`")
           content.append(f"- chunks: **{n_chunks}**")
-          if include_dirs:
-              content.append(f"- include_dirs: `{include_dirs}`")
+          content.append(f"- include_dirs: `{include_dirs}`")
           if emb_model:
               content.append(f"- embedding_model: `{emb_model}`")
           content.append(f"- actions_run: {run_url}")
-          content.append("")
-          content.append("## Notes")
-          content.append("- Автолог создан пайплайном после успешной публикации KB.")
-          content.append("")
 
           fname.write_text("\n".join(content), encoding="utf-8")
           print("Wrote", fname)
           PY
 
-      - name: Commit machine-log
+      - name: Commit machine log
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           git config user.name "kb-bot"
           git config user.email "kb-bot@users.noreply.github.com"
-          git fetch origin main
-          git rebase origin/main
-          git add docs/machine-log/kb/*.md docs/machine-log/README.md
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git pull --rebase origin main
+          git add docs/machine-log/kb/*.md
           git commit -m "chore(machine-log): record KB update" || echo "No changes to commit"
-          git fetch origin main
-          git rebase origin/main
           git push origin HEAD:main
