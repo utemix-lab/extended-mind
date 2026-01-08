@@ -278,7 +278,7 @@ with gr.Blocks(title="extended-mind console") as demo:
         bundle_btn = gr.Button("Copy bundle")
 
     export_out = gr.Markdown(label="Export JSON")
-    bundle_out = gr.Textbox(label="Bundle", lines=12, show_copy_button=True)
+    bundle_out = gr.Textbox(label="Bundle", lines=12)
 
     export_btn.click(fn=ui_export_json, inputs=[results_state], outputs=[export_out])
     bundle_btn.click(fn=ui_bundle, inputs=[query_state, results_state], outputs=[bundle_out])
