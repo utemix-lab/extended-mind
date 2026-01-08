@@ -85,13 +85,9 @@ class KBSearch:
 KB = KBSearch()
 
 
-def ui_search(query: str, top_k: int) -> str:
-    res = KB.search(query, int(top_k))
-    if not res:
-        return "No results found. Try a different query."
-
+def _format_cards(results: List[Dict[str, Any]]) -> str:
     lines = []
-    for n, r in enumerate(res, 1):
+    for n, r in enumerate(results, 1):
         lines.append(f"### {n}) score={r['score']:.4f}")
         lines.append(f"- path: `{r['rel_path']}`")
         if r["title_path"]:
@@ -100,6 +96,51 @@ def ui_search(query: str, top_k: int) -> str:
         lines.append(r["text"])
         lines.append("\n---\n")
     return "\n".join(lines)
+
+
+def _format_table(results: List[Dict[str, Any]]) -> str:
+    lines = [
+        "| score | rel_path | title_path | preview |",
+        "| --- | --- | --- | --- |",
+    ]
+    for r in results:
+        preview = " ".join(str(r["text"]).split())
+        if len(preview) > 200:
+            preview = preview[:200].rstrip() + "..."
+        lines.append(
+            f"| {r['score']:.4f} | `{r['rel_path']}` | {r['title_path']} | {preview} |"
+        )
+    return "\n".join(lines)
+
+
+def ui_search(query: str, top_k: int, view_mode: str):
+    res = KB.search(query, int(top_k))
+    if not res:
+        return "No results found. Try a different query.", [], query
+
+    if view_mode == "Table":
+        return _format_table(res), res, query
+    return _format_cards(res), res, query
+
+
+def ui_export_json(results: List[Dict[str, Any]]):
+    if not results:
+        return "```json\n[]\n```"
+    return "```json\n" + json.dumps(results, ensure_ascii=False, indent=2) + "\n```"
+
+
+def ui_bundle(query: str, results: List[Dict[str, Any]]):
+    if not results:
+        return "No results to bundle."
+    lines = [f"Query: {query}", ""]
+    for n, r in enumerate(results, 1):
+        header = f"[{n}] {r['rel_path']}"
+        if r["title_path"]:
+            header += f" | {r['title_path']}"
+        lines.append(header)
+        lines.append(r["text"])
+        lines.append("")
+    return "\n".join(lines).strip()
 
 
 with gr.Blocks(title="extended-mind console") as demo:
@@ -118,10 +159,33 @@ with gr.Blocks(title="extended-mind console") as demo:
     with gr.Row():
         top_k = gr.Slider(1, 20, value=8, step=1, label="Top K")
 
+    with gr.Row():
+        view_mode = gr.Radio(
+            choices=["Cards", "Table"],
+            value="Cards",
+            label="View mode",
+        )
+
     btn = gr.Button("Search")
     out = gr.Markdown()
+    results_state = gr.State([])
+    query_state = gr.State("")
 
-    btn.click(fn=ui_search, inputs=[query, top_k], outputs=[out])
+    btn.click(
+        fn=ui_search,
+        inputs=[query, top_k, view_mode],
+        outputs=[out, results_state, query_state],
+    )
+
+    with gr.Row():
+        export_btn = gr.Button("Export JSON")
+        bundle_btn = gr.Button("Copy bundle")
+
+    export_out = gr.Markdown(label="Export JSON")
+    bundle_out = gr.Textbox(label="Bundle", lines=12, show_copy_button=True)
+
+    export_btn.click(fn=ui_export_json, inputs=[results_state], outputs=[export_out])
+    bundle_btn.click(fn=ui_bundle, inputs=[query_state, results_state], outputs=[bundle_out])
 
     gr.Markdown(
         f"**Dataset:** `{DATASET_REPO}`  \n"
