@@ -1,4 +1,8 @@
 # extended-mind  
+## Links
+- Space: https://huggingface.co/spaces/utemix/extended-mind-console
+- How to use console: docs/console/how-to-use-console.md
+
 **Система мышления и архитектурное ядро экосистемы utemix-lab**
 
 extended-mind — это камерная лаборатория мышления и инженерный каркас всех проектов utemix-lab.  
