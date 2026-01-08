@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 import faiss  # type: ignore
 import gradio as gr  # type: ignore
@@ -43,14 +43,18 @@ class KBSearch:
         chunks_path = _download_artifact("chunks.jsonl")
         index_path = _download_artifact("faiss.index")
 
+        build_info: Dict[str, Any] = {}
         try:
-            _download_artifact("build_info.json")
+            build_info_path = _download_artifact("build_info.json")
+            with open(build_info_path, "r", encoding="utf-8") as f:
+                build_info = json.load(f)
         except Exception:
             pass
 
         self.chunks = _load_chunks(chunks_path)
         self.index = faiss.read_index(index_path)
         self.model = SentenceTransformer(EMBED_MODEL)
+        self.build_info = build_info
 
     def search(self, query: str, top_k: int) -> List[Dict[str, Any]]:
         q = (query or "").strip()
@@ -132,8 +136,9 @@ def _apply_filters(
     dedup: bool,
     prefer_manifest_adr: bool,
     query: str,
-) -> List[Dict[str, Any]]:
+) -> Tuple[List[Dict[str, Any]], int, int]:
     filtered = [r for r in results if r["score"] >= min_score]
+    matched_count = len(filtered)
 
     if prefer_manifest_adr and _is_what_is_query(query):
         def prefer_key(r: Dict[str, Any]) -> int:
@@ -144,6 +149,7 @@ def _apply_filters(
     else:
         filtered.sort(key=lambda r: -r["score"])
 
+    dedup_removed = 0
     if dedup:
         seen = set()
         deduped = []
@@ -153,9 +159,10 @@ def _apply_filters(
                 continue
             seen.add(rp)
             deduped.append(r)
+        dedup_removed = len(filtered) - len(deduped)
         filtered = deduped
 
-    return filtered
+    return filtered, matched_count, dedup_removed
 
 
 def ui_search(
@@ -168,13 +175,19 @@ def ui_search(
     full_text: bool,
 ):
     res = KB.search(query, int(top_k))
-    res = _apply_filters(res, float(min_score), dedup_by_path, prefer_manifest_adr, query)
+    res, matched_count, dedup_removed = _apply_filters(
+        res, float(min_score), dedup_by_path, prefer_manifest_adr, query
+    )
     if not res:
-        return "No results found. Try a different query.", [], query
+        debug = _format_debug(len(KB.chunks), matched_count, dedup_removed)
+        return "No results found. Try a different query.", [], query, debug
 
     if view_mode == "Table":
-        return _format_table(res), res, query
-    return _format_cards(res, full_text), res, query
+        out = _format_table(res)
+    else:
+        out = _format_cards(res, full_text)
+    debug = _format_debug(len(KB.chunks), matched_count, dedup_removed)
+    return out, res, query, debug
 
 
 def ui_export_json(results: List[Dict[str, Any]]):
@@ -195,6 +208,14 @@ def ui_bundle(query: str, results: List[Dict[str, Any]]):
         lines.append(r["text"])
         lines.append("")
     return "\n".join(lines).strip()
+
+
+def _format_debug(total_chunks: int, matched_count: int, dedup_removed: int) -> str:
+    return (
+        f"- total chunks: **{total_chunks}**\n"
+        f"- matched (after filters): **{matched_count}**\n"
+        f"- removed by dedup: **{dedup_removed}**"
+    )
 
 
 with gr.Blocks(title="extended-mind console") as demo:
@@ -235,6 +256,9 @@ with gr.Blocks(title="extended-mind console") as demo:
     results_state = gr.State([])
     query_state = gr.State("")
 
+    with gr.Accordion("Debug panel", open=False):
+        debug_out = gr.Markdown(_format_debug(len(KB.chunks), 0, 0))
+
     btn.click(
         fn=ui_search,
         inputs=[
@@ -246,7 +270,7 @@ with gr.Blocks(title="extended-mind console") as demo:
             prefer_manifest_adr,
             full_text,
         ],
-        outputs=[out, results_state, query_state],
+        outputs=[out, results_state, query_state, debug_out],
     )
 
     with gr.Row():
@@ -259,10 +283,12 @@ with gr.Blocks(title="extended-mind console") as demo:
     export_btn.click(fn=ui_export_json, inputs=[results_state], outputs=[export_out])
     bundle_btn.click(fn=ui_bundle, inputs=[query_state, results_state], outputs=[bundle_out])
 
-    gr.Markdown(
-        f"**Dataset:** `{DATASET_REPO}`  \n"
-        f"**Embedding model:** `{EMBED_MODEL}`"
-    )
+    schema_version = KB.build_info.get("chunk_schema_version")
+    schema_line = f"**Chunk schema:** `{schema_version}`" if schema_version else ""
+    header = f"**Dataset:** `{DATASET_REPO}`  \n**Embedding model:** `{EMBED_MODEL}`"
+    if schema_line:
+        header = f"{header}  \n{schema_line}"
+    gr.Markdown(header)
 
 if __name__ == "__main__":
     demo.launch()
