@@ -43,6 +43,9 @@ class Chunk:
     title_path: List[str]
     text: str
     sha1: str
+    source_dir: Optional[str] = None
+    doc_kind: Optional[str] = None
+    project: Optional[str] = None
 
 
 def utc_now_iso() -> str:
@@ -156,6 +159,41 @@ def collect_md_files(root: Path, include_dirs: List[str]) -> List[Path]:
     return files
 
 
+def compute_source_dir(rel_path: str, include_dirs: List[str]) -> Optional[str]:
+    first = rel_path.split("/", 1)[0] if rel_path else ""
+    return first if first in include_dirs else None
+
+
+def compute_project(rel_path: str) -> Optional[str]:
+    m = re.search(r"^docs/projects/([^/]+)/", rel_path)
+    if m:
+        return m.group(1)
+    return None
+
+
+def compute_doc_kind(rel_path: str) -> str:
+    p = rel_path.lower()
+    name = Path(p).name
+
+    if p.startswith("manifest/"):
+        return "manifest"
+    if p.startswith("adr/"):
+        return "adr"
+    if p.startswith("patterns/"):
+        return "pattern"
+    if "/projects/" in p:
+        return "project"
+    if "principle" in p:
+        return "principle"
+    if name in {"index.md", "index.markdown"}:
+        return "index"
+    if "storylayer" in p:
+        return "storylayer"
+    if "rag" in p:
+        return "rag"
+    return "other"
+
+
 def build_chunks(
     repo_root: Path,
     include_dirs: List[str],
@@ -180,6 +218,9 @@ def build_chunks(
         for idx, (title_path, text) in enumerate(derived):
             sha = sha1_text(f"{rel_path}::{idx}::{text}")
             chunk_id = sha  # stable id
+            source_dir = compute_source_dir(rel_path, include_dirs)
+            doc_kind = compute_doc_kind(rel_path) if source_dir else None
+            project = compute_project(rel_path)
             chunks.append(
                 Chunk(
                     chunk_id=chunk_id,
@@ -188,6 +229,9 @@ def build_chunks(
                     title_path=title_path,
                     text=text,
                     sha1=sha,
+                    source_dir=source_dir,
+                    doc_kind=doc_kind,
+                    project=project,
                 )
             )
 
@@ -235,6 +279,12 @@ def write_artifacts(out_dir: Path, chunks: List[Chunk], emb: np.ndarray, index: 
                 "text": c.text,
                 "sha1": c.sha1,
             }
+            if c.source_dir:
+                row["source_dir"] = c.source_dir
+            if c.doc_kind:
+                row["doc_kind"] = c.doc_kind
+            if c.project:
+                row["project"] = c.project
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
     np.save(out_dir / "embeddings.npy", emb)
@@ -267,6 +317,12 @@ def get_git_sha() -> Optional[str]:
         return None
 
 
+def validate_chunks(chunks: List[Chunk]) -> None:
+    for c in chunks:
+        if not c.text or not c.rel_path:
+            raise ValueError("Invalid chunk: missing text or rel_path")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo-root", default=".", help="Path to extended-mind repo root")
@@ -296,12 +352,15 @@ def main() -> int:
         "include_dirs": include_dirs,
         "chunking": {"max_chars": args.max_chars, "overlap_chars": args.overlap_chars},
         "embedding_model": args.model,
+        "chunk_schema_version": "0.2",
     }
 
     chunks = build_chunks(repo_root, include_dirs, args.max_chars, args.overlap_chars)
     if not chunks:
         print("ERROR: no chunks produced. Check include dirs / markdown files.", file=sys.stderr)
         return 3
+
+    validate_chunks(chunks)
 
     emb = embed_chunks(chunks, model_name=args.model, batch_size=args.batch_size)
     index = build_faiss_index(emb)
