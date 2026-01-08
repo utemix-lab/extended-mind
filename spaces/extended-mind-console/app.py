@@ -1,11 +1,10 @@
 import json
 import os
-from pathlib import Path
-from typing import List, Dict, Any, Tuple
+from typing import Any, Dict, List
 
-import numpy as np
 import faiss  # type: ignore
 import gradio as gr  # type: ignore
+import numpy as np
 from huggingface_hub import hf_hub_download
 from sentence_transformers import SentenceTransformer  # type: ignore
 
@@ -41,10 +40,9 @@ def _safe_join_title(title_path: Any) -> str:
 
 class KBSearch:
     def __init__(self) -> None:
-        # Download artifacts once at startup
         chunks_path = _download_artifact("chunks.jsonl")
         index_path = _download_artifact("faiss.index")
-        # optional
+
         try:
             _download_artifact("build_info.json")
         except Exception:
@@ -52,7 +50,6 @@ class KBSearch:
 
         self.chunks = _load_chunks(chunks_path)
         self.index = faiss.read_index(index_path)
-
         self.model = SentenceTransformer(EMBED_MODEL)
 
     def search(self, query: str, top_k: int) -> List[Dict[str, Any]]:
@@ -60,11 +57,12 @@ class KBSearch:
         if not q:
             return []
 
-        # embed + normalize (cosine via inner product)
+        k = max(1, min(int(top_k), len(self.chunks)))
+
         emb = self.model.encode([q], normalize_embeddings=True)
         qv = np.asarray(emb, dtype="float32")
 
-        scores, idxs = self.index.search(qv, top_k)
+        scores, idxs = self.index.search(qv, k)
         scores = scores[0].tolist()
         idxs = idxs[0].tolist()
 
@@ -90,7 +88,7 @@ KB = KBSearch()
 def ui_search(query: str, top_k: int) -> str:
     res = KB.search(query, int(top_k))
     if not res:
-        return "Ничего не найдено (или пустой запрос)."
+        return "No results found. Try a different query."
 
     lines = []
     for n, r in enumerate(res, 1):
@@ -106,12 +104,17 @@ def ui_search(query: str, top_k: int) -> str:
 
 with gr.Blocks(title="extended-mind console") as demo:
     gr.Markdown(
-        "# extended-mind — Search Console\n"
-        "Минимальный retrieval-интерфейс без генерации: вопрос → найденные фрагменты."
+        "# extended-mind Search Console\n"
+        "Local retrieval-only search over the extended-mind knowledge base. "
+        "No LLM, just vector search."
     )
 
     with gr.Row():
-        query = gr.Textbox(label="Вопрос", placeholder="Например: What is extended-mind?", lines=2)
+        query = gr.Textbox(
+            label="Query",
+            placeholder="Ask a question, e.g. What is extended-mind?",
+            lines=2,
+        )
     with gr.Row():
         top_k = gr.Slider(1, 20, value=8, step=1, label="Top K")
 
