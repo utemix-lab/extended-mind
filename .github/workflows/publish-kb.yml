@@ -11,6 +11,10 @@ on:
       - "tools/kb_build/**"
       - ".github/workflows/publish-kb.yml"
 
+concurrency:
+  group: publish-kb-main
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -20,6 +24,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -98,6 +104,10 @@ jobs:
         run: |
           git config user.name "kb-bot"
           git config user.email "kb-bot@users.noreply.github.com"
+          git fetch origin main
+          git rebase origin/main
           git add docs/machine-log/kb/*.md docs/machine-log/README.md
           git commit -m "chore(machine-log): record KB update" || echo "No changes to commit"
-          git push
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
