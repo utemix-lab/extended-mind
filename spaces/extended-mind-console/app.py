@@ -13,7 +13,7 @@ from console_utils import build_context_cocktail, serialize_bundle_json, should_
 
 DATASET_REPO = os.getenv("KB_DATASET_REPO", "utemix/extended-mind-kb")
 EMBED_MODEL = os.getenv("KB_EMBED_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
-UI_VERSION = "nodes-v0-console-0.3"
+UI_VERSION = "nodes-v0-console-0.4"
 
 DEFAULT_LLM_MODEL = os.getenv(
     "HF_INFERENCE_MODEL", "meta-llama/Meta-Llama-3.1-8B-Instruct"
@@ -25,6 +25,15 @@ MODEL_PRESETS = [
     "HuggingFaceH4/zephyr-7b-beta",
 ]
 MODEL_PRESETS = [m for i, m in enumerate(MODEL_PRESETS) if m and m not in MODEL_PRESETS[:i]]
+
+NODE_PRESETS = {
+    "Custom": [],
+    "Core": ["manifest", "adr", "principle", "pattern"],
+    "ADR-only": ["adr"],
+    "Principles-only": ["principle"],
+    "Manifest-only": ["manifest"],
+    "Story-layer": ["storylayer"],
+}
 
 
 def _download_artifact(filename: str) -> str:
@@ -174,9 +183,6 @@ def _apply_filters(
     query: str,
 ) -> Tuple[List[Dict[str, Any]], int, int]:
     filtered = results
-    if min_score > 0:
-        filtered = [r for r in filtered if r["score"] >= min_score]
-
     if selected_source_dirs:
         allowed = {s for s in selected_source_dirs if s}
         if allowed:
@@ -189,6 +195,9 @@ def _apply_filters(
 
     if selected_project and selected_project != "all":
         filtered = [r for r in filtered if r.get("project") == selected_project]
+
+    if min_score > 0:
+        filtered = [r for r in filtered if r["score"] >= min_score]
 
     matched_count = len(filtered)
 
@@ -233,6 +242,9 @@ def ui_search(
     max_tokens: int,
     temperature: float,
     answer_style: str,
+    preset: str,
+    strict_mode: bool,
+    strict_min_sources: int,
 ):
     raw_k = max(int(top_k), int(top_k) * 5)
     res = KB.search(query, raw_k)
@@ -259,9 +271,13 @@ def ui_search(
             selected_doc_kinds,
             selected_project,
             view_mode,
+            preset,
+            strict_mode,
+            strict_min_sources,
         )
         return (
             "No results found. Try a different query.",
+            "",
             "",
             "No sources.",
             "",
@@ -278,7 +294,9 @@ def ui_search(
     sources_out = _format_sources(citations)
 
     answer_out = ""
-    if llm_mode == "ON":
+    if strict_mode and len(res) < int(strict_min_sources):
+        answer_out = f"Strict mode: not enough sources (need {int(strict_min_sources)})."
+    elif llm_mode == "ON":
         provider = os.getenv("HF_INFERENCE_PROVIDER")
         answer_out, err = _call_llm(
             query,
@@ -292,6 +310,19 @@ def ui_search(
         if err:
             answer_out = "LLM unavailable"
 
+    why_out = _format_why(
+        matched_count,
+        dedup_removed,
+        len(res),
+        min_score,
+        selected_source_dirs,
+        selected_doc_kinds,
+        selected_project,
+        strict_mode,
+        int(strict_min_sources),
+        llm_mode,
+    )
+
     debug = _format_debug(
         len(KB.chunks),
         matched_count,
@@ -303,8 +334,11 @@ def ui_search(
         selected_doc_kinds,
         selected_project,
         view_mode,
+        preset,
+        strict_mode,
+        strict_min_sources,
     )
-    return context_out, answer_out, sources_out, bundle_md, bundle_json, debug
+    return context_out, answer_out, why_out, sources_out, bundle_md, bundle_json, debug
 
 
 def _format_sources(citations: List[Dict[str, Any]]) -> str:
@@ -322,6 +356,39 @@ def _format_sources(citations: List[Dict[str, Any]]) -> str:
         lines.append("- matched by semantic similarity")
         lines.append("")
     return "\n".join(lines).strip()
+
+
+def _format_why(
+    matched_count: int,
+    dedup_removed: int,
+    final_count: int,
+    min_score: float,
+    selected_source_dirs: List[str],
+    selected_doc_kinds: List[str],
+    selected_project: str,
+    strict_mode: bool,
+    strict_min_sources: int,
+    llm_mode: str,
+) -> str:
+    lines = []
+    lines.append("- Routing: filter by doc kind/source/project, then semantic rerank.")
+    lines.append(
+        f"- Filters: doc_kind={selected_doc_kinds or []}, "
+        f"source_dir={selected_source_dirs or []}, "
+        f"project={selected_project or 'all'}, "
+        f"min_score={float(min_score):.2f}"
+    )
+    lines.append(
+        f"- Matched after filters: {matched_count}, "
+        f"removed by dedup: {dedup_removed}, final: {final_count}."
+    )
+    if strict_mode:
+        status = "ok" if final_count >= strict_min_sources else "not enough sources"
+        lines.append(f"- Strict mode: ON (min_sources={strict_min_sources}, {status}).")
+    else:
+        lines.append("- Strict mode: OFF.")
+    lines.append(f"- LLM mode: {llm_mode}.")
+    return "\n".join(lines)
 
 
 def _call_llm(
@@ -385,6 +452,9 @@ def _format_debug(
     selected_doc_kinds: List[str],
     selected_project: str,
     view_mode: str,
+    preset: str,
+    strict_mode: bool,
+    strict_min_sources: int,
 ) -> str:
     filters_selected = {
         "view_mode": view_mode,
@@ -392,6 +462,9 @@ def _format_debug(
         "source_dir": selected_source_dirs or [],
         "doc_kind": selected_doc_kinds or [],
         "project": selected_project or "all",
+        "preset": preset or "Custom",
+        "strict_mode": bool(strict_mode),
+        "strict_min_sources": int(strict_min_sources),
     }
     return (
         f"- ui_version: **{UI_VERSION}**\n"
@@ -432,6 +505,15 @@ with gr.Blocks(title="extended-mind console") as demo:
             with gr.Row():
                 top_k = gr.Slider(1, 20, value=8, step=1, label="Top K")
 
+            gr.Markdown("### Node Presets")
+            with gr.Row():
+                preset = gr.Dropdown(
+                    choices=list(NODE_PRESETS.keys()),
+                    value="Custom",
+                    label="Preset",
+                )
+                gr.Markdown("Routing: doc kind filter -> semantic rerank.")
+
             gr.Markdown("### Filters")
             with gr.Row():
                 source_dirs = gr.CheckboxGroup(
@@ -468,7 +550,7 @@ with gr.Blocks(title="extended-mind console") as demo:
                 or KB.source_dir_present_count == 0
                 or KB.project_present_count == 0
             ):
-                gr.Markdown("Metadata fields missing in chunks — run KB rebuild")
+                gr.Markdown("Metadata fields missing in chunks - run KB rebuild")
 
             gr.Markdown("### LLM Mode")
             with gr.Row():
@@ -490,11 +572,18 @@ with gr.Blocks(title="extended-mind console") as demo:
                     label="Answer style",
                 )
 
+            gr.Markdown("### Answer Policy")
+            with gr.Row():
+                strict_mode = gr.Checkbox(value=False, label="Strict mode")
+                strict_min_sources = gr.Slider(1, 10, value=3, step=1, label="Min sources")
+
             btn = gr.Button("Search")
             gr.Markdown("## Context Cocktail")
             context_out = gr.Markdown()
             gr.Markdown("## Answer (LLM)")
             answer_out = gr.Markdown()
+            gr.Markdown("## Why this answer")
+            why_out = gr.Markdown()
             gr.Markdown("## Sources")
             sources_out = gr.Markdown()
             bundle_md_state = gr.State("")
@@ -513,6 +602,9 @@ with gr.Blocks(title="extended-mind console") as demo:
                         [],
                         "all",
                         "Cards",
+                        "Custom",
+                        False,
+                        3,
                     )
                 )
 
@@ -534,10 +626,14 @@ with gr.Blocks(title="extended-mind console") as demo:
                     max_tokens,
                     temperature,
                     answer_style,
+                    preset,
+                    strict_mode,
+                    strict_min_sources,
                 ],
                 outputs=[
                     context_out,
                     answer_out,
+                    why_out,
                     sources_out,
                     bundle_md_state,
                     bundle_json_state,
@@ -546,12 +642,13 @@ with gr.Blocks(title="extended-mind console") as demo:
             )
 
             def _reset_filters():
-                return [], [], "all", "Cards", 0.0, True, True, False
+                return "Custom", [], [], "all", "Cards", 0.0, True, True, False, False, 3
 
             reset_filters.click(
                 fn=_reset_filters,
                 inputs=[],
                 outputs=[
+                    preset,
                     source_dirs,
                     doc_kinds,
                     projects,
@@ -560,8 +657,15 @@ with gr.Blocks(title="extended-mind console") as demo:
                     dedup_by_path,
                     prefer_manifest_adr,
                     full_text,
+                    strict_mode,
+                    strict_min_sources,
                 ],
             )
+
+            def _apply_preset(preset_name: str):
+                return NODE_PRESETS.get(preset_name, [])
+
+            preset.change(fn=_apply_preset, inputs=[preset], outputs=[doc_kinds])
 
             gr.Markdown("### Export")
             with gr.Row():
@@ -617,7 +721,6 @@ with gr.Blocks(title="extended-mind console") as demo:
                     "Safety:\n"
                     "- Answer uses sources; if none, it should say it does not know."
                 )
-
         with gr.TabItem("Map"):
             gr.Markdown("## Map")
             gr.Markdown(_load_graph_map())
