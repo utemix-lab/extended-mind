@@ -1,5 +1,6 @@
 import json
 import os
+from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 import faiss  # type: ignore
@@ -406,199 +407,220 @@ def _format_debug(
     )
 
 
+def _load_graph_map() -> str:
+    path = Path("docs/maps/graph.mmd")
+    if not path.exists():
+        return "Map not built yet. Run the auto-map workflow."
+    text = path.read_text(encoding="utf-8", errors="replace")
+    return "```mermaid\n" + text.strip() + "\n```"
+
+
 with gr.Blocks(title="extended-mind console") as demo:
     gr.Markdown(
         "# extended-mind Search Console\n"
         "Retrieval over the extended-mind knowledge base with an optional LLM layer."
     )
 
-    with gr.Row():
-        query = gr.Textbox(
-            label="Query",
-            placeholder="Ask a question, e.g. What is extended-mind?",
-            lines=2,
-        )
-    with gr.Row():
-        top_k = gr.Slider(1, 20, value=8, step=1, label="Top K")
+    with gr.Tabs():
+        with gr.TabItem("Console"):
+            with gr.Row():
+                query = gr.Textbox(
+                    label="Query",
+                    placeholder="Ask a question, e.g. What is extended-mind?",
+                    lines=2,
+                )
+            with gr.Row():
+                top_k = gr.Slider(1, 20, value=8, step=1, label="Top K")
 
-    gr.Markdown("### Filters")
-    with gr.Row():
-        source_dirs = gr.CheckboxGroup(
-            choices=KB.source_dir_values,
-            label="Source dir",
-        )
-        doc_kinds = gr.CheckboxGroup(
-            choices=KB.doc_kind_values,
-            label="Doc kind",
-        )
-        projects = gr.Dropdown(
-            choices=["all"] + KB.project_values,
-            value="all",
-            label="Project",
-        )
-        view_mode = gr.Radio(
-            choices=["Cards", "Table"],
-            value="Cards",
-            label="Mode",
-        )
+            gr.Markdown("### Filters")
+            with gr.Row():
+                source_dirs = gr.CheckboxGroup(
+                    choices=KB.source_dir_values,
+                    label="Source dir",
+                )
+                doc_kinds = gr.CheckboxGroup(
+                    choices=KB.doc_kind_values,
+                    label="Doc kind",
+                )
+                projects = gr.Dropdown(
+                    choices=["all"] + KB.project_values,
+                    value="all",
+                    label="Project",
+                )
+                view_mode = gr.Radio(
+                    choices=["Cards", "Table"],
+                    value="Cards",
+                    label="Mode",
+                )
 
-    with gr.Row():
-        min_score = gr.Slider(0.0, 1.0, value=0.0, step=0.01, label="Min score")
-        dedup_by_path = gr.Checkbox(value=True, label="Deduplicate by rel_path")
-        prefer_manifest_adr = gr.Checkbox(
-            value=True, label='Prefer manifest/adr for "what is"'
-        )
-        full_text = gr.Checkbox(value=False, label="Show full text (cards)")
+            with gr.Row():
+                min_score = gr.Slider(0.0, 1.0, value=0.0, step=0.01, label="Min score")
+                dedup_by_path = gr.Checkbox(value=True, label="Deduplicate by rel_path")
+                prefer_manifest_adr = gr.Checkbox(
+                    value=True, label='Prefer manifest/adr for "what is"'
+                )
+                full_text = gr.Checkbox(value=False, label="Show full text (cards)")
 
-    reset_filters = gr.Button("Reset filters")
+            reset_filters = gr.Button("Reset filters")
 
-    if (
-        KB.doc_kind_present_count == 0
-        or KB.source_dir_present_count == 0
-        or KB.project_present_count == 0
-    ):
-        gr.Markdown("Metadata fields missing in chunks — run KB rebuild")
+            if (
+                KB.doc_kind_present_count == 0
+                or KB.source_dir_present_count == 0
+                or KB.project_present_count == 0
+            ):
+                gr.Markdown("Metadata fields missing in chunks — run KB rebuild")
 
-    gr.Markdown("### LLM Mode")
-    with gr.Row():
-        llm_mode = gr.Radio(
-            choices=["OFF", "ON"],
-            value="OFF",
-            label="LLM",
-        )
-        llm_model = gr.Dropdown(
-            choices=MODEL_PRESETS,
-            value=DEFAULT_LLM_MODEL,
-            label="Model",
-        )
-        max_tokens = gr.Slider(32, 1024, value=256, step=32, label="max_tokens")
-        temperature = gr.Slider(0.0, 1.2, value=0.2, step=0.05, label="temperature")
-        answer_style = gr.Dropdown(
-            choices=["neutral", "strict", "explainer"],
-            value="neutral",
-            label="Answer style",
-        )
+            gr.Markdown("### LLM Mode")
+            with gr.Row():
+                llm_mode = gr.Radio(
+                    choices=["OFF", "ON"],
+                    value="OFF",
+                    label="LLM",
+                )
+                llm_model = gr.Dropdown(
+                    choices=MODEL_PRESETS,
+                    value=DEFAULT_LLM_MODEL,
+                    label="Model",
+                )
+                max_tokens = gr.Slider(32, 1024, value=256, step=32, label="max_tokens")
+                temperature = gr.Slider(0.0, 1.2, value=0.2, step=0.05, label="temperature")
+                answer_style = gr.Dropdown(
+                    choices=["neutral", "strict", "explainer"],
+                    value="neutral",
+                    label="Answer style",
+                )
 
-    btn = gr.Button("Search")
-    gr.Markdown("## Context Cocktail")
-    context_out = gr.Markdown()
-    gr.Markdown("## Answer (LLM)")
-    answer_out = gr.Markdown()
-    gr.Markdown("## Sources")
-    sources_out = gr.Markdown()
-    bundle_md_state = gr.State("")
-    bundle_json_state = gr.State({})
+            btn = gr.Button("Search")
+            gr.Markdown("## Context Cocktail")
+            context_out = gr.Markdown()
+            gr.Markdown("## Answer (LLM)")
+            answer_out = gr.Markdown()
+            gr.Markdown("## Sources")
+            sources_out = gr.Markdown()
+            bundle_md_state = gr.State("")
+            bundle_json_state = gr.State({})
 
-    with gr.Accordion("Debug panel", open=False):
-        debug_out = gr.Markdown(
-            _format_debug(
-                len(KB.chunks),
-                0,
-                0,
-                0,
-                0,
-                0.0,
-                [],
-                [],
-                "all",
-                "Cards",
+            with gr.Accordion("Debug panel", open=False):
+                debug_out = gr.Markdown(
+                    _format_debug(
+                        len(KB.chunks),
+                        0,
+                        0,
+                        0,
+                        0,
+                        0.0,
+                        [],
+                        [],
+                        "all",
+                        "Cards",
+                    )
+                )
+
+            btn.click(
+                fn=ui_search,
+                inputs=[
+                    query,
+                    top_k,
+                    view_mode,
+                    min_score,
+                    dedup_by_path,
+                    prefer_manifest_adr,
+                    source_dirs,
+                    doc_kinds,
+                    projects,
+                    full_text,
+                    llm_mode,
+                    llm_model,
+                    max_tokens,
+                    temperature,
+                    answer_style,
+                ],
+                outputs=[
+                    context_out,
+                    answer_out,
+                    sources_out,
+                    bundle_md_state,
+                    bundle_json_state,
+                    debug_out,
+                ],
             )
-        )
 
-    btn.click(
-        fn=ui_search,
-        inputs=[
-            query,
-            top_k,
-            view_mode,
-            min_score,
-            dedup_by_path,
-            prefer_manifest_adr,
-            source_dirs,
-            doc_kinds,
-            projects,
-            full_text,
-            llm_mode,
-            llm_model,
-            max_tokens,
-            temperature,
-            answer_style,
-        ],
-        outputs=[context_out, answer_out, sources_out, bundle_md_state, bundle_json_state, debug_out],
-    )
+            def _reset_filters():
+                return [], [], "all", "Cards", 0.0, True, True, False
 
-    def _reset_filters():
-        return [], [], "all", "Cards", 0.0, True, True, False
+            reset_filters.click(
+                fn=_reset_filters,
+                inputs=[],
+                outputs=[
+                    source_dirs,
+                    doc_kinds,
+                    projects,
+                    view_mode,
+                    min_score,
+                    dedup_by_path,
+                    prefer_manifest_adr,
+                    full_text,
+                ],
+            )
 
-    reset_filters.click(
-        fn=_reset_filters,
-        inputs=[],
-        outputs=[
-            source_dirs,
-            doc_kinds,
-            projects,
-            view_mode,
-            min_score,
-            dedup_by_path,
-            prefer_manifest_adr,
-            full_text,
-        ],
-    )
+            gr.Markdown("### Export")
+            with gr.Row():
+                copy_bundle_btn = gr.Button("Copy bundle (MD)")
+                download_json_btn = gr.Button("Download bundle.json")
+                copy_prompt_btn = gr.Button("Copy prompt scaffold")
 
-    gr.Markdown("### Export")
-    with gr.Row():
-        copy_bundle_btn = gr.Button("Copy bundle (MD)")
-        download_json_btn = gr.Button("Download bundle.json")
-        copy_prompt_btn = gr.Button("Copy prompt scaffold")
+            bundle_md_out = gr.Textbox(label="Bundle (MD)", lines=10)
+            prompt_out = gr.Textbox(label="Prompt scaffold", lines=8)
+            bundle_file = gr.File(label="bundle.json")
 
-    bundle_md_out = gr.Textbox(label="Bundle (MD)", lines=10)
-    prompt_out = gr.Textbox(label="Prompt scaffold", lines=8)
-    bundle_file = gr.File(label="bundle.json")
+            def _bundle_md_out(bundle_md: str) -> str:
+                return bundle_md or ""
 
-    def _bundle_md_out(bundle_md: str) -> str:
-        return bundle_md or ""
+            def _prompt_scaffold(bundle_md: str) -> str:
+                if not bundle_md:
+                    return ""
+                return "Use this prompt with your LLM:\n\n" + bundle_md
 
-    def _prompt_scaffold(bundle_md: str) -> str:
-        if not bundle_md:
-            return ""
-        return "Use this prompt with your LLM:\n\n" + bundle_md
+            def _bundle_json_file(bundle: Dict[str, Any]) -> str | None:
+                if not bundle:
+                    return None
+                import tempfile
 
-    def _bundle_json_file(bundle: Dict[str, Any]) -> str | None:
-        if not bundle:
-            return None
-        import tempfile
+                fd, path = tempfile.mkstemp(suffix=".json")
+                with os.fdopen(fd, "w", encoding="utf-8") as f:
+                    f.write(serialize_bundle_json(bundle))
+                return path
 
-        fd, path = tempfile.mkstemp(suffix=".json")
-        with os.fdopen(fd, "w", encoding="utf-8") as f:
-            f.write(serialize_bundle_json(bundle))
-        return path
+            copy_bundle_btn.click(fn=_bundle_md_out, inputs=[bundle_md_state], outputs=[bundle_md_out])
+            copy_prompt_btn.click(fn=_prompt_scaffold, inputs=[bundle_md_state], outputs=[prompt_out])
+            download_json_btn.click(fn=_bundle_json_file, inputs=[bundle_json_state], outputs=[bundle_file])
 
-    copy_bundle_btn.click(fn=_bundle_md_out, inputs=[bundle_md_state], outputs=[bundle_md_out])
-    copy_prompt_btn.click(fn=_prompt_scaffold, inputs=[bundle_md_state], outputs=[prompt_out])
-    download_json_btn.click(fn=_bundle_json_file, inputs=[bundle_json_state], outputs=[bundle_file])
+            schema_version = KB.build_info.get("chunk_schema_version")
+            schema_line = f"**Chunk schema:** `{schema_version}`" if schema_version else ""
+            header = f"**Dataset:** `{DATASET_REPO}`  \n**Embedding model:** `{EMBED_MODEL}`"
+            if schema_line:
+                header = f"{header}  \n{schema_line}"
+            gr.Markdown(header)
 
-    schema_version = KB.build_info.get("chunk_schema_version")
-    schema_line = f"**Chunk schema:** `{schema_version}`" if schema_version else ""
-    header = f"**Dataset:** `{DATASET_REPO}`  \n**Embedding model:** `{EMBED_MODEL}`"
-    if schema_line:
-        header = f"{header}  \n{schema_line}"
-    gr.Markdown(header)
+            with gr.Accordion("Help / About", open=False):
+                gr.Markdown(
+                    "Search vs thinking:\n"
+                    "- Search = retrieval from KB.\n"
+                    "- Thinking = optional LLM over the context cocktail.\n\n"
+                    "Context cocktail:\n"
+                    "- A compact bundle of top fragments with metadata.\n"
+                    "- Use it manually if LLM is OFF.\n\n"
+                    "Secrets (Space env vars):\n"
+                    "- HF_TOKEN (required for LLM calls)\n"
+                    "- HF_INFERENCE_MODEL (model name for chat completion)\n"
+                    "- HF_INFERENCE_PROVIDER (optional)\n\n"
+                    "Safety:\n"
+                    "- Answer uses sources; if none, it should say it does not know."
+                )
 
-    with gr.Accordion("Help / About", open=False):
-        gr.Markdown(
-            "Search vs thinking:\n"
-            "- Search = retrieval from KB.\n"
-            "- Thinking = optional LLM over the context cocktail.\n\n"
-            "Context cocktail:\n"
-            "- A compact bundle of top fragments with metadata.\n"
-            "- Use it manually if LLM is OFF.\n\n"
-            "Secrets (Space env vars):\n"
-            "- HF_TOKEN (required for LLM calls)\n"
-            "- HF_INFERENCE_MODEL (model name for chat completion)\n"
-            "- HF_INFERENCE_PROVIDER (optional)\n\n"
-            "Safety:\n"
-            "- Answer uses sources; if none, it should say it does not know."
-        )
+        with gr.TabItem("Map"):
+            gr.Markdown("## Map")
+            gr.Markdown(_load_graph_map())
 
 if __name__ == "__main__":
     demo.launch()
