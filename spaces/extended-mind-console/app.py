@@ -11,6 +11,7 @@ from sentence_transformers import SentenceTransformer  # type: ignore
 
 DATASET_REPO = os.getenv("KB_DATASET_REPO", "utemix/extended-mind-kb")
 EMBED_MODEL = os.getenv("KB_EMBED_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
+UI_VERSION = "nodes-v0-console-0.2"
 
 
 def _download_artifact(filename: str) -> str:
@@ -38,6 +39,15 @@ def _safe_join_title(title_path: Any) -> str:
     return str(title_path) if title_path is not None else ""
 
 
+def _unique_values(chunks: List[Dict[str, Any]], key: str) -> List[str]:
+    vals = {str(c.get(key)).strip() for c in chunks if c.get(key)}
+    return sorted(vals)
+
+
+def _present_count(chunks: List[Dict[str, Any]], key: str) -> int:
+    return sum(1 for c in chunks if c.get(key))
+
+
 class KBSearch:
     def __init__(self) -> None:
         chunks_path = _download_artifact("chunks.jsonl")
@@ -55,6 +65,13 @@ class KBSearch:
         self.index = faiss.read_index(index_path)
         self.model = SentenceTransformer(EMBED_MODEL)
         self.build_info = build_info
+        self.source_dir_values = _unique_values(self.chunks, "source_dir")
+        self.doc_kind_values = _unique_values(self.chunks, "doc_kind")
+        self.project_values = _unique_values(self.chunks, "project")
+
+        self.source_dir_present_count = _present_count(self.chunks, "source_dir")
+        self.doc_kind_present_count = _present_count(self.chunks, "doc_kind")
+        self.project_present_count = _present_count(self.chunks, "project")
 
     def search(self, query: str, top_k: int) -> List[Dict[str, Any]]:
         q = (query or "").strip()
@@ -81,6 +98,9 @@ class KBSearch:
                     "rel_path": c.get("rel_path", ""),
                     "title_path": _safe_join_title(c.get("title_path", [])),
                     "text": c.get("text", ""),
+                    "source_dir": c.get("source_dir"),
+                    "doc_kind": c.get("doc_kind"),
+                    "project": c.get("project"),
                 }
             )
         return results
@@ -127,7 +147,7 @@ def _format_table(results: List[Dict[str, Any]]) -> str:
 
 def _is_what_is_query(query: str) -> bool:
     q = (query or "").strip().lower()
-    return q.startswith("what is") or q.startswith("что такое")
+    return q.startswith("what is") or q.startswith("\u0447\u0442\u043e \u0442\u0430\u043a\u043e\u0435")
 
 
 def _apply_filters(
@@ -135,9 +155,28 @@ def _apply_filters(
     min_score: float,
     dedup: bool,
     prefer_manifest_adr: bool,
+    selected_source_dirs: List[str] | None,
+    selected_doc_kinds: List[str] | None,
+    selected_project: str,
     query: str,
 ) -> Tuple[List[Dict[str, Any]], int, int]:
-    filtered = [r for r in results if r["score"] >= min_score]
+    filtered = results
+    if min_score > 0:
+        filtered = [r for r in filtered if r["score"] >= min_score]
+
+    if selected_source_dirs:
+        allowed = {s for s in selected_source_dirs if s}
+        if allowed:
+            filtered = [r for r in filtered if r.get("source_dir") in allowed]
+
+    if selected_doc_kinds:
+        allowed = {s for s in selected_doc_kinds if s}
+        if allowed:
+            filtered = [r for r in filtered if r.get("doc_kind") in allowed]
+
+    if selected_project and selected_project != "all":
+        filtered = [r for r in filtered if r.get("project") == selected_project]
+
     matched_count = len(filtered)
 
     if prefer_manifest_adr and _is_what_is_query(query):
@@ -172,21 +211,55 @@ def ui_search(
     min_score: float,
     dedup_by_path: bool,
     prefer_manifest_adr: bool,
+    selected_source_dirs: List[str],
+    selected_doc_kinds: List[str],
+    selected_project: str,
     full_text: bool,
 ):
-    res = KB.search(query, int(top_k))
+    raw_k = max(int(top_k), int(top_k) * 5)
+    res = KB.search(query, raw_k)
     res, matched_count, dedup_removed = _apply_filters(
-        res, float(min_score), dedup_by_path, prefer_manifest_adr, query
+        res,
+        float(min_score),
+        dedup_by_path,
+        prefer_manifest_adr,
+        selected_source_dirs,
+        selected_doc_kinds,
+        selected_project,
+        query,
     )
+    res = res[: int(top_k)]
     if not res:
-        debug = _format_debug(len(KB.chunks), matched_count, dedup_removed)
+        debug = _format_debug(
+            len(KB.chunks),
+            matched_count,
+            dedup_removed,
+            raw_k,
+            len(res),
+            min_score,
+            selected_source_dirs,
+            selected_doc_kinds,
+            selected_project,
+            view_mode,
+        )
         return "No results found. Try a different query.", [], query, debug
 
     if view_mode == "Table":
         out = _format_table(res)
     else:
         out = _format_cards(res, full_text)
-    debug = _format_debug(len(KB.chunks), matched_count, dedup_removed)
+    debug = _format_debug(
+        len(KB.chunks),
+        matched_count,
+        dedup_removed,
+        raw_k,
+        len(res),
+        min_score,
+        selected_source_dirs,
+        selected_doc_kinds,
+        selected_project,
+        view_mode,
+    )
     return out, res, query, debug
 
 
@@ -210,11 +283,36 @@ def ui_bundle(query: str, results: List[Dict[str, Any]]):
     return "\n".join(lines).strip()
 
 
-def _format_debug(total_chunks: int, matched_count: int, dedup_removed: int) -> str:
+def _format_debug(
+    total_chunks: int,
+    matched_count: int,
+    dedup_removed: int,
+    top_k_raw: int,
+    top_k_final: int,
+    min_score: float,
+    selected_source_dirs: List[str],
+    selected_doc_kinds: List[str],
+    selected_project: str,
+    view_mode: str,
+) -> str:
+    filters_selected = {
+        "view_mode": view_mode,
+        "min_score": float(min_score),
+        "source_dir": selected_source_dirs or [],
+        "doc_kind": selected_doc_kinds or [],
+        "project": selected_project or "all",
+    }
     return (
+        f"- ui_version: **{UI_VERSION}**\n"
+        f"- top_k_raw: **{top_k_raw}**\n"
+        f"- top_k_final: **{top_k_final}**\n"
         f"- total chunks: **{total_chunks}**\n"
         f"- matched (after filters): **{matched_count}**\n"
-        f"- removed by dedup: **{dedup_removed}**"
+        f"- removed by dedup: **{dedup_removed}**\n"
+        f"- filters_selected: `{json.dumps(filters_selected, ensure_ascii=False)}`\n"
+        f"- doc_kind_present_count: **{KB.doc_kind_present_count}**\n"
+        f"- source_dir_present_count: **{KB.source_dir_present_count}**\n"
+        f"- project_present_count: **{KB.project_present_count}**"
     )
 
 
@@ -234,11 +332,25 @@ with gr.Blocks(title="extended-mind console") as demo:
     with gr.Row():
         top_k = gr.Slider(1, 20, value=8, step=1, label="Top K")
 
+    gr.Markdown("### Filters")
     with gr.Row():
+        source_dirs = gr.CheckboxGroup(
+            choices=KB.source_dir_values,
+            label="Source dir",
+        )
+        doc_kinds = gr.CheckboxGroup(
+            choices=KB.doc_kind_values,
+            label="Doc kind",
+        )
+        projects = gr.Dropdown(
+            choices=["all"] + KB.project_values,
+            value="all",
+            label="Project",
+        )
         view_mode = gr.Radio(
             choices=["Cards", "Table"],
             value="Cards",
-            label="View mode",
+            label="Mode",
         )
 
     with gr.Row():
@@ -247,9 +359,14 @@ with gr.Blocks(title="extended-mind console") as demo:
         prefer_manifest_adr = gr.Checkbox(
             value=True, label='Prefer manifest/adr for "what is"'
         )
-
-    with gr.Row():
         full_text = gr.Checkbox(value=False, label="Show full text (cards)")
+
+    if (
+        KB.doc_kind_present_count == 0
+        or KB.source_dir_present_count == 0
+        or KB.project_present_count == 0
+    ):
+        gr.Markdown("Metadata fields missing in chunks — run KB rebuild")
 
     btn = gr.Button("Search")
     out = gr.Markdown()
@@ -257,7 +374,20 @@ with gr.Blocks(title="extended-mind console") as demo:
     query_state = gr.State("")
 
     with gr.Accordion("Debug panel", open=False):
-        debug_out = gr.Markdown(_format_debug(len(KB.chunks), 0, 0))
+        debug_out = gr.Markdown(
+            _format_debug(
+                len(KB.chunks),
+                0,
+                0,
+                0,
+                0,
+                0.0,
+                [],
+                [],
+                "all",
+                "Cards",
+            )
+        )
 
     btn.click(
         fn=ui_search,
@@ -268,6 +398,9 @@ with gr.Blocks(title="extended-mind console") as demo:
             min_score,
             dedup_by_path,
             prefer_manifest_adr,
+            source_dirs,
+            doc_kinds,
+            projects,
             full_text,
         ],
         outputs=[out, results_state, query_state, debug_out],
