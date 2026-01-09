@@ -361,6 +361,8 @@ with gr.Blocks(title="extended-mind console") as demo:
         )
         full_text = gr.Checkbox(value=False, label="Show full text (cards)")
 
+    reset_filters = gr.Button("Reset filters")
+
     if (
         KB.doc_kind_present_count == 0
         or KB.source_dir_present_count == 0
@@ -404,6 +406,24 @@ with gr.Blocks(title="extended-mind console") as demo:
             full_text,
         ],
         outputs=[out, results_state, query_state, debug_out],
+    )
+
+    def _reset_filters():
+        return [], [], "all", "Cards", 0.0, True, True, False
+
+    reset_filters.click(
+        fn=_reset_filters,
+        inputs=[],
+        outputs=[
+            source_dirs,
+            doc_kinds,
+            projects,
+            view_mode,
+            min_score,
+            dedup_by_path,
+            prefer_manifest_adr,
+            full_text,
+        ],
     )
 
     with gr.Row():
