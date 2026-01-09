@@ -1,0 +1,45 @@
+name: Build Docs Map
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: write
+
+jobs:
+  build-doc-map:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build index and graph
+        run: |
+          python scripts/build_doc_index.py
+          python scripts/build_graph.py
+
+      - name: Upload artifacts (PR)
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-map
+          path: |
+            docs/_index.json
+            docs/maps/graph.mmd
+
+      - name: Commit generated files (push to main)
+        if: ${{ github.event_name == 'push' }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "map-bot"
+          git config user.email "map-bot@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git add docs/_index.json docs/maps/graph.mmd
+          git commit -m "chore(docs): update index and graph" || echo "No changes to commit"
+          git push origin HEAD:main
