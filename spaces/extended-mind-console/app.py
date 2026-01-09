@@ -5,13 +5,25 @@ from typing import Any, Dict, List, Tuple
 import faiss  # type: ignore
 import gradio as gr  # type: ignore
 import numpy as np
-from huggingface_hub import hf_hub_download
+from huggingface_hub import InferenceClient, hf_hub_download
 from sentence_transformers import SentenceTransformer  # type: ignore
 
+from console_utils import build_context_cocktail, serialize_bundle_json, should_call_llm
 
 DATASET_REPO = os.getenv("KB_DATASET_REPO", "utemix/extended-mind-kb")
 EMBED_MODEL = os.getenv("KB_EMBED_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
-UI_VERSION = "nodes-v0-console-0.2"
+UI_VERSION = "nodes-v0-console-0.3"
+
+DEFAULT_LLM_MODEL = os.getenv(
+    "HF_INFERENCE_MODEL", "meta-llama/Meta-Llama-3.1-8B-Instruct"
+)
+MODEL_PRESETS = [
+    DEFAULT_LLM_MODEL,
+    "mistralai/Mistral-7B-Instruct-v0.3",
+    "Qwen/Qwen2.5-7B-Instruct",
+    "HuggingFaceH4/zephyr-7b-beta",
+]
+MODEL_PRESETS = [m for i, m in enumerate(MODEL_PRESETS) if m and m not in MODEL_PRESETS[:i]]
 
 
 def _download_artifact(filename: str) -> str:
@@ -215,6 +227,11 @@ def ui_search(
     selected_doc_kinds: List[str],
     selected_project: str,
     full_text: bool,
+    llm_mode: str,
+    llm_model: str,
+    max_tokens: int,
+    temperature: float,
+    answer_style: str,
 ):
     raw_k = max(int(top_k), int(top_k) * 5)
     res = KB.search(query, raw_k)
@@ -242,12 +259,38 @@ def ui_search(
             selected_project,
             view_mode,
         )
-        return "No results found. Try a different query.", [], query, debug
+        return (
+            "No results found. Try a different query.",
+            "",
+            "No sources.",
+            "",
+            {},
+            debug,
+        )
 
     if view_mode == "Table":
-        out = _format_table(res)
+        context_out = _format_table(res)
     else:
-        out = _format_cards(res, full_text)
+        context_out = _format_cards(res, full_text)
+
+    bundle_md, bundle_json, citations = build_context_cocktail(query, res, len(res))
+    sources_out = _format_sources(citations)
+
+    answer_out = ""
+    if llm_mode == "ON":
+        provider = os.getenv("HF_INFERENCE_PROVIDER")
+        answer_out, err = _call_llm(
+            query,
+            bundle_md,
+            llm_model,
+            max_tokens,
+            temperature,
+            answer_style,
+            provider,
+        )
+        if err:
+            answer_out = "LLM unavailable"
+
     debug = _format_debug(
         len(KB.chunks),
         matched_count,
@@ -260,27 +303,74 @@ def ui_search(
         selected_project,
         view_mode,
     )
-    return out, res, query, debug
+    return context_out, answer_out, sources_out, bundle_md, bundle_json, debug
 
 
-def ui_export_json(results: List[Dict[str, Any]]):
-    if not results:
-        return "```json\n[]\n```"
-    return "```json\n" + json.dumps(results, ensure_ascii=False, indent=2) + "\n```"
-
-
-def ui_bundle(query: str, results: List[Dict[str, Any]]):
-    if not results:
-        return "No results to bundle."
-    lines = [f"Query: {query}", ""]
-    for n, r in enumerate(results, 1):
-        header = f"[{n}] {r['rel_path']}"
-        if r["title_path"]:
-            header += f" | {r['title_path']}"
-        lines.append(header)
-        lines.append(r["text"])
+def _format_sources(citations: List[Dict[str, Any]]) -> str:
+    if not citations:
+        return "No sources."
+    lines = []
+    for i, c in enumerate(citations, 1):
+        parts = [f"**{i})** score={c['score']:.4f}"]
+        if c.get("doc_kind"):
+            parts.append(f"doc_kind={c['doc_kind']}")
+        lines.append(" - ".join(parts))
+        lines.append(f"- path: `{c['path']}`")
+        if c.get("title"):
+            lines.append(f"- title: {c['title']}")
+        lines.append("- matched by semantic similarity")
         lines.append("")
     return "\n".join(lines).strip()
+
+
+def _call_llm(
+    query: str,
+    bundle_md: str,
+    model: str,
+    max_tokens: int,
+    temperature: float,
+    answer_style: str,
+    provider: str | None,
+) -> Tuple[str, str]:
+    token = os.getenv("HF_TOKEN")
+    if not should_call_llm(True, token, model):
+        return "", "LLM unavailable"
+
+    system = (
+        "You are a neutral engineer. Use only the provided context. "
+        "Cite sources by path when possible. If missing, say you do not know."
+    )
+    if answer_style == "strict":
+        system += " Be concise and strict."
+    elif answer_style == "explainer":
+        system += " Explain clearly and briefly."
+
+    messages = [
+        {"role": "system", "content": system},
+        {"role": "user", "content": f"Question: {query}\n\n{bundle_md}"},
+    ]
+
+    client = InferenceClient(token=token)
+    kwargs = {
+        "model": model,
+        "messages": messages,
+        "max_tokens": int(max_tokens),
+        "temperature": float(temperature),
+    }
+    if provider:
+        kwargs["provider"] = provider
+
+    try:
+        response = client.chat.completions.create(**kwargs)
+    except TypeError:
+        kwargs.pop("provider", None)
+        response = client.chat.completions.create(**kwargs)
+    except Exception as exc:
+        print(f"LLM error: {exc}")
+        return "", "LLM unavailable"
+
+    content = response.choices[0].message.content or ""
+    return content, ""
 
 
 def _format_debug(
@@ -319,8 +409,7 @@ def _format_debug(
 with gr.Blocks(title="extended-mind console") as demo:
     gr.Markdown(
         "# extended-mind Search Console\n"
-        "Local retrieval-only search over the extended-mind knowledge base. "
-        "No LLM, just vector search."
+        "Retrieval over the extended-mind knowledge base with an optional LLM layer."
     )
 
     with gr.Row():
@@ -361,6 +450,8 @@ with gr.Blocks(title="extended-mind console") as demo:
         )
         full_text = gr.Checkbox(value=False, label="Show full text (cards)")
 
+    reset_filters = gr.Button("Reset filters")
+
     if (
         KB.doc_kind_present_count == 0
         or KB.source_dir_present_count == 0
@@ -368,10 +459,35 @@ with gr.Blocks(title="extended-mind console") as demo:
     ):
         gr.Markdown("Metadata fields missing in chunks — run KB rebuild")
 
+    gr.Markdown("### LLM Mode")
+    with gr.Row():
+        llm_mode = gr.Radio(
+            choices=["OFF", "ON"],
+            value="OFF",
+            label="LLM",
+        )
+        llm_model = gr.Dropdown(
+            choices=MODEL_PRESETS,
+            value=DEFAULT_LLM_MODEL,
+            label="Model",
+        )
+        max_tokens = gr.Slider(32, 1024, value=256, step=32, label="max_tokens")
+        temperature = gr.Slider(0.0, 1.2, value=0.2, step=0.05, label="temperature")
+        answer_style = gr.Dropdown(
+            choices=["neutral", "strict", "explainer"],
+            value="neutral",
+            label="Answer style",
+        )
+
     btn = gr.Button("Search")
-    out = gr.Markdown()
-    results_state = gr.State([])
-    query_state = gr.State("")
+    gr.Markdown("## Context Cocktail")
+    context_out = gr.Markdown()
+    gr.Markdown("## Answer (LLM)")
+    answer_out = gr.Markdown()
+    gr.Markdown("## Sources")
+    sources_out = gr.Markdown()
+    bundle_md_state = gr.State("")
+    bundle_json_state = gr.State({})
 
     with gr.Accordion("Debug panel", open=False):
         debug_out = gr.Markdown(
@@ -402,19 +518,64 @@ with gr.Blocks(title="extended-mind console") as demo:
             doc_kinds,
             projects,
             full_text,
+            llm_mode,
+            llm_model,
+            max_tokens,
+            temperature,
+            answer_style,
         ],
-        outputs=[out, results_state, query_state, debug_out],
+        outputs=[context_out, answer_out, sources_out, bundle_md_state, bundle_json_state, debug_out],
     )
 
+    def _reset_filters():
+        return [], [], "all", "Cards", 0.0, True, True, False
+
+    reset_filters.click(
+        fn=_reset_filters,
+        inputs=[],
+        outputs=[
+            source_dirs,
+            doc_kinds,
+            projects,
+            view_mode,
+            min_score,
+            dedup_by_path,
+            prefer_manifest_adr,
+            full_text,
+        ],
+    )
+
+    gr.Markdown("### Export")
     with gr.Row():
-        export_btn = gr.Button("Export JSON")
-        bundle_btn = gr.Button("Copy bundle")
+        copy_bundle_btn = gr.Button("Copy bundle (MD)")
+        download_json_btn = gr.Button("Download bundle.json")
+        copy_prompt_btn = gr.Button("Copy prompt scaffold")
 
-    export_out = gr.Markdown(label="Export JSON")
-    bundle_out = gr.Textbox(label="Bundle", lines=12)
+    bundle_md_out = gr.Textbox(label="Bundle (MD)", lines=10)
+    prompt_out = gr.Textbox(label="Prompt scaffold", lines=8)
+    bundle_file = gr.File(label="bundle.json")
 
-    export_btn.click(fn=ui_export_json, inputs=[results_state], outputs=[export_out])
-    bundle_btn.click(fn=ui_bundle, inputs=[query_state, results_state], outputs=[bundle_out])
+    def _bundle_md_out(bundle_md: str) -> str:
+        return bundle_md or ""
+
+    def _prompt_scaffold(bundle_md: str) -> str:
+        if not bundle_md:
+            return ""
+        return "Use this prompt with your LLM:\n\n" + bundle_md
+
+    def _bundle_json_file(bundle: Dict[str, Any]) -> str | None:
+        if not bundle:
+            return None
+        import tempfile
+
+        fd, path = tempfile.mkstemp(suffix=".json")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(serialize_bundle_json(bundle))
+        return path
+
+    copy_bundle_btn.click(fn=_bundle_md_out, inputs=[bundle_md_state], outputs=[bundle_md_out])
+    copy_prompt_btn.click(fn=_prompt_scaffold, inputs=[bundle_md_state], outputs=[prompt_out])
+    download_json_btn.click(fn=_bundle_json_file, inputs=[bundle_json_state], outputs=[bundle_file])
 
     schema_version = KB.build_info.get("chunk_schema_version")
     schema_line = f"**Chunk schema:** `{schema_version}`" if schema_version else ""
@@ -422,6 +583,22 @@ with gr.Blocks(title="extended-mind console") as demo:
     if schema_line:
         header = f"{header}  \n{schema_line}"
     gr.Markdown(header)
+
+    with gr.Accordion("Help / About", open=False):
+        gr.Markdown(
+            "Search vs thinking:\n"
+            "- Search = retrieval from KB.\n"
+            "- Thinking = optional LLM over the context cocktail.\n\n"
+            "Context cocktail:\n"
+            "- A compact bundle of top fragments with metadata.\n"
+            "- Use it manually if LLM is OFF.\n\n"
+            "Secrets (Space env vars):\n"
+            "- HF_TOKEN (required for LLM calls)\n"
+            "- HF_INFERENCE_MODEL (model name for chat completion)\n"
+            "- HF_INFERENCE_PROVIDER (optional)\n\n"
+            "Safety:\n"
+            "- Answer uses sources; if none, it should say it does not know."
+        )
 
 if __name__ == "__main__":
     demo.launch()
