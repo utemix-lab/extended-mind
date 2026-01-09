@@ -683,9 +683,7 @@ with gr.Blocks(title="extended-mind console") as demo:
             def _prompt_scaffold(bundle_md: str) -> str:
                 if not bundle_md:
                     return ""
-                return "Use this prompt with your LLM:
-
-" + bundle_md
+                return "Use this prompt with your LLM:\n\n" + bundle_md
 
             def _bundle_json_file(bundle: Dict[str, Any]) -> str | None:
                 if not bundle:
@@ -703,40 +701,24 @@ with gr.Blocks(title="extended-mind console") as demo:
 
             schema_version = KB.build_info.get("chunk_schema_version")
             schema_line = f"**Chunk schema:** `{schema_version}`" if schema_version else ""
-            header = f"**Dataset:** `{DATASET_REPO}`  
-**Embedding model:** `{EMBED_MODEL}`"
+            header = f"**Dataset:** `{DATASET_REPO}`  \n**Embedding model:** `{EMBED_MODEL}`"
             if schema_line:
-                header = f"{header}  
-{schema_line}"
+                header = f"{header}  \n{schema_line}"
             gr.Markdown(header)
 
             with gr.Accordion("Help / About", open=False):
                 gr.Markdown(
-                    "Search vs thinking:
-"
-                    "- Search = retrieval from KB.
-"
-                    "- Thinking = optional LLM over the context cocktail.
-
-"
-                    "Context cocktail:
-"
-                    "- A compact bundle of top fragments with metadata.
-"
-                    "- Use it manually if LLM is OFF.
-
-"
-                    "Secrets (Space env vars):
-"
-                    "- HF_TOKEN (required for LLM calls)
-"
-                    "- HF_INFERENCE_MODEL (model name for chat completion)
-"
-                    "- HF_INFERENCE_PROVIDER (optional)
-
-"
-                    "Safety:
-"
+                    "Search vs thinking:\n"
+                    "- Search = retrieval from KB.\n"
+                    "- Thinking = optional LLM over the context cocktail.\n\n"
+                    "Context cocktail:\n"
+                    "- A compact bundle of top fragments with metadata.\n"
+                    "- Use it manually if LLM is OFF.\n\n"
+                    "Secrets (Space env vars):\n"
+                    "- HF_TOKEN (required for LLM calls)\n"
+                    "- HF_INFERENCE_MODEL (model name for chat completion)\n"
+                    "- HF_INFERENCE_PROVIDER (optional)\n\n"
+                    "Safety:\n"
                     "- Answer uses sources; if none, it should say it does not know."
                 )
         with gr.TabItem("Map"):
