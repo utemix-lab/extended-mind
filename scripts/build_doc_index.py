@@ -95,7 +95,10 @@ def doc_id_from_path(rel_path: str) -> str:
 def build_index(root: Path) -> List[Dict[str, Any]]:
     docs = []
     for path in sorted(root.rglob("*.md")):
-        rel_path = path.relative_to(Path.cwd()).as_posix()
+        if path.is_absolute():
+            rel_path = path.relative_to(Path.cwd()).as_posix()
+        else:
+            rel_path = path.as_posix()
         md = read_text(path)
         fm, body = parse_frontmatter(md)
         title = extract_title(body, fm)
