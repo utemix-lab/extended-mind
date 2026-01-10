@@ -754,7 +754,15 @@ with gr.Blocks(title="extended-mind console") as demo:
             gr.Markdown("## Cosmos Map")
             cosmos_html_path = Path(__file__).parent / "cosmos-map" / "index.html"
             if cosmos_html_path.exists():
-                gr.HTML(cosmos_html_path.read_text(encoding="utf-8"))
+                gr.HTML(
+                    '<iframe src="/file=cosmos-map/index.html" '
+                    'style="width:100%;height:720px;border:0;"></iframe>'
+                )
+                gr.Markdown(
+                    "Direct links: "
+                    "[view](/file=cosmos-map/index.html?mode=view) | "
+                    "[edit](/file=cosmos-map/index.html?mode=edit)"
+                )
             else:
                 gr.Markdown("Cosmos map UI not found.")
 

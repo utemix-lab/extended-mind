@@ -118,12 +118,6 @@
       const SOURCE_URL =
         "https://raw.githubusercontent.com/utemix-lab/extended-mind/main/cosmos/cosmos-map.v0.1.json";
 
-      function el(tag, text) {
-        const n = document.createElement(tag);
-        if (text) n.textContent = text;
-        return n;
-      }
-
       function mkTag(label, checked, onChange) {
         const wrap = document.createElement("label");
         wrap.className = "tag";
