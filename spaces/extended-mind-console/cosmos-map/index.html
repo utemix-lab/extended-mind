@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cosmos Map</title>
+    <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        color: #222;
+      }
+      #app {
+        display: grid;
+        grid-template-columns: 280px 1fr 260px;
+        gap: 12px;
+        padding: 12px;
+      }
+      #cy {
+        height: 640px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+      }
+      .panel {
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 10px;
+        background: #fafafa;
+      }
+      .panel h3 {
+        margin: 0 0 8px 0;
+        font-size: 14px;
+      }
+      .row {
+        margin-bottom: 8px;
+      }
+      label {
+        display: block;
+        font-size: 12px;
+        margin-bottom: 4px;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 6px;
+        box-sizing: border-box;
+      }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .tag {
+        font-size: 11px;
+        padding: 2px 6px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background: #fff;
+      }
+      .btn {
+        padding: 6px 10px;
+        border: 1px solid #444;
+        background: #fff;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      .btn + .btn {
+        margin-left: 6px;
+      }
+      .muted {
+        color: #777;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="panel">
+        <h3>Filters</h3>
+        <div class="row">
+          <label>Search</label>
+          <input id="search" type="text" placeholder="Search by label" />
+        </div>
+        <div class="row">
+          <label>Type</label>
+          <div id="type-filters" class="tags"></div>
+        </div>
+        <div class="row">
+          <label>Status</label>
+          <div id="status-filters" class="tags"></div>
+        </div>
+        <div class="row">
+          <button id="export" class="btn">Export JSON</button>
+          <button id="reset" class="btn">Reset layout</button>
+        </div>
+        <div class="row muted">
+          Mode: <span id="mode-label">view</span>
+        </div>
+      </div>
+      <div id="cy"></div>
+      <div class="panel">
+        <h3>Details</h3>
+        <div id="details" class="muted">Select a node.</div>
+        <div id="edit-panel" style="margin-top: 10px; display: none;">
+          <label>Label</label>
+          <input id="edit-label" type="text" />
+          <label style="margin-top: 8px;">Notes</label>
+          <input id="edit-notes" type="text" />
+          <button id="apply-edit" class="btn" style="margin-top: 8px;">Apply</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const mode = params.get("mode") || "view";
+      document.getElementById("mode-label").textContent = mode;
+
+      const SOURCE_URL =
+        "https://raw.githubusercontent.com/utemix-lab/extended-mind/main/cosmos/cosmos-map.v0.1.json";
+
+      function el(tag, text) {
+        const n = document.createElement(tag);
+        if (text) n.textContent = text;
+        return n;
+      }
+
+      function mkTag(label, checked, onChange) {
+        const wrap = document.createElement("label");
+        wrap.className = "tag";
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.checked = checked;
+        input.addEventListener("change", onChange);
+        wrap.appendChild(input);
+        wrap.appendChild(document.createTextNode(" " + label));
+        return wrap;
+      }
+
+      function downloadJson(data, name) {
+        const blob = new Blob([JSON.stringify(data, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = name;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      fetch(SOURCE_URL)
+        .then((r) => r.json())
+        .then((data) => {
+          const nodes = data.nodes || [];
+          const edges = data.edges || [];
+
+          const types = Array.from(new Set(nodes.map((n) => n.type))).sort();
+          const statuses = Array.from(new Set(nodes.map((n) => n.status))).sort();
+
+          const typeState = new Set(types);
+          const statusState = new Set(statuses);
+
+          const cy = cytoscape({
+            container: document.getElementById("cy"),
+            elements: [
+              ...nodes.map((n) => ({
+                data: {
+                  id: n.id,
+                  label: n.label,
+                  type: n.type,
+                  status: n.status,
+                  notes: n.notes || "",
+                },
+              })),
+              ...edges.map((e) => ({
+                data: {
+                  id: e.id,
+                  source: e.source,
+                  target: e.target,
+                  type: e.type,
+                  status: e.status,
+                },
+              })),
+            ],
+            layout: { name: "cose", animate: false },
+            style: [
+              {
+                selector: "node",
+                style: {
+                  "background-color": "#4c6ef5",
+                  label: "data(label)",
+                  "font-size": "10px",
+                  color: "#222",
+                  "text-wrap": "wrap",
+                  "text-max-width": "80px",
+                },
+              },
+              {
+                selector: "edge",
+                style: {
+                  width: 1,
+                  "line-color": "#999",
+                  "target-arrow-color": "#999",
+                  "target-arrow-shape": "triangle",
+                  "curve-style": "bezier",
+                },
+              },
+            ],
+          });
+
+          function applyFilters() {
+            const q = document.getElementById("search").value.toLowerCase();
+            cy.nodes().forEach((n) => {
+              const matchType = typeState.has(n.data("type"));
+              const matchStatus = statusState.has(n.data("status"));
+              const matchSearch = n.data("label").toLowerCase().includes(q);
+              n.style("display", matchType && matchStatus && matchSearch ? "element" : "none");
+            });
+            cy.edges().forEach((e) => {
+              const s = e.source().style("display") !== "none";
+              const t = e.target().style("display") !== "none";
+              e.style("display", s && t ? "element" : "none");
+            });
+          }
+
+          const typeFilters = document.getElementById("type-filters");
+          types.forEach((t) => {
+            typeFilters.appendChild(
+              mkTag(t, true, (ev) => {
+                ev.target.checked ? typeState.add(t) : typeState.delete(t);
+                applyFilters();
+              })
+            );
+          });
+
+          const statusFilters = document.getElementById("status-filters");
+          statuses.forEach((s) => {
+            statusFilters.appendChild(
+              mkTag(s, true, (ev) => {
+                ev.target.checked ? statusState.add(s) : statusState.delete(s);
+                applyFilters();
+              })
+            );
+          });
+
+          document.getElementById("search").addEventListener("input", applyFilters);
+
+          document.getElementById("reset").addEventListener("click", () => {
+            cy.layout({ name: "cose", animate: false }).run();
+          });
+
+          document.getElementById("export").addEventListener("click", () => {
+            const exportData = {
+              version: data.version || "0.1",
+              generated_at: data.generated_at || new Date().toISOString(),
+              nodes: cy.nodes().map((n) => n.data()),
+              edges: cy.edges().map((e) => e.data()),
+            };
+            downloadJson(exportData, "cosmos-map.v0.1.json");
+          });
+
+          const details = document.getElementById("details");
+          const editPanel = document.getElementById("edit-panel");
+          const editLabel = document.getElementById("edit-label");
+          const editNotes = document.getElementById("edit-notes");
+          const applyEdit = document.getElementById("apply-edit");
+          let selectedNode = null;
+
+          cy.on("tap", "node", (evt) => {
+            selectedNode = evt.target;
+            const d = selectedNode.data();
+            details.textContent =
+              "id=" +
+              d.id +
+              " | type=" +
+              d.type +
+              " | status=" +
+              d.status;
+            if (mode === "edit") {
+              editPanel.style.display = "block";
+              editLabel.value = d.label || "";
+              editNotes.value = d.notes || "";
+            } else {
+              editPanel.style.display = "none";
+            }
+          });
+
+          applyEdit.addEventListener("click", () => {
+            if (!selectedNode) return;
+            selectedNode.data("label", editLabel.value);
+            selectedNode.data("notes", editNotes.value);
+            details.textContent =
+              "id=" +
+              selectedNode.data("id") +
+              " | type=" +
+              selectedNode.data("type") +
+              " | status=" +
+              selectedNode.data("status");
+          });
+
+          if (mode === "edit") {
+            cy.nodes().grabify();
+          } else {
+            cy.nodes().ungrabify();
+          }
+
+          applyFilters();
+        })
+        .catch((err) => {
+          const el = document.getElementById("cy");
+          el.textContent = "Failed to load cosmos map: " + err;
+        });
+    </script>
+  </body>
+</html>

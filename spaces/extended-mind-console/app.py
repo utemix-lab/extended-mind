@@ -725,5 +725,13 @@ with gr.Blocks(title="extended-mind console") as demo:
             gr.Markdown("## Map")
             gr.Markdown(_load_graph_map())
 
+        with gr.TabItem("Cosmos"):
+            gr.Markdown("## Cosmos Map")
+            cosmos_html_path = Path(__file__).parent / "cosmos-map" / "index.html"
+            if cosmos_html_path.exists():
+                gr.HTML(cosmos_html_path.read_text(encoding="utf-8"))
+            else:
+                gr.Markdown("Cosmos map UI not found.")
+
 if __name__ == "__main__":
     demo.launch()

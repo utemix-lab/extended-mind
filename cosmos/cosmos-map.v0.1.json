@@ -1,0 +1,238 @@
+{
+  "version": "0.1",
+  "generated_at": "2026-01-09T00:00:00Z",
+  "nodes": [
+    {
+      "id": "project:extended-mind",
+      "label": "extended-mind",
+      "type": "project",
+      "status": "active"
+    },
+    {
+      "id": "project:vova-i-petrova",
+      "label": "vova-i-petrova",
+      "type": "project",
+      "status": "draft"
+    },
+    {
+      "id": "project:evoquant",
+      "label": "evoquant",
+      "type": "project",
+      "status": "draft"
+    },
+    {
+      "id": "project:word-machine",
+      "label": "word-machine",
+      "type": "project",
+      "status": "draft"
+    },
+    {
+      "id": "layer:story-layer",
+      "label": "story-layer",
+      "type": "layer",
+      "status": "active"
+    },
+    {
+      "id": "layer:rag-layer",
+      "label": "rag-layer",
+      "type": "layer",
+      "status": "active"
+    },
+    {
+      "id": "layer:cosmos-map",
+      "label": "cosmos-map",
+      "type": "layer",
+      "status": "active"
+    },
+    {
+      "id": "layer:infra",
+      "label": "infra",
+      "type": "layer",
+      "status": "active"
+    },
+    {
+      "id": "artifact:hf-space",
+      "label": "hf-space",
+      "type": "artifact",
+      "status": "active"
+    },
+    {
+      "id": "artifact:hf-dataset",
+      "label": "hf-dataset",
+      "type": "artifact",
+      "status": "active"
+    },
+    {
+      "id": "artifact:github-actions",
+      "label": "github-actions",
+      "type": "artifact",
+      "status": "active"
+    },
+    {
+      "id": "artifact:machine-log",
+      "label": "machine-log",
+      "type": "artifact",
+      "status": "active"
+    },
+    {
+      "id": "actor:author",
+      "label": "author",
+      "type": "actor",
+      "status": "active"
+    },
+    {
+      "id": "actor:viewer",
+      "label": "viewer",
+      "type": "actor",
+      "status": "active"
+    },
+    {
+      "id": "system:extended-mind-repo",
+      "label": "extended-mind repo",
+      "type": "system",
+      "status": "active"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "project:extended-mind",
+      "target": "layer:story-layer",
+      "type": "uses",
+      "status": "active"
+    },
+    {
+      "id": "e2",
+      "source": "project:extended-mind",
+      "target": "layer:rag-layer",
+      "type": "uses",
+      "status": "active"
+    },
+    {
+      "id": "e3",
+      "source": "project:extended-mind",
+      "target": "layer:cosmos-map",
+      "type": "uses",
+      "status": "active"
+    },
+    {
+      "id": "e4",
+      "source": "project:extended-mind",
+      "target": "layer:infra",
+      "type": "uses",
+      "status": "active"
+    },
+    {
+      "id": "e5",
+      "source": "project:extended-mind",
+      "target": "artifact:hf-space",
+      "type": "produces",
+      "status": "active"
+    },
+    {
+      "id": "e6",
+      "source": "project:extended-mind",
+      "target": "artifact:hf-dataset",
+      "type": "produces",
+      "status": "active"
+    },
+    {
+      "id": "e7",
+      "source": "project:extended-mind",
+      "target": "artifact:github-actions",
+      "type": "uses",
+      "status": "active"
+    },
+    {
+      "id": "e8",
+      "source": "project:extended-mind",
+      "target": "artifact:machine-log",
+      "type": "produces",
+      "status": "active"
+    },
+    {
+      "id": "e9",
+      "source": "actor:author",
+      "target": "project:extended-mind",
+      "type": "drives",
+      "status": "active"
+    },
+    {
+      "id": "e10",
+      "source": "actor:viewer",
+      "target": "artifact:hf-space",
+      "type": "uses",
+      "status": "active"
+    },
+    {
+      "id": "e11",
+      "source": "artifact:hf-space",
+      "target": "artifact:hf-dataset",
+      "type": "depends-on",
+      "status": "active"
+    },
+    {
+      "id": "e12",
+      "source": "artifact:github-actions",
+      "target": "artifact:hf-dataset",
+      "type": "publishes",
+      "status": "active"
+    },
+    {
+      "id": "e13",
+      "source": "artifact:github-actions",
+      "target": "artifact:hf-space",
+      "type": "publishes",
+      "status": "active"
+    },
+    {
+      "id": "e14",
+      "source": "project:vova-i-petrova",
+      "target": "layer:story-layer",
+      "type": "uses",
+      "status": "draft"
+    },
+    {
+      "id": "e15",
+      "source": "project:evoquant",
+      "target": "layer:rag-layer",
+      "type": "uses",
+      "status": "draft"
+    },
+    {
+      "id": "e16",
+      "source": "project:word-machine",
+      "target": "layer:story-layer",
+      "type": "uses",
+      "status": "draft"
+    },
+    {
+      "id": "e17",
+      "source": "system:extended-mind-repo",
+      "target": "project:extended-mind",
+      "type": "hosts",
+      "status": "active"
+    },
+    {
+      "id": "e18",
+      "source": "system:extended-mind-repo",
+      "target": "artifact:machine-log",
+      "type": "hosts",
+      "status": "active"
+    },
+    {
+      "id": "e19",
+      "source": "system:extended-mind-repo",
+      "target": "layer:cosmos-map",
+      "type": "hosts",
+      "status": "active"
+    },
+    {
+      "id": "e20",
+      "source": "artifact:hf-space",
+      "target": "layer:cosmos-map",
+      "type": "visualizes",
+      "status": "active"
+    }
+  ]
+}
