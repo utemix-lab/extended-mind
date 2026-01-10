@@ -754,19 +754,15 @@ with gr.Blocks(title="extended-mind console") as demo:
             gr.Markdown("## Cosmos Map")
             cosmos_html_path = Path(__file__).parent / "cosmos-map" / "index.html"
             if cosmos_html_path.exists():
-                cosmos_src = (
-                    "https://raw.githubusercontent.com/utemix-lab/extended-mind/main/"
-                    "spaces/extended-mind-console/cosmos-map/index.html"
-                )
+                import html
+
+                cosmos_html = cosmos_html_path.read_text(encoding="utf-8")
+                cosmos_srcdoc = html.escape(cosmos_html, quote=True)
                 gr.HTML(
-                    f'<iframe src="{cosmos_src}" '
+                    f'<iframe srcdoc="{cosmos_srcdoc}" '
                     'style="width:100%;height:720px;border:0;"></iframe>'
                 )
-                gr.Markdown(
-                    "Direct links: "
-                    f"[view]({cosmos_src}?mode=view) | "
-                    f"[edit]({cosmos_src}?mode=edit)"
-                )
+                gr.Markdown("Direct links: /?mode=view or /?mode=edit")
             else:
                 gr.Markdown("Cosmos map UI not found.")
 
