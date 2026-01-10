@@ -284,6 +284,18 @@
     "updated": "2025-12-10"
   },
   {
+    "path": "docs/cosmos/index.md",
+    "id": "docs__cosmos__index",
+    "title": "Cosmos Map",
+    "type": "index",
+    "tags": [
+      "cosmos",
+      "graph",
+      "navigation"
+    ],
+    "links": []
+  },
+  {
     "path": "docs/definition-archive/extended-mind/extended-mind-variants.md",
     "id": "docs__definition-archive__extended-mind__extended-mind-variants",
     "title": "Definition Variants \u2014 Extended-mind",
