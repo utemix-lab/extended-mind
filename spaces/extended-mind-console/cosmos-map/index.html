@@ -112,7 +112,10 @@
     </div>
     <script>
       const params = new URLSearchParams(window.location.search);
-      const mode = params.get("mode") || "view";
+      const parentParams = new URLSearchParams(
+        (window.parent && window.parent.location && window.parent.location.search) || ""
+      );
+      const mode = params.get("mode") || parentParams.get("mode") || "view";
       document.getElementById("mode-label").textContent = mode;
 
       const SOURCE_URL =
