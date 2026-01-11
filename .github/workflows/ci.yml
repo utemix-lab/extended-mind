@@ -23,7 +23,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r tools/kb_build/requirements.txt
           pip install -r spaces/extended-mind-console/requirements.txt
+          pip install jsonschema
 
       - name: Compile
         run: |
           python -m compileall tools/kb_build spaces/extended-mind-console
+
+      - name: Validate Cosmos map
+        run: |
+          python scripts/validate_cosmos.py cosmos/cosmos-map.v0.2.json cosmos/schema.v0.2.json

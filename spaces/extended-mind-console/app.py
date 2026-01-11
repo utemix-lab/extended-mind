@@ -1,5 +1,8 @@
+import base64
 import json
 import os
+import time
+import urllib.request
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
@@ -7,6 +10,7 @@ import faiss  # type: ignore
 import gradio as gr  # type: ignore
 import numpy as np
 from huggingface_hub import InferenceClient, hf_hub_download
+from jsonschema import Draft202012Validator  # type: ignore
 from sentence_transformers import SentenceTransformer  # type: ignore
 
 from console_utils import build_context_cocktail, serialize_bundle_json, should_call_llm
@@ -14,6 +18,10 @@ from console_utils import build_context_cocktail, serialize_bundle_json, should_
 DATASET_REPO = os.getenv("KB_DATASET_REPO", "utemix/extended-mind-kb")
 EMBED_MODEL = os.getenv("KB_EMBED_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
 UI_VERSION = "nodes-v0-console-0.4"
+COSMOS_SCHEMA_PATH = Path("cosmos/schema.v0.2.json")
+COSMOS_SAVE_RATE_LIMIT_SEC = int(os.getenv("COSMOS_SAVE_RATE_LIMIT_SEC", "300"))
+COSMOS_GITHUB_REPO = os.getenv("COSMOS_GITHUB_REPO", "utemix-lab/extended-mind")
+_LAST_COSMOS_SAVE_TS = 0.0
 
 DEFAULT_LLM_MODEL = os.getenv(
     "HF_INFERENCE_MODEL", "meta-llama/Meta-Llama-3.1-8B-Instruct"
@@ -356,6 +364,103 @@ def _format_sources(citations: List[Dict[str, Any]]) -> str:
         lines.append("- matched by semantic similarity")
         lines.append("")
     return "\n".join(lines).strip()
+
+
+def _load_cosmos_schema() -> Dict[str, Any]:
+    if not COSMOS_SCHEMA_PATH.exists():
+        return {}
+    return json.loads(COSMOS_SCHEMA_PATH.read_text(encoding="utf-8"))
+
+
+def validate_cosmos_payload(payload: Dict[str, Any]) -> List[str]:
+    schema = _load_cosmos_schema()
+    if not schema:
+        return ["schema not found"]
+    validator = Draft202012Validator(schema)
+    errors = []
+    for err in validator.iter_errors(payload):
+        errors.append(f"{err.message} (at {list(err.path)})")
+    return errors
+
+
+def _github_request(method: str, url: str, token: str, body: Dict[str, Any] | None) -> Dict[str, Any]:
+    data = None
+    if body is not None:
+        data = json.dumps(body).encode("utf-8")
+    req = urllib.request.Request(url, data=data, method=method)
+    req.add_header("Authorization", f"Bearer {token}")
+    req.add_header("Accept", "application/vnd.github+json")
+    if data is not None:
+        req.add_header("Content-Type", "application/json")
+    with urllib.request.urlopen(req) as resp:
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def save_cosmos_payload(payload: Dict[str, Any], override: bool) -> Dict[str, Any]:
+    global _LAST_COSMOS_SAVE_TS
+
+    errors = validate_cosmos_payload(payload)
+    if errors:
+        return {"ok": False, "errors": errors}
+
+    now = time.time()
+    if not override and _LAST_COSMOS_SAVE_TS and now - _LAST_COSMOS_SAVE_TS < COSMOS_SAVE_RATE_LIMIT_SEC:
+        return {"ok": False, "error": "recent save, please wait"}
+
+    token = os.getenv("GH_TOKEN")
+    if not token:
+        return {"ok": False, "error": "missing GH_TOKEN"}
+
+    owner_repo = COSMOS_GITHUB_REPO
+    api = "https://api.github.com"
+    ref = _github_request(
+        "GET", f"{api}/repos/{owner_repo}/git/ref/heads/main", token, None
+    )
+    base_sha = ref["object"]["sha"]
+
+    branch = time.strftime("cosmos/%Y%m%d-%H%M%S")
+    _github_request(
+        "POST",
+        f"{api}/repos/{owner_repo}/git/refs",
+        token,
+        {"ref": f"refs/heads/{branch}", "sha": base_sha},
+    )
+
+    content = base64.b64encode(json.dumps(payload, ensure_ascii=True, indent=2).encode("utf-8")).decode(
+        "utf-8"
+    )
+    _github_request(
+        "PUT",
+        f"{api}/repos/{owner_repo}/contents/cosmos/cosmos-map.v0.2.json",
+        token,
+        {
+            "message": "cosmos: update map (session)",
+            "content": content,
+            "branch": branch,
+        },
+    )
+
+    nodes_count = len(payload.get("nodes", []))
+    edges_count = len(payload.get("edges", []))
+    pr = _github_request(
+        "POST",
+        f"{api}/repos/{owner_repo}/pulls",
+        token,
+        {
+            "title": "cosmos: update map (session)",
+            "head": branch,
+            "base": "main",
+            "body": f"session save\\n\\n- nodes: {nodes_count}\\n- edges: {edges_count}\\n- ts: {time.strftime('%Y-%m-%d %H:%M:%S')}",
+        },
+    )
+
+    _LAST_COSMOS_SAVE_TS = now
+    return {"ok": True, "pr_url": pr.get("html_url", "")}
+
+
+def validate_cosmos_api(payload: Dict[str, Any]) -> Dict[str, Any]:
+    errors = validate_cosmos_payload(payload)
+    return {"ok": not errors, "errors": errors}
 
 
 def _format_why(
@@ -763,6 +868,26 @@ with gr.Blocks(title="extended-mind console") as demo:
                     'style="width:100%;height:720px;border:0;"></iframe>'
                 )
                 gr.Markdown("Direct links: /?mode=view or /?mode=edit")
+
+                cosmos_payload = gr.JSON(visible=False)
+                cosmos_override = gr.Checkbox(visible=False)
+                cosmos_result = gr.JSON(visible=False)
+                cosmos_save_btn = gr.Button(visible=False)
+                cosmos_validate_btn = gr.Button(visible=False)
+
+                cosmos_save_btn.click(
+                    fn=save_cosmos_payload,
+                    inputs=[cosmos_payload, cosmos_override],
+                    outputs=[cosmos_result],
+                    api_name="save_cosmos",
+                )
+
+                cosmos_validate_btn.click(
+                    fn=validate_cosmos_api,
+                    inputs=[cosmos_payload],
+                    outputs=[cosmos_result],
+                    api_name="validate_cosmos",
+                )
             else:
                 gr.Markdown("Cosmos map UI not found.")
 
