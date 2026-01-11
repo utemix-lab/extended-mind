@@ -102,16 +102,15 @@
           <button id="add-edge" class="btn">Add edge</button>
         </div>
         <div class="row">
-          <button id="export" class="btn">Export JSON</button>
-          <button id="restore" class="btn">Restore draft</button>
-        </div>
-        <div class="row">
           <button id="validate" class="btn">Validate</button>
           <button id="save" class="btn">Save PR</button>
         </div>
         <div class="row">
           <label>Mode</label>
-          <button id="toggle-mode" class="btn">Toggle view/edit</button>
+          <label class="tag" style="display: inline-flex; align-items: center; gap: 6px;">
+            <input id="toggle-mode" type="checkbox" />
+            Edit mode
+          </label>
         </div>
         <div class="row muted">
           Mode: <span id="mode-label">view</span>
@@ -123,23 +122,81 @@
           <label>Force save</label>
           <input id="force-save" type="checkbox" />
         </div>
-        <div id="status" class="muted"></div>
+        <div id="status" class="muted">Status: idle</div>
         <div class="row">
-          <h3>Help</h3>
-          <div class="muted">
-            Cosmos Map — это черновой рабочий граф. Изменения делятся на два класса:
-            <br />
-            <strong>Архитектура репо</strong>: слои, ключевые артефакты, устойчивые связи между
-            системами/проектами. Такие правки идут в PR и влияют на то, как описана структура
-            репозитория.
-            <br />
-            <strong>Наброски</strong>: гипотезы, временные связи, идеи для будущей формализации. Их
-            можно вносить сейчас — они попадают в PR как черновые узлы/рёбра и не обязаны быть
-            финально согласованными.
-            <br />
-            Механизм рассчитан на <strong>отложенную формализацию</strong>: сначала фиксируем
-            наблюдения в графе, потом уточняем типы/связи/метаданные.
-          </div>
+          <details>
+            <summary>Help</summary>
+            <div class="muted" style="margin-top: 6px;">
+              <strong>Что это</strong>
+              <br />
+              Cosmos Map — черновой рабочий граф. Изменения делятся на два класса:
+              <br />
+              <strong>Архитектура репо</strong>: слои, ключевые артефакты, устойчивые связи между
+              системами/проектами. Эти правки идут в PR и описывают структуру репозитория.
+              <br />
+              <strong>Наброски</strong>: гипотезы и временные связи. Их можно фиксировать сейчас,
+              а позже уточнять типы/связи/метаданные. Это и есть <strong>отложенная формализация</strong>.
+              <br /><br />
+              <strong>Быстрый старт</strong>
+              <br />
+              1) Переключи <strong>Edit mode</strong>.
+              <br />
+              2) Внеси правки, затем <strong>Validate</strong> и <strong>Save PR</strong>.
+              <br /><br />
+              <strong>Режимы</strong>
+              <br />
+              <strong>view</strong> — только просмотр, узлы не двигаются.
+              <br />
+              <strong>edit</strong> — можно перетаскивать узлы, редактировать свойства, добавлять рёбра.
+              <br /><br />
+              <strong>Левая панель (Filters/Actions)</strong>
+              <br />
+              <strong>Search</strong> — фильтр по label.
+              <br />
+              <strong>Type / Status</strong> — фильтры по типам/статусу.
+              <br />
+              <strong>Reset layout</strong> — пересчитать раскладку (алгоритм cose), данные не меняются.
+              <br />
+              <strong>Add edge</strong> — режим добавления ребра: клик по узлу-источнику,
+              затем по узлу-цели.
+              <br />
+              <strong>Validate</strong> — проверка схемы v0.2; результат в строке Status.
+              <br />
+              <strong>Save PR</strong> — создать PR с обновлённым `cosmos-map.v0.2.json`.
+              <br />
+              <strong>Dirty</strong> — индикатор несохранённых изменений.
+              <br />
+              <strong>Force save</strong> — обход ограничения на частые PR.
+              <br /><br />
+              <strong>Правая панель (Details)</strong>
+              <br />
+              Если выбран <strong>узел</strong>:
+              <br />
+              — редактируются label, notes, type, status, tags, importance
+              <br />
+              — <strong>Refs</strong>: ссылки (kind/title/url), удаление по индексу
+              <br />
+              — <strong>Custom props</strong>: произвольные поля (key/type/description/value)
+              <br />
+              Если выбрано <strong>ребро</strong>:
+              <br />
+              — редактируются kind, weight, directed, notes
+              <br />
+              — <strong>Reverse</strong> меняет направление, <strong>Delete</strong> удаляет связь
+              <br /><br />
+              <strong>Custom props — типы значений</strong>
+              <br />
+              <strong>string</strong> — одно слово/текст.
+              <br />
+              <strong>number</strong> — одно число (например, priority=3).
+              <br />
+              <strong>bool</strong> — да/нет (true/false).
+              <br />
+              <strong>string[]</strong> — список слов (например, aliases=["em","extended-mind"]).
+              <br />
+              <strong>number[]</strong> — список чисел (например, years=[2023,2024]).
+            </div>
+          </details>
         </div>
       </div>
       <div id="cy"></div>
@@ -208,6 +265,8 @@
       );
       let mode = params.get("mode") || parentParams.get("mode") || "view";
       document.getElementById("mode-label").textContent = mode;
+      const modeToggle = document.getElementById("toggle-mode");
+      modeToggle.checked = mode === "edit";
 
       const SOURCE_URL_V2 =
         "https://raw.githubusercontent.com/utemix-lab/extended-mind/main/cosmos/cosmos-map.v0.2.json";
@@ -292,24 +351,17 @@
       function setMode(next) {
         mode = next;
         document.getElementById("mode-label").textContent = mode;
+        modeToggle.checked = mode === "edit";
+        const url = new URL(window.location.href);
+        url.searchParams.set("mode", mode);
+        window.history.replaceState({}, "", url.toString());
       }
 
-      function saveDraftToLocal(draft) {
-        const payload = {
-          saved_at: new Date().toISOString(),
-          draft: draft,
-        };
-        localStorage.setItem("cosmos_draft_v02", JSON.stringify(payload));
+      function saveDraftToLocal(_draft) {
+        return;
       }
-
       function loadDraftFromLocal() {
-        const raw = localStorage.getItem("cosmos_draft_v02");
-        if (!raw) return null;
-        try {
-          return JSON.parse(raw);
-        } catch (e) {
-          return null;
-        }
+        return null;
       }
 
       function callApi(name, data) {
@@ -428,29 +480,14 @@
             cy.layout({ name: "cose", animate: false }).run();
           });
 
-          document.getElementById("export").addEventListener("click", () => {
-            const exportData = toDraft();
-            downloadJson(exportData, "cosmos-map.v0.2.json");
-          });
-
-          document.getElementById("toggle-mode").addEventListener("click", () => {
-            const next = mode === "view" ? "edit" : "view";
+          modeToggle.addEventListener("change", () => {
+            const next = modeToggle.checked ? "edit" : "view";
             setMode(next);
             if (mode === "edit") {
               cy.nodes().grabify();
             } else {
               cy.nodes().ungrabify();
             }
-          });
-
-          document.getElementById("restore").addEventListener("click", () => {
-            const draft = loadDraftFromLocal();
-            if (!draft || !draft.draft) return;
-            const d = normalizeToV2(draft.draft);
-            cy.elements().remove();
-            cy.add(d.nodes.map((n) => ({ data: n })).concat(d.edges.map((e) => ({ data: e }))));
-            cy.layout({ name: "cose", animate: false }).run();
-            markDirty();
           });
 
           document.getElementById("validate").addEventListener("click", () => {
@@ -730,11 +767,6 @@
           }
 
           setDirty(false);
-          setInterval(() => {
-            if (!dirty) return;
-            saveDraftToLocal(toDraft());
-          }, 15000);
-
           applyFilters();
         })
         .catch((err) => {
