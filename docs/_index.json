@@ -284,6 +284,14 @@
     "updated": "2025-12-10"
   },
   {
+    "path": "docs/cosmos/contract-v0.1.md",
+    "id": "docs__cosmos__contract-v0.1",
+    "title": "Cosmos Map \u2014 Data Contract v0.1",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
     "path": "docs/cosmos/index.md",
     "id": "docs__cosmos__index",
     "title": "Cosmos Map",
