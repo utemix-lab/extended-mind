@@ -296,6 +296,14 @@
     "links": []
   },
   {
+    "path": "docs/cosmos/usage.md",
+    "id": "docs__cosmos__usage",
+    "title": "Cosmos Map Usage",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
     "path": "docs/definition-archive/extended-mind/extended-mind-variants.md",
     "id": "docs__definition-archive__extended-mind__extended-mind-variants",
     "title": "Definition Variants \u2014 Extended-mind",
