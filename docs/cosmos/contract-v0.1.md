@@ -34,7 +34,7 @@
 
 Meta (необязательное, но рекомендовано)
 
-```json
+```
 "meta": {
   "title": "Extended-Mind Cosmos",
   "description": "Conceptual map of the ecosystem",
@@ -53,13 +53,14 @@ meta не участвует в визуальной логике напряму
 Nodes
 Обязательные поля
 
-```json
+```
 {
   "id": "layer:story-layer",
   "label": "story-layer",
   "type": "layer",
   "status": "active"
 }
+```
 
 Поле	Тип	Описание
 id	string	Уникальный идентификатор (никогда не меняется)
@@ -69,12 +70,13 @@ status	string	Жизненный статус узла
 
 Рекомендуемые поля
 
-```json
+```
 {
   "notes": "",
   "importance": 0.6,
   "tags": ["core", "architecture"]
 }
+```
 
 Поле	Тип	Назначение
 notes	string	Свободное описание / комментарий
@@ -114,12 +116,13 @@ hypothesis
 Links
 Обязательные поля
 
-```json
+```
 {
   "source": "layer:story-layer",
   "target": "layer:core",
   "type": "connects"
 }
+```
 
 Поле	Тип	Описание
 source	string	id узла-источника
@@ -128,12 +131,13 @@ type	string	Тип связи
 
 Рекомендуемые поля
 
-```json
+```
 {
   "weight": 0.8,
   "direction": "forward",
   "notes": ""
 }
+```
 
 Поле	Тип	Назначение
 weight	number (0..1)	Сила/важность связи
