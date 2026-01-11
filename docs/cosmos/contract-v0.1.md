@@ -30,15 +30,17 @@
   "nodes": [ ... ],
   "links": [ ... ]
 }
+
 Meta (необязательное, но рекомендовано)
-json
-Копировать код
+
+```json
 "meta": {
   "title": "Extended-Mind Cosmos",
   "description": "Conceptual map of the ecosystem",
   "updated_at": "2024-XX-XX",
   "author": "utemix-lab"
 }
+
 meta не участвует в визуальной логике напрямую, но может использоваться для:
 
 заголовков сцен,
@@ -49,14 +51,15 @@ meta не участвует в визуальной логике напряму
 
 Nodes
 Обязательные поля
-json
-Копировать код
+
+```json
 {
   "id": "layer:story-layer",
   "label": "story-layer",
   "type": "layer",
   "status": "active"
 }
+
 Поле	Тип	Описание
 id	string	Уникальный идентификатор (никогда не меняется)
 label	string	Человеко-читаемое имя
@@ -64,13 +67,14 @@ type	string	Тип сущности (см. ниже)
 status	string	Жизненный статус узла
 
 Рекомендуемые поля
-json
-Копировать код
+
+```json
 {
   "notes": "",
   "importance": 0.6,
   "tags": ["core", "architecture"]
 }
+
 Поле	Тип	Назначение
 notes	string	Свободное описание / комментарий
 importance	number (0..1)	Вес узла для визуализации
@@ -108,26 +112,28 @@ hypothesis
 
 Links
 Обязательные поля
-json
-Копировать код
+
+```json
 {
   "source": "layer:story-layer",
   "target": "layer:core",
   "type": "connects"
 }
+
 Поле	Тип	Описание
 source	string	id узла-источника
 target	string	id узла-приемника
 type	string	Тип связи
 
 Рекомендуемые поля
-json
-Копировать код
+
+```json
 {
   "weight": 0.8,
   "direction": "forward",
   "notes": ""
 }
+
 Поле	Тип	Назначение
 weight	number (0..1)	Сила/важность связи
 direction	string	forward, backward, bidirectional
