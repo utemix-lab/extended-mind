@@ -1,0 +1,42 @@
+# Seed файл для начального сопоставления существующих папок и репозиториев
+# Это черновая карта, не полная картина экосистемы
+# Используется для первичной структуризации графа
+
+# Проекты (репозитории)
+projects:
+  - id: extended-mind
+    kind: project
+    repo: "utemix-lab/extended-mind"
+    docs_root: "."
+    description: "Центральное смысловое ядро экосистемы utemix-lab"
+  
+  - id: dream-graph
+    kind: project
+    repo: "utemix-lab/dream-graph"
+    docs_root: "."
+    description: "Визуальный рендерер графов для Cosmos Map"
+
+# Папки в extended-mind и их типы узлов
+folders:
+  definitions:
+    kind: document
+    path: "docs/definitions"
+    description: "Определения, онтологическое ядро"
+  
+  manifest:
+    kind: document
+    path: "docs/manifest"
+    description: "Философия проекта, манифесты"
+  
+  characters:
+    kind: character
+    path: "docs/characters"
+    description: "Функциональные акторы экосистемы"
+  
+  rag:
+    kind: rag_config
+    path: "docs/rag"
+    description: "RAG-конфигурации и спецификации"
+
+# Примечание: это seed-файл, не полная карта
+# Полная карта будет формироваться из фронтматтеров документов

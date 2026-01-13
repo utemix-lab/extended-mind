@@ -6,6 +6,12 @@ status: draft-core
 tags: [core, ontology, extended-mind]
 lastmod: 2025-01-01
 description: "Базовое ядро понятий extended-mind. Минимальный онтологический набор, на который опирается вся система."
+graph:
+  node_id: "document:definition-pack-v0.1"
+  node_kind: "document"
+  tags: ["core", "ontology", "foundation"]
+  front_label: "Definition Pack v0.1"
+  back_label: "definition-pack-v0.1"
 ---
 
 # Definition Pack v0.1

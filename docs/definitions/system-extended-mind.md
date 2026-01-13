@@ -6,6 +6,12 @@ status: draft-core
 tags: [extended-mind, system, behaviour, ontology]
 lastmod: 2025-01-01
 description: "Определение голоса, роли и поведенческой модели extended-mind. Используется как системный слой для RAG и работы с проектом utemix-lab."
+graph:
+  node_id: "document:system-extended-mind"
+  node_kind: "document"
+  tags: ["system", "behaviour", "core"]
+  front_label: "System Prompt — Extended-mind"
+  back_label: "system-extended-mind"
 ---
 
 # System Prompt — Extended-mind  

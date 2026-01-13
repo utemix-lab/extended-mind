@@ -1,3 +1,13 @@
+---
+title: "Центральное смысловое ядро экосистемы utemix-lab"
+graph:
+  node_id: "project:extended-mind"
+  node_kind: "project"
+  tags: ["core", "metamodel", "normative-layer"]
+  front_label: "Центральное смысловое ядро utemix-lab"
+  back_label: "project.extended-mind"
+---
+
 # extended-mind  
 ## Links
 - Space: https://huggingface.co/spaces/utemix/extended-mind-console
