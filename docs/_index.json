@@ -333,7 +333,7 @@
     "tags": [
       "core",
       "ontology",
-      "extended-mind"
+      "foundation"
     ],
     "links": [],
     "updated": "2025-01-01"
@@ -411,10 +411,9 @@
     "title": "System Prompt \u2014 Extended-mind",
     "type": "system-definition",
     "tags": [
-      "extended-mind",
       "system",
       "behaviour",
-      "ontology"
+      "core"
     ],
     "links": [],
     "updated": "2025-01-01"
@@ -560,6 +559,22 @@
     "path": "docs/machine-log/kb/2026-01-11T14-23-42Z-kb-update.md",
     "id": "docs__machine-log__kb__2026-01-11T14-23-42Z-kb-update",
     "title": "KB update 2026-01-11T14:23:42Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/machine-log/kb/2026-01-11T14-26-01Z-kb-update.md",
+    "id": "docs__machine-log__kb__2026-01-11T14-26-01Z-kb-update",
+    "title": "KB update 2026-01-11T14:26:01Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/machine-log/kb/2026-01-11T14-28-26Z-kb-update.md",
+    "id": "docs__machine-log__kb__2026-01-11T14-28-26Z-kb-update",
+    "title": "KB update 2026-01-11T14:28:26Z",
     "type": "",
     "tags": [],
     "links": []
