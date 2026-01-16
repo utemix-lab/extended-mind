@@ -281,6 +281,9 @@
         <div class="row">
           <button id="export-json" class="btn">Экспорт JSON</button>
         </div>
+        <div class="row">
+          <button id="reload-github" class="btn">Перезагрузить из GitHub</button>
+        </div>
 
         <div id="status" class="muted" style="margin-top: 12px;">Status: idle</div>
 
@@ -549,13 +552,14 @@
       // ============================================================
 
       async function loadCoreTaxonomyData() {
-        setStatus('Loading Core Taxonomy data...', 'warn');
+        setStatus('Loading Core Taxonomy data from GitHub...', 'warn');
         
-        // Try to load from vovaipetrova-core exports
-        // In production, these would be served from a backend or fetched from GitHub
-        const CANON_MAP_URL = '../../../vovaipetrova-core/data/exports/canon_map.v1.json';
-        const KB_TERMS_URL = '../../../vovaipetrova-core/data/exports/kb_terms.v1.jsonl';
-        const STORIES_URL = '../../../vovaipetrova-core/data/exports/stories.v1.jsonl';
+        // Load from vovaipetrova-core GitHub repository (read-only)
+        // These are public raw URLs that work without CORS issues
+        const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/utemix-lab/vovaipetrova-core/main';
+        const CANON_MAP_URL = `${GITHUB_RAW_BASE}/data/exports/canon_map.v1.json`;
+        const KB_TERMS_URL = `${GITHUB_RAW_BASE}/data/exports/kb_terms.v1.jsonl`;
+        const STORIES_URL = `${GITHUB_RAW_BASE}/data/exports/stories.v1.jsonl`;
         
         try {
           const nodes = [];
@@ -716,10 +720,19 @@
 
           currentData = { nodes, edges };
           setGraphData(currentData);
-          setStatus(`Loaded: ${nodes.length} nodes, ${edges.length} edges`, 'ok');
+          
+          // Show source info
+          const sourceInfo = `vovaipetrova-core (GitHub)`;
+          setStatus(`Loaded from ${sourceInfo}: ${nodes.length} nodes, ${edges.length} edges`, 'ok');
+          
+          // Add source indicator to header
+          const subtitle = document.querySelector('#header .subtitle');
+          if (subtitle) {
+            subtitle.innerHTML = `vovaipetrova-core graph constructor · <span style="color: var(--accent-tag);">READ-ONLY source</span>`;
+          }
         } catch (e) {
           console.error('Error loading data:', e);
-          setStatus('Error loading data: ' + e.message, 'error');
+          setStatus('Error loading data: ' + e.message + ' — loading demo', 'error');
           loadDemoData();
         }
       }
@@ -958,11 +971,12 @@
           version: 'core-taxonomy.v0.1',
           generated_at: new Date().toISOString(),
           source: 'vovaipetrova-core',
+          saved_in: 'extended-mind',  // Session saved in extended-mind, NOT in vovaipetrova-core
           nodes: cy.nodes().map(n => n.data()),
           edges: cy.edges().map(e => e.data()),
         };
         localStorage.setItem('core-taxonomy-draft', JSON.stringify(data));
-        setStatus('Saved to localStorage', 'ok');
+        setStatus('Session saved to extended-mind (localStorage)', 'ok');
         setDirty(false);
       });
 
@@ -971,6 +985,7 @@
           version: 'core-taxonomy.v0.1',
           generated_at: new Date().toISOString(),
           source: 'vovaipetrova-core',
+          saved_in: 'extended-mind',  // Session export, NOT for vovaipetrova-core
           nodes: cy.nodes().map(n => n.data()),
           edges: cy.edges().map(e => e.data()),
         };
@@ -978,9 +993,10 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'core-taxonomy-export.json';
+        a.download = 'core-taxonomy-session.json';
         a.click();
         URL.revokeObjectURL(url);
+        setStatus('Session exported (for extended-mind)', 'ok');
       });
 
       document.getElementById('load-file').addEventListener('change', (e) => {
@@ -1009,8 +1025,26 @@
       });
 
       document.getElementById('save-pr').addEventListener('click', () => {
-        setStatus('PR creation not implemented in standalone mode', 'warn');
-        // TODO: Integrate with GitHub API or backend
+        // NOTE: PR would be created in extended-mind repo, NOT in vovaipetrova-core
+        // vovaipetrova-core remains read-only
+        setStatus('PR creation for extended-mind — not yet implemented', 'warn');
+        alert(
+          'Создание PR:\n\n' +
+          '• PR будет создан в репозитории extended-mind\n' +
+          '• Данные vovaipetrova-core остаются read-only\n' +
+          '• Сессия сохраняется как taxonomy-session.json\n\n' +
+          'Пока используйте "Экспорт JSON" и добавьте файл вручную.'
+        );
+      });
+
+      document.getElementById('reload-github').addEventListener('click', () => {
+        if (dirty) {
+          if (!confirm('Есть несохранённые изменения. Перезагрузить данные из GitHub?')) {
+            return;
+          }
+        }
+        localStorage.removeItem('core-taxonomy-draft');
+        loadCoreTaxonomyData();
       });
 
       // Node/Edge selection
@@ -1125,14 +1159,20 @@
 
       setMode(mode);
 
-      // Try to load from localStorage first
+      // Try to load from localStorage first (saved session in extended-mind)
       const savedDraft = localStorage.getItem('core-taxonomy-draft');
       if (savedDraft) {
         try {
           const data = JSON.parse(savedDraft);
           currentData = data;
           setGraphData(data);
-          setStatus('Loaded from localStorage', 'ok');
+          setStatus(`Loaded session from extended-mind (${data.nodes?.length || 0} nodes)`, 'ok');
+          
+          // Update subtitle to show it's a saved session
+          const subtitle = document.querySelector('#header .subtitle');
+          if (subtitle) {
+            subtitle.innerHTML = `vovaipetrova-core graph constructor · <span style="color: var(--accent-page);">SAVED SESSION</span>`;
+          }
         } catch (e) {
           loadCoreTaxonomyData();
         }
