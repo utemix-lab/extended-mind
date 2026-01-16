@@ -446,6 +446,28 @@
     "updated": "2025-12-21"
   },
   {
+    "path": "docs/ecosystem/index.md",
+    "id": "docs__ecosystem__index",
+    "title": "\u042d\u043a\u043e\u0441\u0438\u0441\u0442\u0435\u043c\u043d\u044b\u0439 \u0441\u043b\u043e\u0439 extended-mind",
+    "type": "",
+    "tags": [],
+    "links": [
+      "docs/ecosystem/think-tank-editor.md",
+      "ecosystem/ECOSYSTEM_LAYER.md"
+    ]
+  },
+  {
+    "path": "docs/ecosystem/think-tank-editor.md",
+    "id": "docs__ecosystem__think-tank-editor",
+    "title": "Core Taxonomy Editor (\u0432\u043a\u043b\u0430\u0434\u043a\u0430 vovaipetrova-core)",
+    "type": "",
+    "tags": [],
+    "links": [
+      "docs/ecosystem/index.md",
+      "ecosystem/ECOSYSTEM_LAYER.md"
+    ]
+  },
+  {
     "path": "docs/index.md",
     "id": "docs__index",
     "title": "Extended-mind Index",

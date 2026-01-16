@@ -34,6 +34,8 @@ graph TD
   docs__definitions__system_extended_mind["System Prompt — Extended-mind"]
   docs__definitions__value_of_story_node["Value of Story-node"]
   docs__definitions__vova_i_petrova["Definition — Vova i Petrova"]
+  docs__ecosystem__index["Экосистемный слой extended-mind"]
+  docs__ecosystem__think_tank_editor["Core Taxonomy Editor (вкладка vovaipetrova-core)"]
   docs__index["Extended-mind Index"]
   docs__machine_log__README["Machine Log"]
   docs__machine_log__dev__2026_01_08T23_09_59Z_console_docs["Dev log: console docs + links"]
@@ -151,6 +153,8 @@ graph TD
   docs__definitions__system_extended_mind -.-> type__system_definition
   docs__definitions__value_of_story_node -.-> type__definitions
   docs__definitions__vova_i_petrova -.-> type__definition
+  docs__ecosystem__index --> docs__ecosystem__think_tank_editor
+  docs__ecosystem__think_tank_editor --> docs__ecosystem__index
   docs__index -.-> type__index
   docs__manifest__author_and_machine -.-> type__manifest
   docs__manifest__how_extended_mind_thinks -.-> type__manifest
