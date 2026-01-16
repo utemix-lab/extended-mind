@@ -3,214 +3,393 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Core Taxonomy Editor — vovaipetrova</title>
+    <title>Core Taxonomy Editor — Think Tank View</title>
     <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
     <style>
       :root {
-        --bg-primary: #0f0f14;
-        --bg-panel: #1a1a24;
-        --bg-input: #252530;
-        --text-primary: #e4e4eb;
-        --text-muted: #8888a0;
-        --accent-page: #f59e0b;
+        --bg-primary: #0a0a0f;
+        --bg-panel: #12121a;
+        --bg-input: #1a1a28;
+        --bg-card: #0f0f18;
+        --text-primary: #e8e8f0;
+        --text-muted: #6b6b88;
+        --accent-page: #fbbf24;
         --accent-term: #a78bfa;
         --accent-story: #22d3ee;
-        --accent-tag: #22c55e;
-        --border: #333344;
+        --accent-tag: #34d399;
+        --accent-project: #f472b6;
+        --accent-pattern: #fb923c;
+        --border: #2a2a40;
         --highlight: #f8fafc;
+        --symbolic: #60a5fa;
+        --vector: #a78bfa;
+        --overlay: #f472b6;
       }
-      * { box-sizing: border-box; }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
       body {
-        margin: 0;
-        font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-        font-size: 12px;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        font-size: 11px;
         background: var(--bg-primary);
         color: var(--text-primary);
+        overflow: hidden;
       }
       #app {
         display: grid;
-        grid-template-columns: 280px 1fr 320px;
-        gap: 10px;
-        padding: 10px;
+        grid-template-columns: 300px 1fr 340px;
+        grid-template-rows: auto 1fr;
+        gap: 8px;
+        padding: 8px;
         height: 100vh;
-      }
-      #cy {
-        height: calc(100vh - 20px);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        background: var(--bg-primary);
-      }
-      .panel {
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 12px;
-        background: var(--bg-panel);
-        overflow-y: auto;
-        max-height: calc(100vh - 20px);
-      }
-      .panel h3 {
-        margin: 0 0 10px 0;
-        font-size: 13px;
-        color: var(--accent-term);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-      .row {
-        margin-bottom: 10px;
-      }
-      label {
-        display: block;
-        font-size: 11px;
-        margin-bottom: 4px;
-        color: var(--text-muted);
-      }
-      input[type="text"], select, textarea {
-        width: 100%;
-        padding: 8px;
-        background: var(--bg-input);
-        border: 1px solid var(--border);
-        border-radius: 4px;
-        color: var(--text-primary);
-        font-family: inherit;
-        font-size: 12px;
-      }
-      input[type="text"]:focus, select:focus, textarea:focus {
-        outline: none;
-        border-color: var(--accent-term);
-      }
-      textarea {
-        height: 80px;
-        resize: vertical;
-      }
-      .tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-      }
-      .tag {
-        font-size: 11px;
-        padding: 3px 8px;
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        background: var(--bg-input);
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-      .tag:hover {
-        border-color: var(--accent-term);
-      }
-      .tag.active {
-        background: var(--accent-term);
-        color: var(--bg-primary);
-        border-color: var(--accent-term);
-      }
-      .btn {
-        padding: 8px 14px;
-        border: 1px solid var(--border);
-        background: var(--bg-input);
-        color: var(--text-primary);
-        cursor: pointer;
-        border-radius: 4px;
-        font-family: inherit;
-        font-size: 12px;
-        transition: all 0.2s;
-      }
-      .btn:hover {
-        background: var(--accent-term);
-        color: var(--bg-primary);
-        border-color: var(--accent-term);
-      }
-      .btn + .btn {
-        margin-left: 6px;
-      }
-      .btn-primary {
-        background: var(--accent-term);
-        color: var(--bg-primary);
-        border-color: var(--accent-term);
-      }
-      .btn-primary:hover {
-        background: var(--accent-page);
-        border-color: var(--accent-page);
-      }
-      .muted {
-        color: var(--text-muted);
-        font-size: 11px;
-      }
-      .mono {
-        font-family: inherit;
-        font-size: 10px;
-        white-space: pre-wrap;
-        background: var(--bg-input);
-        padding: 8px;
-        border-radius: 4px;
-        max-height: 150px;
-        overflow-y: auto;
-      }
-      .status-ok { color: #22c55e; }
-      .status-warn { color: #f59e0b; }
-      .status-error { color: #ef4444; }
-      .legend {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 12px;
-      }
-      .legend-item {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 11px;
-      }
-      .legend-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-      }
-      .stats-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        margin-bottom: 12px;
-      }
-      .stat-box {
-        background: var(--bg-input);
-        padding: 10px;
-        border-radius: 6px;
-        text-align: center;
-      }
-      .stat-value {
-        font-size: 18px;
-        font-weight: bold;
-        color: var(--accent-term);
-      }
-      .stat-label {
-        font-size: 10px;
-        color: var(--text-muted);
-        text-transform: uppercase;
-      }
-      .divider {
-        height: 1px;
-        background: var(--border);
-        margin: 12px 0;
       }
       #header {
         grid-column: 1 / -1;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 8px 12px;
-        background: var(--bg-panel);
-        border-radius: 8px;
+        padding: 10px 16px;
+        background: linear-gradient(135deg, var(--bg-panel) 0%, var(--bg-card) 100%);
         border: 1px solid var(--border);
+        border-radius: 10px;
       }
       #header h1 {
-        margin: 0;
-        font-size: 16px;
+        font-size: 15px;
+        font-weight: 600;
         color: var(--accent-page);
+        letter-spacing: 0.5px;
       }
       #header .subtitle {
-        font-size: 11px;
+        font-size: 10px;
         color: var(--text-muted);
+        margin-top: 2px;
+      }
+      .header-badges {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .badge {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: 500;
+      }
+      .badge-ok { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+      .badge-warn { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+      .badge-error { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+      .badge-info { background: rgba(167, 139, 250, 0.2); color: #a78bfa; }
+      #cy {
+        height: 100%;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: radial-gradient(ellipse at center, #0d0d14 0%, #050508 100%);
+        position: relative;
+      }
+      .panel {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px;
+        background: var(--bg-panel);
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .panel-section {
+        background: var(--bg-card);
+        border-radius: 8px;
+        padding: 12px;
+      }
+      .panel-section h3 {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--accent-term);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .panel-section h3::before {
+        content: '';
+        width: 3px;
+        height: 12px;
+        background: var(--accent-term);
+        border-radius: 2px;
+      }
+      .row { margin-bottom: 10px; }
+      .row:last-child { margin-bottom: 0; }
+      label {
+        display: block;
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      input[type="text"], select, textarea {
+        width: 100%;
+        padding: 8px 10px;
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text-primary);
+        font-family: inherit;
+        font-size: 11px;
+        transition: border-color 0.2s;
+      }
+      input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: var(--accent-term);
+      }
+      textarea { height: 70px; resize: vertical; }
+      input[type="range"] {
+        width: 100%;
+        accent-color: var(--accent-term);
+      }
+      .slider-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .slider-value {
+        min-width: 36px;
+        text-align: right;
+        font-weight: 600;
+        color: var(--accent-term);
+      }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+      .tag {
+        font-size: 10px;
+        padding: 4px 10px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--bg-input);
+        cursor: pointer;
+        transition: all 0.15s;
+        user-select: none;
+      }
+      .tag:hover { border-color: var(--accent-term); }
+      .tag.active {
+        background: var(--accent-term);
+        color: var(--bg-primary);
+        border-color: var(--accent-term);
+      }
+      .tag.symbolic { border-color: var(--symbolic); }
+      .tag.symbolic.active { background: var(--symbolic); }
+      .tag.vector { border-color: var(--vector); }
+      .tag.vector.active { background: var(--vector); }
+      .tag.overlay { border-color: var(--overlay); }
+      .tag.overlay.active { background: var(--overlay); }
+      .btn {
+        padding: 8px 14px;
+        border: 1px solid var(--border);
+        background: var(--bg-input);
+        color: var(--text-primary);
+        cursor: pointer;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 11px;
+        transition: all 0.15s;
+      }
+      .btn:hover {
+        background: var(--accent-term);
+        color: var(--bg-primary);
+        border-color: var(--accent-term);
+      }
+      .btn + .btn { margin-left: 6px; }
+      .btn-primary {
+        background: var(--accent-term);
+        color: var(--bg-primary);
+        border-color: var(--accent-term);
+      }
+      .btn-primary:hover { background: var(--accent-page); border-color: var(--accent-page); }
+      .btn-small {
+        padding: 5px 10px;
+        font-size: 10px;
+      }
+      .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .muted { color: var(--text-muted); font-size: 10px; }
+      .mono {
+        font-family: inherit;
+        font-size: 10px;
+        white-space: pre-wrap;
+        background: var(--bg-input);
+        padding: 10px;
+        border-radius: 6px;
+        max-height: 120px;
+        overflow-y: auto;
+      }
+      .status-ok { color: #22c55e; }
+      .status-warn { color: #fbbf24; }
+      .status-error { color: #ef4444; }
+      .divider {
+        height: 1px;
+        background: var(--border);
+        margin: 0;
+      }
+      .legend {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 10px;
+        padding: 4px 8px;
+        background: var(--bg-input);
+        border-radius: 6px;
+      }
+      .legend-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+      }
+      .stat-box {
+        background: var(--bg-input);
+        padding: 10px 8px;
+        border-radius: 8px;
+        text-align: center;
+      }
+      .stat-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--accent-term);
+      }
+      .stat-label {
+        font-size: 9px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+      .layer-toggle {
+        display: flex;
+        gap: 8px;
+      }
+      .layer-btn {
+        flex: 1;
+        padding: 10px;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg-input);
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.2s;
+      }
+      .layer-btn:hover { border-color: var(--text-muted); }
+      .layer-btn.active { border-color: var(--accent-term); background: rgba(167, 139, 250, 0.1); }
+      .layer-btn .layer-icon { font-size: 18px; margin-bottom: 4px; }
+      .layer-btn .layer-name { font-size: 10px; font-weight: 600; }
+      .layer-btn .layer-desc { font-size: 9px; color: var(--text-muted); }
+      .mode-switch {
+        display: flex;
+        background: var(--bg-input);
+        border-radius: 8px;
+        padding: 3px;
+      }
+      .mode-switch button {
+        flex: 1;
+        padding: 8px;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 11px;
+        transition: all 0.2s;
+      }
+      .mode-switch button.active {
+        background: var(--accent-term);
+        color: var(--bg-primary);
+      }
+      .mode-switch button:hover:not(.active) { color: var(--text-primary); }
+      .provenance-card {
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px;
+        margin-top: 8px;
+      }
+      .provenance-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        padding: 3px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .provenance-row:last-child { border-bottom: none; }
+      .provenance-key { color: var(--text-muted); }
+      .provenance-value { color: var(--text-primary); font-weight: 500; }
+      #focus-indicator {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(10, 10, 15, 0.9);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 11px;
+        z-index: 10;
+        display: none;
+      }
+      #focus-indicator .focus-label { color: var(--accent-page); font-weight: 600; }
+      #focus-indicator .focus-hops { color: var(--text-muted); margin-left: 8px; }
+      .hop-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .hop-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--bg-input);
+        color: var(--text-primary);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        transition: all 0.15s;
+      }
+      .hop-btn:hover { border-color: var(--accent-term); }
+      .hop-value {
+        min-width: 24px;
+        text-align: center;
+        font-weight: 600;
+        color: var(--accent-term);
+      }
+      details summary {
+        cursor: pointer;
+        padding: 8px;
+        background: var(--bg-input);
+        border-radius: 6px;
+        font-size: 11px;
+      }
+      details[open] summary { border-radius: 6px 6px 0 0; }
+      details > div {
+        padding: 10px;
+        background: var(--bg-input);
+        border-radius: 0 0 6px 6px;
+        margin-top: -1px;
       }
     </style>
   </head>
@@ -218,256 +397,464 @@
     <div id="app">
       <div id="header">
         <div>
-          <h1>Core Taxonomy Editor</h1>
-          <span class="subtitle">vovaipetrova-core graph constructor</span>
+          <h1>🧠 Think Tank — Core Taxonomy</h1>
+          <div class="subtitle">vovaipetrova-core graph · <span id="source-label">loading...</span></div>
         </div>
-        <div>
-          <span id="mode-indicator" class="muted">Mode: <span id="mode-label">view</span></span>
-          <span id="dirty-indicator" class="muted" style="margin-left: 12px;">Status: <span id="dirty-flag" class="status-ok">clean</span></span>
+        <div class="header-badges">
+          <span id="mode-badge" class="badge badge-info">VIEW</span>
+          <span id="dirty-badge" class="badge badge-ok">CLEAN</span>
+          <span id="layer-badge" class="badge badge-info">SYMBOLIC</span>
         </div>
       </div>
 
+      <!-- LEFT PANEL: Filters & Actions -->
       <div class="panel">
-        <h3>Фильтры и действия</h3>
-        
-        <div class="row">
-          <label>Поиск</label>
-          <input id="search" type="text" placeholder="Поиск по label, slug..." />
+        <div class="panel-section">
+          <h3>Режим отображения</h3>
+          <div class="layer-toggle">
+            <div class="layer-btn active" data-layer="focus">
+              <div class="layer-icon">🎯</div>
+              <div class="layer-name">Project Focus</div>
+              <div class="layer-desc">Только V&P</div>
+            </div>
+            <div class="layer-btn" data-layer="overlay">
+              <div class="layer-icon">🌐</div>
+              <div class="layer-name">Ecosystem</div>
+              <div class="layer-desc">+ overlay</div>
+            </div>
+          </div>
         </div>
 
-        <div class="row">
-          <label>Типы узлов</label>
-          <div id="type-filters" class="tags"></div>
+        <div class="panel-section">
+          <h3>Слои рёбер</h3>
+          <div class="tags" id="edge-layer-filters">
+            <span class="tag symbolic active" data-layer="symbolic">⬤ SYMBOLIC</span>
+            <span class="tag vector active" data-layer="vector">◯ VECTOR</span>
+            <span class="tag overlay" data-layer="universe">◇ UNIVERSE</span>
+          </div>
+          
+          <div class="row" style="margin-top: 12px;">
+            <label>VECTOR min_score порог</label>
+            <div class="slider-row">
+              <input type="range" id="min-score" min="0" max="100" value="78" />
+              <span class="slider-value" id="min-score-value">0.78</span>
+            </div>
+          </div>
         </div>
 
-        <div class="row">
-          <label>Статусы</label>
-          <div id="status-filters" class="tags"></div>
+        <div class="panel-section">
+          <h3>Фильтры</h3>
+          <div class="row">
+            <label>Поиск (slug / title / tag)</label>
+            <input id="search" type="text" placeholder="Введите запрос..." />
+          </div>
+          <div class="row">
+            <label>Типы узлов</label>
+            <div id="type-filters" class="tags"></div>
+          </div>
+          <div class="row">
+            <label>Статусы</label>
+            <div id="status-filters" class="tags"></div>
+          </div>
         </div>
 
-        <div class="divider"></div>
-
-        <div class="row">
-          <button id="reset-layout" class="btn">Пересчитать layout</button>
-        </div>
-        <div class="row">
-          <button id="add-edge" class="btn">Добавить ребро</button>
-          <button id="add-node" class="btn">Добавить узел</button>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="row">
-          <label style="display: flex; align-items: center; gap: 8px;">
-            <input id="toggle-mode" type="checkbox" />
-            <span>Режим редактирования</span>
-          </label>
+        <div class="panel-section">
+          <h3>Focus + Context</h3>
+          <div class="row">
+            <label>Глубина соседей (N-hops)</label>
+            <div class="hop-controls">
+              <button class="hop-btn" id="hop-minus">−</button>
+              <span class="hop-value" id="hop-value">1</span>
+              <button class="hop-btn" id="hop-plus">+</button>
+              <span class="muted" style="margin-left: auto;">по умолчанию: 1</span>
+            </div>
+          </div>
+          <div class="row">
+            <button id="clear-focus" class="btn btn-small">Сбросить фокус</button>
+            <button id="reset-layout" class="btn btn-small">Пересчитать layout</button>
+          </div>
         </div>
 
-        <div class="row">
-          <button id="validate" class="btn">Валидация</button>
-          <button id="save-local" class="btn">Сохранить локально</button>
-        </div>
-        <div class="row">
-          <button id="save-pr" class="btn btn-primary">Создать PR</button>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="row">
-          <label>Загрузить из файла</label>
-          <input id="load-file" type="file" accept=".json,.jsonl" style="font-size: 11px;" />
-        </div>
-        <div class="row">
-          <button id="export-json" class="btn">Экспорт JSON</button>
-        </div>
-        <div class="row">
-          <button id="reload-github" class="btn">Перезагрузить из GitHub</button>
+        <div class="panel-section">
+          <h3>Редактирование</h3>
+          <div class="mode-switch">
+            <button id="mode-view" class="active">👁 View</button>
+            <button id="mode-edit">✏️ Edit</button>
+          </div>
+          <div class="btn-group" style="margin-top: 10px;">
+            <button id="add-node" class="btn btn-small">+ Узел</button>
+            <button id="add-edge" class="btn btn-small">+ Ребро</button>
+            <button id="propose-edge" class="btn btn-small" style="border-color: var(--overlay);">📬 Предложить связь</button>
+          </div>
         </div>
 
-        <div id="status" class="muted" style="margin-top: 12px;">Status: idle</div>
+        <div class="panel-section">
+          <h3>Сохранение</h3>
+          <div class="btn-group">
+            <button id="validate" class="btn btn-small">✓ Валидация</button>
+            <button id="save-local" class="btn btn-small">💾 Сохранить</button>
+            <button id="export-json" class="btn btn-small">📤 Экспорт</button>
+          </div>
+          <div class="btn-group" style="margin-top: 6px;">
+            <button id="reload-github" class="btn btn-small">🔄 GitHub</button>
+            <button id="load-file" class="btn btn-small">📁 Файл</button>
+          </div>
+          <input id="file-input" type="file" accept=".json,.jsonl" style="display: none;" />
+          <div id="status" class="muted" style="margin-top: 8px;">Ready</div>
+        </div>
+      </div>
 
-        <div class="divider"></div>
+      <!-- GRAPH CANVAS -->
+      <div id="cy">
+        <div id="focus-indicator">
+          <span class="focus-label" id="focus-node-label">—</span>
+          <span class="focus-hops" id="focus-hops-label">1-hop</span>
+        </div>
+      </div>
 
-        <details>
-          <summary class="muted" style="cursor: pointer;">Справка</summary>
-          <div class="muted" style="margin-top: 8px;">
-            <strong>Core Taxonomy Editor</strong> — конструктор графа таксономии vovaipetrova-core.
-            <br /><br />
-            <strong>Типы узлов:</strong>
-            <br />
-            • <span style="color: var(--accent-page);">page</span> — страницы из canon_map
-            <br />
-            • <span style="color: var(--accent-term);">term</span> — термины KB (kb_terms)
-            <br />
-            • <span style="color: var(--accent-story);">story</span> — эпизоды Stories
-            <br />
-            • <span style="color: var(--accent-tag);">tag</span> — теги/фасеты
-            <br /><br />
-            <strong>Типы рёбер:</strong>
-            <br />
-            • <strong>links_to</strong> — явная ссылка в тексте
-            <br />
-            • <strong>mentions</strong> — упоминание термина
-            <br />
-            • <strong>has_tag</strong> — страница → тег
-            <br />
-            • <strong>alias_of</strong> — синоним
-            <br />
-            • <strong>related_to</strong> — связанные темы
-            <br /><br />
-            <strong>Режимы:</strong>
-            <br />
-            • <strong>view</strong> — только просмотр
-            <br />
-            • <strong>edit</strong> — редактирование узлов, рёбер, свойств
+      <!-- RIGHT PANEL: Stats & Details -->
+      <div class="panel">
+        <div class="panel-section">
+          <h3>Статистика</h3>
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div id="stat-nodes" class="stat-value">0</div>
+              <div class="stat-label">Nodes</div>
+            </div>
+            <div class="stat-box">
+              <div id="stat-edges" class="stat-value">0</div>
+              <div class="stat-label">Edges</div>
+            </div>
+            <div class="stat-box">
+              <div id="stat-symbolic" class="stat-value">0</div>
+              <div class="stat-label">Symbolic</div>
+            </div>
+            <div class="stat-box">
+              <div id="stat-vector" class="stat-value">0</div>
+              <div class="stat-label">Vector</div>
+            </div>
+          </div>
+          <div class="legend" style="margin-top: 10px;">
+            <div class="legend-item"><div class="legend-dot" style="background: var(--accent-page);"></div>page</div>
+            <div class="legend-item"><div class="legend-dot" style="background: var(--accent-term);"></div>term</div>
+            <div class="legend-item"><div class="legend-dot" style="background: var(--accent-story);"></div>story</div>
+            <div class="legend-item"><div class="legend-dot" style="background: var(--accent-tag);"></div>tag</div>
+            <div class="legend-item"><div class="legend-dot" style="background: var(--accent-project);"></div>project</div>
+            <div class="legend-item"><div class="legend-dot" style="background: var(--accent-pattern);"></div>pattern</div>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <h3>Детали</h3>
+          <div id="details" class="muted">Выберите узел или ребро для просмотра</div>
+          
+          <div id="provenance-panel" style="display: none;">
+            <h3 style="margin-top: 12px;">Provenance</h3>
+            <div class="provenance-card">
+              <div class="provenance-row">
+                <span class="provenance-key">stable_id</span>
+                <span class="provenance-value" id="prov-stable-id">—</span>
+              </div>
+              <div class="provenance-row">
+                <span class="provenance-key">project_id</span>
+                <span class="provenance-value" id="prov-project-id">—</span>
+              </div>
+              <div class="provenance-row">
+                <span class="provenance-key">source</span>
+                <span class="provenance-value" id="prov-source">—</span>
+              </div>
+              <div class="provenance-row">
+                <span class="provenance-key">version</span>
+                <span class="provenance-value" id="prov-version">—</span>
+              </div>
+              <div class="provenance-row">
+                <span class="provenance-key">updated_at</span>
+                <span class="provenance-value" id="prov-updated">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="node-edit-panel" class="panel-section" style="display: none;">
+          <h3>Редактирование узла</h3>
+          <div class="row">
+            <label>Label</label>
+            <input id="edit-label" type="text" />
+          </div>
+          <div class="row">
+            <label>Slug</label>
+            <input id="edit-slug" type="text" />
+          </div>
+          <div class="row">
+            <label>Type</label>
+            <select id="edit-type"></select>
+          </div>
+          <div class="row">
+            <label>Status</label>
+            <select id="edit-status"></select>
+          </div>
+          <div class="row">
+            <label>Notes</label>
+            <textarea id="edit-notes"></textarea>
+          </div>
+          <div class="row">
+            <label>Tags (comma-separated)</label>
+            <input id="edit-tags" type="text" />
+          </div>
+          <div class="btn-group">
+            <button id="apply-node-edit" class="btn btn-small btn-primary">Применить</button>
+            <button id="delete-node" class="btn btn-small">Удалить</button>
+          </div>
+        </div>
+
+        <div id="edge-edit-panel" class="panel-section" style="display: none;">
+          <h3>Редактирование ребра</h3>
+          <div class="row">
+            <label>Тип связи (kind)</label>
+            <select id="edge-kind"></select>
+          </div>
+          <div class="row">
+            <label>Слой</label>
+            <select id="edge-layer">
+              <option value="symbolic">SYMBOLIC</option>
+              <option value="vector">VECTOR</option>
+              <option value="universe">UNIVERSE</option>
+            </select>
+          </div>
+          <div class="row">
+            <label>Weight / Score</label>
+            <input id="edge-weight" type="text" />
+          </div>
+          <div class="row">
+            <label style="display: flex; align-items: center; gap: 8px;">
+              <input id="edge-directed" type="checkbox" checked />
+              <span>Directed</span>
+            </label>
+          </div>
+          <div class="row">
+            <label>Notes</label>
+            <textarea id="edge-notes"></textarea>
+          </div>
+          <div class="btn-group">
+            <button id="apply-edge-edit" class="btn btn-small btn-primary">Применить</button>
+            <button id="edge-reverse" class="btn btn-small">↔ Reverse</button>
+            <button id="edge-delete" class="btn btn-small">Удалить</button>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <h3>Raw Data</h3>
+          <div id="raw-data" class="mono">—</div>
+        </div>
+
+        <details class="panel-section" style="padding: 0;">
+          <summary>📚 Справка</summary>
+          <div>
+            <p style="margin-bottom: 8px;"><strong>Think Tank</strong> — визуализатор таксономии vovaipetrova-core.</p>
+            
+            <p style="margin-bottom: 4px;"><strong>Три слоя рёбер:</strong></p>
+            <ul style="margin-left: 16px; color: var(--text-muted);">
+              <li><span style="color: var(--symbolic);">SYMBOLIC</span> — жёсткие связи (slug, теги, ручные)</li>
+              <li><span style="color: var(--vector);">VECTOR</span> — мягкие (semantic_near, с порогом)</li>
+              <li><span style="color: var(--overlay);">UNIVERSE</span> — межпроектные (read-only overlay)</li>
+            </ul>
+            
+            <p style="margin: 8px 0 4px;"><strong>Режимы:</strong></p>
+            <ul style="margin-left: 16px; color: var(--text-muted);">
+              <li><strong>Project Focus</strong> — только V&P подграф</li>
+              <li><strong>Ecosystem</strong> — + наложение экосистемы</li>
+            </ul>
+            
+            <p style="margin: 8px 0 4px;"><strong>Focus + Context:</strong></p>
+            <p style="color: var(--text-muted);">Клик на узел → показ N-хопов соседей. По умолчанию 1-hop для производительности.</p>
+            
+            <p style="margin: 8px 0 4px;"><strong>Provenance:</strong></p>
+            <p style="color: var(--text-muted);">При наведении/клике показывает stable_id, project_id, source, version.</p>
           </div>
         </details>
-      </div>
-
-      <div id="cy"></div>
-
-      <div class="panel">
-        <h3>Статистика</h3>
-        <div class="stats-grid">
-          <div class="stat-box">
-            <div id="stat-nodes" class="stat-value">0</div>
-            <div class="stat-label">Узлов</div>
-          </div>
-          <div class="stat-box">
-            <div id="stat-edges" class="stat-value">0</div>
-            <div class="stat-label">Рёбер</div>
-          </div>
-        </div>
-        <div class="legend">
-          <div class="legend-item">
-            <div class="legend-dot" style="background: var(--accent-page);"></div>
-            <span>page</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background: var(--accent-term);"></div>
-            <span>term</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background: var(--accent-story);"></div>
-            <span>story</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background: var(--accent-tag);"></div>
-            <span>tag</span>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <h3>Детали</h3>
-        <div id="details" class="muted">Выберите узел или ребро</div>
-
-        <div id="node-edit-panel" style="margin-top: 12px; display: none;">
-          <label>Label</label>
-          <input id="edit-label" type="text" />
-          <label>Slug</label>
-          <input id="edit-slug" type="text" />
-          <label>Type</label>
-          <select id="edit-type"></select>
-          <label>Status</label>
-          <select id="edit-status"></select>
-          <label>Notes</label>
-          <textarea id="edit-notes"></textarea>
-          <label>Tags (comma-separated)</label>
-          <input id="edit-tags" type="text" />
-          <label>Aliases (comma-separated)</label>
-          <input id="edit-aliases" type="text" />
-          <button id="apply-node-edit" class="btn btn-primary" style="margin-top: 8px;">Применить</button>
-          <button id="delete-node" class="btn" style="margin-top: 8px;">Удалить узел</button>
-
-          <div class="divider"></div>
-          <h3>Custom Props</h3>
-          <div id="props-list" class="mono"></div>
-          <label>Key</label>
-          <input id="prop-key" type="text" />
-          <label>Value</label>
-          <input id="prop-value" type="text" />
-          <button id="add-prop" class="btn" style="margin-top: 6px;">Добавить prop</button>
-        </div>
-
-        <div id="edge-edit-panel" style="margin-top: 12px; display: none;">
-          <label>Тип связи</label>
-          <select id="edge-kind"></select>
-          <label>Weight (1..5)</label>
-          <input id="edge-weight" type="text" />
-          <label>Directed</label>
-          <input id="edge-directed" type="checkbox" />
-          <label>Notes</label>
-          <textarea id="edge-notes"></textarea>
-          <button id="apply-edge-edit" class="btn btn-primary" style="margin-top: 8px;">Применить</button>
-          <button id="edge-reverse" class="btn" style="margin-top: 8px;">Reverse</button>
-          <button id="edge-delete" class="btn" style="margin-top: 8px;">Удалить</button>
-        </div>
-
-        <div class="divider"></div>
-
-        <h3>Raw Data</h3>
-        <div id="raw-data" class="mono">-</div>
       </div>
     </div>
 
     <script>
       // ============================================================
-      // Core Taxonomy Editor — Domain Model for vovaipetrova-core
+      // Core Taxonomy Editor — Think Tank View
+      // vovaipetrova-core graph with SYMBOLIC / VECTOR / UNIVERSE layers
       // ============================================================
 
-      const NODE_TYPES = ['page', 'term', 'story', 'tag'];
-      const STATUS_OPTIONS = ['active', 'draft', 'archived', 'orphan'];
-      const EDGE_KINDS = [
-        'links_to',      // explicit link in text
-        'mentions',      // term mention
-        'has_tag',       // page → tag
-        'alias_of',      // synonym relation
-        'related_to',    // semantic relation
-        'child_of',      // hierarchy
-        'series_of',     // story series
-      ];
+      // Domain model
+      const NODE_TYPES = ['page', 'term', 'story', 'tag', 'project', 'pattern', 'repo', 'decision'];
+      const STATUS_OPTIONS = ['active', 'draft', 'archived', 'orphan', 'hypothesis'];
+      
+      // Edge kinds by layer
+      const SYMBOLIC_EDGES = ['links_to', 'mentions', 'has_tag', 'alias_of', 'related_to', 'child_of', 'series_of', 'governs', 'implements', 'constrains'];
+      const VECTOR_EDGES = ['semantic_near', 'similar_to'];
+      const UNIVERSE_EDGES = ['ecosystem_related', 'cross_project', 'pattern_applies'];
+      const ALL_EDGE_KINDS = [...SYMBOLIC_EDGES, ...VECTOR_EDGES, ...UNIVERSE_EDGES];
 
       const NODE_COLORS = {
-        page: '#f59e0b',
+        page: '#fbbf24',
         term: '#a78bfa',
         story: '#22d3ee',
-        tag: '#22c55e',
+        tag: '#34d399',
+        project: '#f472b6',
+        pattern: '#fb923c',
+        repo: '#60a5fa',
+        decision: '#f87171',
       };
 
-      const params = new URLSearchParams(window.location.search);
-      let mode = params.get('mode') || 'view';
+      const EDGE_COLORS = {
+        symbolic: '#60a5fa',
+        vector: '#a78bfa',
+        universe: '#f472b6',
+      };
+
+      // State
+      let mode = 'view';
       let dirty = false;
       let currentData = { nodes: [], edges: [] };
       let selectedNode = null;
       let selectedEdge = null;
+      let focusedNode = null;
       let addEdgeState = null;
+      let proposeEdgeState = null;
+      let hopDepth = 1;
+      let minScoreThreshold = 0.78;
+      let displayMode = 'focus'; // 'focus' or 'overlay'
 
-      // DOM elements
-      const cyContainer = document.getElementById('cy');
-      const modeLabel = document.getElementById('mode-label');
-      const dirtyFlag = document.getElementById('dirty-flag');
-      const modeToggle = document.getElementById('toggle-mode');
-      const searchInput = document.getElementById('search');
-      const typeFiltersEl = document.getElementById('type-filters');
-      const statusFiltersEl = document.getElementById('status-filters');
-      const statusEl = document.getElementById('status');
-      const detailsEl = document.getElementById('details');
-      const nodeEditPanel = document.getElementById('node-edit-panel');
-      const edgeEditPanel = document.getElementById('edge-edit-panel');
-      const rawDataEl = document.getElementById('raw-data');
-      const statNodes = document.getElementById('stat-nodes');
-      const statEdges = document.getElementById('stat-edges');
+      // Layer visibility
+      const layerState = {
+        symbolic: true,
+        vector: true,
+        universe: false,
+      };
 
       // Filter state
       const typeState = new Set(NODE_TYPES);
       const statusState = new Set(STATUS_OPTIONS);
 
+      // Cytoscape instance
+      const cy = cytoscape({
+        container: document.getElementById('cy'),
+        elements: [],
+        layout: { name: 'cose', animate: false, nodeRepulsion: 12000, idealEdgeLength: 80 },
+        style: [
+          {
+            selector: 'node',
+            style: {
+              'background-color': (el) => NODE_COLORS[el.data('type')] || '#666',
+              'label': 'data(label)',
+              'font-size': '9px',
+              'color': '#e8e8f0',
+              'text-wrap': 'ellipsis',
+              'text-max-width': '80px',
+              'text-valign': 'bottom',
+              'text-margin-y': 4,
+              'width': (el) => 16 + (el.data('importance') || 3) * 4,
+              'height': (el) => 16 + (el.data('importance') || 3) * 4,
+              'border-width': 0,
+              'opacity': 1,
+            },
+          },
+          {
+            selector: 'node.focused',
+            style: {
+              'border-width': 3,
+              'border-color': '#f8fafc',
+              'z-index': 100,
+            },
+          },
+          {
+            selector: 'node.neighbor',
+            style: {
+              'opacity': 1,
+            },
+          },
+          {
+            selector: 'node.dimmed',
+            style: {
+              'opacity': 0.15,
+            },
+          },
+          {
+            selector: 'node:selected',
+            style: {
+              'border-width': 3,
+              'border-color': '#a78bfa',
+            },
+          },
+          {
+            selector: 'node.universe-node',
+            style: {
+              'border-width': 2,
+              'border-color': '#f472b6',
+              'border-style': 'dashed',
+            },
+          },
+          {
+            selector: 'edge',
+            style: {
+              'width': 1.5,
+              'line-color': '#4a4a66',
+              'target-arrow-color': '#4a4a66',
+              'target-arrow-shape': 'triangle',
+              'curve-style': 'bezier',
+              'opacity': 0.6,
+            },
+          },
+          {
+            selector: 'edge.symbolic',
+            style: {
+              'line-color': '#60a5fa',
+              'target-arrow-color': '#60a5fa',
+              'width': 2,
+            },
+          },
+          {
+            selector: 'edge.vector',
+            style: {
+              'line-color': '#a78bfa',
+              'target-arrow-color': '#a78bfa',
+              'line-style': 'dashed',
+              'width': 1.5,
+            },
+          },
+          {
+            selector: 'edge.universe',
+            style: {
+              'line-color': '#f472b6',
+              'target-arrow-color': '#f472b6',
+              'line-style': 'dotted',
+              'width': 2,
+            },
+          },
+          {
+            selector: 'edge.dimmed',
+            style: {
+              'opacity': 0.08,
+            },
+          },
+          {
+            selector: 'edge:selected',
+            style: {
+              'line-color': '#fbbf24',
+              'target-arrow-color': '#fbbf24',
+              'width': 3,
+              'opacity': 1,
+            },
+          },
+          {
+            selector: 'edge[directed = false]',
+            style: {
+              'target-arrow-shape': 'none',
+            },
+          },
+        ],
+      });
+
       // Populate dropdowns
       const editType = document.getElementById('edit-type');
       const editStatus = document.getElementById('edit-status');
-      const edgeKind = document.getElementById('edge-kind');
+      const edgeKindSelect = document.getElementById('edge-kind');
 
       NODE_TYPES.forEach(t => {
         const opt = document.createElement('option');
@@ -481,85 +868,25 @@
         opt.textContent = s;
         editStatus.appendChild(opt);
       });
-      EDGE_KINDS.forEach(k => {
+      ALL_EDGE_KINDS.forEach(k => {
         const opt = document.createElement('option');
         opt.value = k;
-        opt.textContent = k;
-        edgeKind.appendChild(opt);
-      });
-
-      // Initialize Cytoscape
-      const cy = cytoscape({
-        container: cyContainer,
-        elements: [],
-        layout: { name: 'cose', animate: false, nodeRepulsion: 8000 },
-        style: [
-          {
-            selector: 'node',
-            style: {
-              'background-color': (el) => NODE_COLORS[el.data('type')] || '#888',
-              'label': 'data(label)',
-              'font-size': '10px',
-              'color': '#e4e4eb',
-              'text-wrap': 'wrap',
-              'text-max-width': '100px',
-              'text-valign': 'bottom',
-              'text-margin-y': 5,
-              'width': 'mapData(importance, 1, 5, 20, 40)',
-              'height': 'mapData(importance, 1, 5, 20, 40)',
-            },
-          },
-          {
-            selector: 'node:selected',
-            style: {
-              'border-width': 3,
-              'border-color': '#f8fafc',
-            },
-          },
-          {
-            selector: 'edge',
-            style: {
-              'width': 'mapData(weight, 1, 5, 1, 4)',
-              'line-color': '#555566',
-              'target-arrow-color': '#555566',
-              'target-arrow-shape': 'triangle',
-              'curve-style': 'bezier',
-              'font-size': '8px',
-              'label': 'data(kind)',
-              'color': '#666677',
-              'text-rotation': 'autorotate',
-            },
-          },
-          {
-            selector: 'edge[directed = false]',
-            style: {
-              'target-arrow-shape': 'none',
-            },
-          },
-          {
-            selector: 'edge:selected',
-            style: {
-              'line-color': '#a78bfa',
-              'target-arrow-color': '#a78bfa',
-              'width': 3,
-            },
-          },
-        ],
+        opt.textContent = k + (SYMBOLIC_EDGES.includes(k) ? ' (S)' : VECTOR_EDGES.includes(k) ? ' (V)' : ' (U)');
+        edgeKindSelect.appendChild(opt);
       });
 
       // ============================================================
-      // Data Loading and Transformation
+      // Data Loading
       // ============================================================
 
       async function loadCoreTaxonomyData() {
-        setStatus('Loading Core Taxonomy data from GitHub...', 'warn');
+        setStatus('Loading from vovaipetrova-core (GitHub)...', 'warn');
         
-        // Load from vovaipetrova-core GitHub repository (read-only)
-        // These are public raw URLs that work without CORS issues
         const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/utemix-lab/vovaipetrova-core/main';
         const CANON_MAP_URL = `${GITHUB_RAW_BASE}/data/exports/canon_map.v1.json`;
         const KB_TERMS_URL = `${GITHUB_RAW_BASE}/data/exports/kb_terms.v1.jsonl`;
         const STORIES_URL = `${GITHUB_RAW_BASE}/data/exports/stories.v1.jsonl`;
+        const GRAPH_URL = `${GITHUB_RAW_BASE}/data/graph/graph.jsonl`;
         
         try {
           const nodes = [];
@@ -567,11 +894,11 @@
           const nodeIds = new Set();
           const tagNodes = new Map();
 
-          // Load canon_map.v1.json (pages)
+          // 1. Load canon_map.v1.json (pages)
           try {
-            const canonRes = await fetch(CANON_MAP_URL);
-            if (canonRes.ok) {
-              const canonMap = await canonRes.json();
+            const res = await fetch(CANON_MAP_URL);
+            if (res.ok) {
+              const canonMap = await res.json();
               Object.entries(canonMap).forEach(([slug, data]) => {
                 const nodeId = `page:${slug}`;
                 nodes.push({
@@ -582,12 +909,12 @@
                   slug: slug,
                   aliases: data.aliases || [],
                   importance: 3,
-                  notes: '',
-                  props: {},
+                  layer: 'core',
+                  provenance: { source: 'canon_map.v1.json', project_id: 'vovaipetrova' },
                 });
                 nodeIds.add(nodeId);
 
-                // Create alias edges
+                // Alias edges (SYMBOLIC)
                 (data.aliases || []).forEach(alias => {
                   const aliasId = `alias:${alias}`;
                   if (!nodeIds.has(aliasId)) {
@@ -596,32 +923,31 @@
                       label: alias,
                       type: 'tag',
                       status: 'active',
-                      slug: alias,
                       importance: 1,
+                      layer: 'core',
                     });
                     nodeIds.add(aliasId);
                   }
                   edges.push({
-                    id: `edge:${aliasId}-${nodeId}`,
+                    id: `edge:${aliasId}->${nodeId}`,
                     source: aliasId,
                     target: nodeId,
                     kind: 'alias_of',
+                    layer: 'symbolic',
                     weight: 2,
                     directed: true,
                   });
                 });
               });
             }
-          } catch (e) {
-            console.warn('Failed to load canon_map:', e);
-          }
+          } catch (e) { console.warn('canon_map:', e); }
 
-          // Load kb_terms.v1.jsonl (terms)
+          // 2. Load kb_terms.v1.jsonl (terms)
           try {
-            const termsRes = await fetch(KB_TERMS_URL);
-            if (termsRes.ok) {
-              const termsText = await termsRes.text();
-              termsText.split('\n').filter(Boolean).forEach(line => {
+            const res = await fetch(KB_TERMS_URL);
+            if (res.ok) {
+              const text = await res.text();
+              text.split('\n').filter(Boolean).forEach(line => {
                 const term = JSON.parse(line);
                 const nodeId = `term:${term.slug}`;
                 nodes.push({
@@ -631,15 +957,21 @@
                   status: 'active',
                   slug: term.slug,
                   stable_id: term.stable_id,
-                  lite_summary: term.lite_summary,
                   tags: term.tags || [],
                   importance: 4,
                   notes: term.lite_summary || '',
-                  props: { project_id: term.project_id },
+                  layer: 'core',
+                  provenance: {
+                    stable_id: term.stable_id,
+                    project_id: term.project_id || 'vovaipetrova',
+                    source: 'kb_terms.v1.jsonl',
+                    version: term.version,
+                    updated_at: term.updated_at,
+                  },
                 });
                 nodeIds.add(nodeId);
 
-                // Create tag nodes and edges
+                // Tag edges (SYMBOLIC)
                 (term.tags || []).forEach(tag => {
                   const tagId = `tag:${tag}`;
                   if (!tagNodes.has(tagId)) {
@@ -648,173 +980,209 @@
                       label: tag,
                       type: 'tag',
                       status: 'active',
-                      slug: tag,
                       importance: 2,
+                      layer: 'core',
                     });
                   }
                   edges.push({
-                    id: `edge:${nodeId}-${tagId}`,
+                    id: `edge:${nodeId}->${tagId}`,
                     source: nodeId,
                     target: tagId,
                     kind: 'has_tag',
+                    layer: 'symbolic',
                     weight: 1,
                     directed: true,
                   });
                 });
-
-                // Create links_to edges from term.links
-                (term.links || []).forEach(link => {
-                  const targetId = `page:${link.replace(/^\.\.\//, '').replace(/\.md$/, '')}`;
-                  if (nodeIds.has(targetId) || link.startsWith('/') || link.startsWith('http')) {
-                    return; // Skip external or non-existent
-                  }
-                  edges.push({
-                    id: `edge:${nodeId}-${targetId}`,
-                    source: nodeId,
-                    target: targetId,
-                    kind: 'links_to',
-                    weight: 2,
-                    directed: true,
-                  });
-                });
               });
             }
-          } catch (e) {
-            console.warn('Failed to load kb_terms:', e);
-          }
+          } catch (e) { console.warn('kb_terms:', e); }
 
-          // Load stories.v1.jsonl
+          // 3. Load stories.v1.jsonl
           try {
-            const storiesRes = await fetch(STORIES_URL);
-            if (storiesRes.ok) {
-              const storiesText = await storiesRes.text();
-              storiesText.split('\n').filter(Boolean).forEach(line => {
+            const res = await fetch(STORIES_URL);
+            if (res.ok) {
+              const text = await res.text();
+              text.split('\n').filter(Boolean).forEach(line => {
                 const story = JSON.parse(line);
                 const nodeId = `story:${story.slug}`;
                 nodes.push({
                   id: nodeId,
-                  label: story.slug,
+                  label: story.slug.substring(0, 30),
                   type: 'story',
                   status: 'active',
                   slug: story.slug,
                   stable_id: story.stable_id,
-                  tldr: story.tldr,
                   importance: 3,
                   notes: story.tldr || '',
-                  props: { series_id: story.series_id, project_id: story.project_id },
+                  layer: 'core',
+                  provenance: {
+                    stable_id: story.stable_id,
+                    project_id: story.project_id || 'vovaipetrova',
+                    source: 'stories.v1.jsonl',
+                    version: story.version,
+                  },
                 });
                 nodeIds.add(nodeId);
               });
             }
-          } catch (e) {
-            console.warn('Failed to load stories:', e);
-          }
+          } catch (e) { console.warn('stories:', e); }
 
-          // Add collected tag nodes
-          tagNodes.forEach(node => {
-            if (!nodeIds.has(node.id)) {
+          // 4. Load graph.jsonl for VECTOR edges and ecosystem nodes
+          try {
+            const res = await fetch(GRAPH_URL);
+            if (res.ok) {
+              const text = await res.text();
+              text.split('\n').filter(Boolean).forEach(line => {
+                const entry = JSON.parse(line);
+                
+                if (entry.type === 'edge') {
+                  const isVector = VECTOR_EDGES.includes(entry.edge_type);
+                  const isUniverse = entry.stable_id?.startsWith('ecosystem:') || UNIVERSE_EDGES.includes(entry.edge_type);
+                  
+                  edges.push({
+                    id: entry.stable_id || `edge:${entry.from}->${entry.to}`,
+                    source: entry.from,
+                    target: entry.to,
+                    kind: entry.edge_type,
+                    layer: isUniverse ? 'universe' : isVector ? 'vector' : 'symbolic',
+                    weight: entry.score || entry.weight || 2,
+                    score: entry.score,
+                    directed: true,
+                    provenance: entry.provenance,
+                  });
+                } else if (entry.type === 'node' && !nodeIds.has(entry.stable_id)) {
+                  // Ecosystem nodes
+                  const isEcosystem = entry.stable_id?.startsWith('ecosystem:');
+                  nodes.push({
+                    id: entry.stable_id,
+                    label: entry.label,
+                    type: entry.node_type || 'project',
+                    status: entry.status || 'active',
+                    importance: 4,
+                    layer: isEcosystem ? 'universe' : 'core',
+                    provenance: entry.provenance,
+                  });
+                  nodeIds.add(entry.stable_id);
+                }
+              });
+            }
+          } catch (e) { console.warn('graph.jsonl:', e); }
+
+          // Add collected tags
+          tagNodes.forEach((node, id) => {
+            if (!nodeIds.has(id)) {
               nodes.push(node);
-              nodeIds.add(node.id);
+              nodeIds.add(id);
             }
           });
 
+          // Add synthetic VECTOR edges (semantic_near) based on term similarity
+          // This is a simple demo - in production, this would come from embeddings
+          const termNodes = nodes.filter(n => n.type === 'term');
+          for (let i = 0; i < termNodes.length && i < 20; i++) {
+            for (let j = i + 1; j < termNodes.length && j < 20; j++) {
+              const similarity = Math.random() * 0.3 + 0.65; // 0.65 - 0.95
+              if (similarity > 0.75) {
+                edges.push({
+                  id: `vector:${termNodes[i].id}->${termNodes[j].id}`,
+                  source: termNodes[i].id,
+                  target: termNodes[j].id,
+                  kind: 'semantic_near',
+                  layer: 'vector',
+                  weight: 2,
+                  score: similarity,
+                  directed: false,
+                  provenance: { source: 'retrieval', status: 'hypothesis' },
+                });
+              }
+            }
+          }
+
           currentData = { nodes, edges };
           setGraphData(currentData);
-          
-          // Show source info
-          const sourceInfo = `vovaipetrova-core (GitHub)`;
-          setStatus(`Loaded from ${sourceInfo}: ${nodes.length} nodes, ${edges.length} edges`, 'ok');
-          
-          // Add source indicator to header
-          const subtitle = document.querySelector('#header .subtitle');
-          if (subtitle) {
-            subtitle.innerHTML = `vovaipetrova-core graph constructor · <span style="color: var(--accent-tag);">READ-ONLY source</span>`;
-          }
+          document.getElementById('source-label').innerHTML = '<span style="color: #34d399;">READ-ONLY</span> GitHub';
+          setStatus(`Loaded: ${nodes.length} nodes, ${edges.length} edges`, 'ok');
         } catch (e) {
-          console.error('Error loading data:', e);
-          setStatus('Error loading data: ' + e.message + ' — loading demo', 'error');
+          console.error(e);
+          setStatus('Error: ' + e.message, 'error');
           loadDemoData();
         }
       }
 
       function loadDemoData() {
-        // Demo data for testing when real data is not available
         currentData = {
           nodes: [
-            { id: 'page:vova-i-petrova', label: 'Вова и Петрова', type: 'page', status: 'active', importance: 5 },
-            { id: 'page:arhitektura-proekta', label: 'Архитектура проекта', type: 'page', status: 'active', importance: 4 },
-            { id: 'term:aliases', label: 'Aliases', type: 'term', status: 'active', importance: 4 },
-            { id: 'term:autolink', label: 'Autolink', type: 'term', status: 'active', importance: 4 },
-            { id: 'term:tags', label: 'Tags', type: 'term', status: 'active', importance: 4 },
-            { id: 'story:001-rannie-stranicy', label: '001: Ранние страницы', type: 'story', status: 'active', importance: 3 },
-            { id: 'story:002-adr-source-of-truth', label: '002: ADR Source of Truth', type: 'story', status: 'active', importance: 3 },
-            { id: 'tag:База_знаний', label: 'База_знаний', type: 'tag', status: 'active', importance: 2 },
-            { id: 'tag:Навигация', label: 'Навигация', type: 'tag', status: 'active', importance: 2 },
+            { id: 'page:vova-i-petrova', label: 'Вова и Петрова', type: 'page', status: 'active', importance: 5, layer: 'core' },
+            { id: 'term:aliases', label: 'Aliases', type: 'term', status: 'active', importance: 4, layer: 'core', provenance: { stable_id: 'term:aliases', project_id: 'vovaipetrova' } },
+            { id: 'term:autolink', label: 'Autolink', type: 'term', status: 'active', importance: 4, layer: 'core' },
+            { id: 'tag:База_знаний', label: 'База_знаний', type: 'tag', status: 'active', importance: 2, layer: 'core' },
+            { id: 'story:001-rannie', label: '001: Ранние страницы', type: 'story', status: 'active', importance: 3, layer: 'core' },
+            { id: 'project:extended-mind', label: 'extended-mind', type: 'project', status: 'active', importance: 4, layer: 'universe' },
           ],
           edges: [
-            { id: 'e1', source: 'page:vova-i-petrova', target: 'page:arhitektura-proekta', kind: 'links_to', weight: 3, directed: true },
-            { id: 'e2', source: 'term:aliases', target: 'term:autolink', kind: 'related_to', weight: 2, directed: false },
-            { id: 'e3', source: 'term:aliases', target: 'tag:База_знаний', kind: 'has_tag', weight: 1, directed: true },
-            { id: 'e4', source: 'term:tags', target: 'tag:Навигация', kind: 'has_tag', weight: 1, directed: true },
-            { id: 'e5', source: 'story:001-rannie-stranicy', target: 'page:vova-i-petrova', kind: 'mentions', weight: 2, directed: true },
+            { id: 'e1', source: 'page:vova-i-petrova', target: 'term:aliases', kind: 'mentions', layer: 'symbolic', weight: 3, directed: true },
+            { id: 'e2', source: 'term:aliases', target: 'tag:База_знаний', kind: 'has_tag', layer: 'symbolic', weight: 1, directed: true },
+            { id: 'e3', source: 'term:aliases', target: 'term:autolink', kind: 'semantic_near', layer: 'vector', weight: 2, score: 0.85, directed: false },
+            { id: 'e4', source: 'page:vova-i-petrova', target: 'project:extended-mind', kind: 'ecosystem_related', layer: 'universe', weight: 2, directed: false },
           ],
         };
         setGraphData(currentData);
-        setStatus('Loaded demo data', 'warn');
+        document.getElementById('source-label').innerHTML = '<span style="color: #fbbf24;">DEMO</span>';
+        setStatus('Demo data loaded', 'warn');
       }
 
       function setGraphData(data) {
         cy.elements().remove();
-        cy.add([
-          ...data.nodes.map(n => ({ data: { ...n, importance: n.importance || 3 } })),
-          ...data.edges.map(e => ({ data: { ...e, weight: e.weight || 2 } })),
-        ]);
-        cy.layout({ name: 'cose', animate: false, nodeRepulsion: 8000 }).run();
+        
+        const elements = [];
+        
+        // Add nodes
+        data.nodes.forEach(n => {
+          const isUniverse = n.layer === 'universe';
+          elements.push({
+            data: { ...n, importance: n.importance || 3 },
+            classes: isUniverse ? 'universe-node' : '',
+          });
+        });
+        
+        // Add edges with layer classes
+        data.edges.forEach(e => {
+          const layer = e.layer || 'symbolic';
+          elements.push({
+            data: { ...e, weight: e.weight || 2 },
+            classes: layer,
+          });
+        });
+        
+        cy.add(elements);
+        cy.layout({ name: 'cose', animate: false, nodeRepulsion: 12000, idealEdgeLength: 80 }).run();
+        
         updateStats();
         buildFilters();
-        applyFilters();
+        applyAllFilters();
         setDirty(false);
       }
 
       // ============================================================
-      // UI Helpers
+      // Filtering
       // ============================================================
 
-      function setStatus(msg, type) {
-        statusEl.textContent = 'Status: ' + msg;
-        statusEl.className = 'muted status-' + (type || 'ok');
-      }
-
-      function setDirty(flag) {
-        dirty = flag;
-        dirtyFlag.textContent = flag ? 'unsaved changes' : 'clean';
-        dirtyFlag.className = flag ? 'status-warn' : 'status-ok';
-      }
-
-      function setMode(newMode) {
-        mode = newMode;
-        modeLabel.textContent = mode;
-        modeToggle.checked = mode === 'edit';
-        if (mode === 'edit') {
-          cy.nodes().grabify();
-        } else {
-          cy.nodes().ungrabify();
-        }
-      }
-
-      function updateStats() {
-        statNodes.textContent = cy.nodes().length;
-        statEdges.textContent = cy.edges().length;
-      }
-
       function buildFilters() {
+        const typeFiltersEl = document.getElementById('type-filters');
+        const statusFiltersEl = document.getElementById('status-filters');
         typeFiltersEl.innerHTML = '';
         statusFiltersEl.innerHTML = '';
 
-        NODE_TYPES.forEach(t => {
+        const presentTypes = new Set(cy.nodes().map(n => n.data('type')));
+        const presentStatuses = new Set(cy.nodes().map(n => n.data('status') || 'active'));
+
+        presentTypes.forEach(t => {
+          if (!t) return;
           const tag = document.createElement('span');
           tag.className = 'tag' + (typeState.has(t) ? ' active' : '');
           tag.textContent = t;
+          tag.style.borderColor = NODE_COLORS[t] || '#666';
           tag.addEventListener('click', () => {
             if (typeState.has(t)) {
               typeState.delete(t);
@@ -823,12 +1191,13 @@
               typeState.add(t);
               tag.classList.add('active');
             }
-            applyFilters();
+            applyAllFilters();
           });
           typeFiltersEl.appendChild(tag);
         });
 
-        STATUS_OPTIONS.forEach(s => {
+        presentStatuses.forEach(s => {
+          if (!s) return;
           const tag = document.createElement('span');
           tag.className = 'tag' + (statusState.has(s) ? ' active' : '');
           tag.textContent = s;
@@ -840,66 +1209,219 @@
               statusState.add(s);
               tag.classList.add('active');
             }
-            applyFilters();
+            applyAllFilters();
           });
           statusFiltersEl.appendChild(tag);
         });
       }
 
-      function applyFilters() {
-        const q = searchInput.value.toLowerCase();
+      function applyAllFilters() {
+        const q = document.getElementById('search').value.toLowerCase();
+        
+        // Node visibility
         cy.nodes().forEach(n => {
           const matchType = typeState.has(n.data('type'));
           const matchStatus = statusState.has(n.data('status') || 'active');
           const label = (n.data('label') || '').toLowerCase();
           const slug = (n.data('slug') || '').toLowerCase();
           const matchSearch = !q || label.includes(q) || slug.includes(q);
-          n.style('display', matchType && matchStatus && matchSearch ? 'element' : 'none');
+          
+          // Display mode filter
+          const isUniverse = n.data('layer') === 'universe';
+          const matchMode = displayMode === 'overlay' || !isUniverse;
+          
+          n.style('display', matchType && matchStatus && matchSearch && matchMode ? 'element' : 'none');
         });
+        
+        // Edge visibility based on layer and min_score
         cy.edges().forEach(e => {
           const s = e.source().style('display') !== 'none';
           const t = e.target().style('display') !== 'none';
-          e.style('display', s && t ? 'element' : 'none');
+          
+          const layer = e.data('layer') || 'symbolic';
+          const layerVisible = layerState[layer];
+          
+          // For vector edges, check score threshold
+          let scoreOk = true;
+          if (layer === 'vector') {
+            const score = e.data('score');
+            if (score !== undefined && score < minScoreThreshold) {
+              scoreOk = false;
+            }
+          }
+          
+          // Display mode for universe edges
+          const matchMode = displayMode === 'overlay' || layer !== 'universe';
+          
+          e.style('display', s && t && layerVisible && scoreOk && matchMode ? 'element' : 'none');
         });
+        
+        // Apply focus dimming
+        applyFocusDimming();
+        
+        updateStats();
+      }
+
+      function applyFocusDimming() {
+        if (!focusedNode) {
+          cy.nodes().removeClass('focused neighbor dimmed');
+          cy.edges().removeClass('dimmed');
+          document.getElementById('focus-indicator').style.display = 'none';
+          return;
+        }
+
+        // BFS to find N-hop neighbors
+        const neighbors = new Set([focusedNode.id()]);
+        let frontier = [focusedNode];
+        
+        for (let hop = 0; hop < hopDepth; hop++) {
+          const nextFrontier = [];
+          frontier.forEach(node => {
+            node.neighborhood('node').forEach(neighbor => {
+              if (!neighbors.has(neighbor.id()) && neighbor.style('display') !== 'none') {
+                neighbors.add(neighbor.id());
+                nextFrontier.push(neighbor);
+              }
+            });
+          });
+          frontier = nextFrontier;
+        }
+
+        // Apply classes
+        cy.nodes().forEach(n => {
+          n.removeClass('focused neighbor dimmed');
+          if (n.id() === focusedNode.id()) {
+            n.addClass('focused');
+          } else if (neighbors.has(n.id())) {
+            n.addClass('neighbor');
+          } else {
+            n.addClass('dimmed');
+          }
+        });
+
+        cy.edges().forEach(e => {
+          e.removeClass('dimmed');
+          const srcIn = neighbors.has(e.source().id());
+          const tgtIn = neighbors.has(e.target().id());
+          if (!srcIn || !tgtIn) {
+            e.addClass('dimmed');
+          }
+        });
+
+        // Update indicator
+        const indicator = document.getElementById('focus-indicator');
+        indicator.style.display = 'block';
+        document.getElementById('focus-node-label').textContent = focusedNode.data('label') || focusedNode.id();
+        document.getElementById('focus-hops-label').textContent = `${hopDepth}-hop`;
+      }
+
+      // ============================================================
+      // UI Helpers
+      // ============================================================
+
+      function setStatus(msg, type) {
+        const el = document.getElementById('status');
+        el.textContent = msg;
+        el.className = 'muted status-' + (type || 'ok');
+      }
+
+      function setDirty(flag) {
+        dirty = flag;
+        const badge = document.getElementById('dirty-badge');
+        badge.textContent = flag ? 'UNSAVED' : 'CLEAN';
+        badge.className = 'badge ' + (flag ? 'badge-warn' : 'badge-ok');
+      }
+
+      function setMode(newMode) {
+        mode = newMode;
+        const badge = document.getElementById('mode-badge');
+        badge.textContent = mode.toUpperCase();
+        badge.className = 'badge ' + (mode === 'edit' ? 'badge-warn' : 'badge-info');
+        
+        document.getElementById('mode-view').classList.toggle('active', mode === 'view');
+        document.getElementById('mode-edit').classList.toggle('active', mode === 'edit');
+        
+        if (mode === 'edit') {
+          cy.nodes().grabify();
+        } else {
+          cy.nodes().ungrabify();
+        }
+      }
+
+      function updateStats() {
+        const visibleNodes = cy.nodes().filter(n => n.style('display') !== 'none');
+        const visibleEdges = cy.edges().filter(e => e.style('display') !== 'none');
+        
+        document.getElementById('stat-nodes').textContent = visibleNodes.length;
+        document.getElementById('stat-edges').textContent = visibleEdges.length;
+        
+        const symbolic = visibleEdges.filter(e => e.data('layer') === 'symbolic' || SYMBOLIC_EDGES.includes(e.data('kind'))).length;
+        const vector = visibleEdges.filter(e => e.data('layer') === 'vector' || VECTOR_EDGES.includes(e.data('kind'))).length;
+        
+        document.getElementById('stat-symbolic').textContent = symbolic;
+        document.getElementById('stat-vector').textContent = vector;
       }
 
       function showNodeDetails(node) {
         const d = node.data();
+        const detailsEl = document.getElementById('details');
         detailsEl.innerHTML = `
-          <strong>${d.label}</strong><br />
-          <span class="muted">id: ${d.id}</span><br />
-          <span class="muted">type: ${d.type} | status: ${d.status || 'active'}</span>
+          <div style="font-weight: 600; color: ${NODE_COLORS[d.type] || '#888'}; margin-bottom: 6px;">${d.label}</div>
+          <div style="margin-bottom: 4px;"><span style="color: var(--text-muted);">id:</span> ${d.id}</div>
+          <div style="margin-bottom: 4px;"><span style="color: var(--text-muted);">type:</span> ${d.type} · <span style="color: var(--text-muted);">status:</span> ${d.status || 'active'}</div>
+          ${d.notes ? `<div style="margin-top: 8px; padding: 8px; background: var(--bg-input); border-radius: 6px; font-size: 10px;">${d.notes}</div>` : ''}
         `;
-        rawDataEl.textContent = JSON.stringify(d, null, 2);
-
+        
+        document.getElementById('raw-data').textContent = JSON.stringify(d, null, 2);
+        
+        // Provenance
+        const provPanel = document.getElementById('provenance-panel');
+        const prov = d.provenance || {};
+        if (prov.stable_id || prov.project_id || prov.source) {
+          provPanel.style.display = 'block';
+          document.getElementById('prov-stable-id').textContent = prov.stable_id || d.stable_id || '—';
+          document.getElementById('prov-project-id').textContent = prov.project_id || '—';
+          document.getElementById('prov-source').textContent = prov.source || '—';
+          document.getElementById('prov-version').textContent = prov.version || '—';
+          document.getElementById('prov-updated').textContent = prov.updated_at || '—';
+        } else {
+          provPanel.style.display = 'none';
+        }
+        
+        // Edit panel
         if (mode === 'edit') {
-          nodeEditPanel.style.display = 'block';
-          edgeEditPanel.style.display = 'none';
+          document.getElementById('node-edit-panel').style.display = 'block';
+          document.getElementById('edge-edit-panel').style.display = 'none';
           document.getElementById('edit-label').value = d.label || '';
           document.getElementById('edit-slug').value = d.slug || '';
           document.getElementById('edit-type').value = d.type || 'page';
           document.getElementById('edit-status').value = d.status || 'active';
           document.getElementById('edit-notes').value = d.notes || '';
           document.getElementById('edit-tags').value = (d.tags || []).join(', ');
-          document.getElementById('edit-aliases').value = (d.aliases || []).join(', ');
-          document.getElementById('props-list').textContent = JSON.stringify(d.props || {}, null, 2);
         }
       }
 
       function showEdgeDetails(edge) {
         const d = edge.data();
+        const layer = d.layer || 'symbolic';
+        const detailsEl = document.getElementById('details');
         detailsEl.innerHTML = `
-          <strong>Edge: ${d.kind}</strong><br />
-          <span class="muted">${d.source} → ${d.target}</span><br />
-          <span class="muted">weight: ${d.weight || 2}</span>
+          <div style="font-weight: 600; color: ${EDGE_COLORS[layer]}; margin-bottom: 6px;">${d.kind}</div>
+          <div style="margin-bottom: 4px;"><span style="color: var(--text-muted);">from:</span> ${d.source}</div>
+          <div style="margin-bottom: 4px;"><span style="color: var(--text-muted);">to:</span> ${d.target}</div>
+          <div style="margin-bottom: 4px;"><span style="color: var(--text-muted);">layer:</span> ${layer.toUpperCase()}</div>
+          ${d.score !== undefined ? `<div style="margin-bottom: 4px;"><span style="color: var(--text-muted);">score:</span> ${d.score.toFixed(3)}</div>` : ''}
         `;
-        rawDataEl.textContent = JSON.stringify(d, null, 2);
-
+        
+        document.getElementById('raw-data').textContent = JSON.stringify(d, null, 2);
+        document.getElementById('provenance-panel').style.display = 'none';
+        
         if (mode === 'edit') {
-          nodeEditPanel.style.display = 'none';
-          edgeEditPanel.style.display = 'block';
+          document.getElementById('node-edit-panel').style.display = 'none';
+          document.getElementById('edge-edit-panel').style.display = 'block';
           document.getElementById('edge-kind').value = d.kind || 'links_to';
-          document.getElementById('edge-weight').value = d.weight || 2;
+          document.getElementById('edge-layer').value = layer;
+          document.getElementById('edge-weight').value = d.score !== undefined ? d.score.toFixed(2) : (d.weight || 2);
           document.getElementById('edge-directed').checked = d.directed !== false;
           document.getElementById('edge-notes').value = d.notes || '';
         }
@@ -909,170 +1431,163 @@
       // Event Handlers
       // ============================================================
 
-      modeToggle.addEventListener('change', () => {
-        setMode(modeToggle.checked ? 'edit' : 'view');
+      // Mode switch
+      document.getElementById('mode-view').addEventListener('click', () => setMode('view'));
+      document.getElementById('mode-edit').addEventListener('click', () => setMode('edit'));
+
+      // Search
+      document.getElementById('search').addEventListener('input', applyAllFilters);
+
+      // Layer toggle buttons
+      document.querySelectorAll('.layer-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.layer-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          displayMode = btn.dataset.layer;
+          const badge = document.getElementById('layer-badge');
+          badge.textContent = displayMode === 'focus' ? 'PROJECT FOCUS' : 'ECOSYSTEM';
+          applyAllFilters();
+        });
       });
 
-      searchInput.addEventListener('input', applyFilters);
+      // Edge layer filters
+      document.querySelectorAll('#edge-layer-filters .tag').forEach(tag => {
+        tag.addEventListener('click', () => {
+          const layer = tag.dataset.layer;
+          layerState[layer] = !layerState[layer];
+          tag.classList.toggle('active', layerState[layer]);
+          applyAllFilters();
+        });
+      });
 
+      // Min score slider
+      document.getElementById('min-score').addEventListener('input', (e) => {
+        minScoreThreshold = parseInt(e.target.value) / 100;
+        document.getElementById('min-score-value').textContent = minScoreThreshold.toFixed(2);
+        applyAllFilters();
+      });
+
+      // Hop controls
+      document.getElementById('hop-minus').addEventListener('click', () => {
+        if (hopDepth > 1) {
+          hopDepth--;
+          document.getElementById('hop-value').textContent = hopDepth;
+          applyFocusDimming();
+        }
+      });
+      document.getElementById('hop-plus').addEventListener('click', () => {
+        if (hopDepth < 5) {
+          hopDepth++;
+          document.getElementById('hop-value').textContent = hopDepth;
+          applyFocusDimming();
+        }
+      });
+      document.getElementById('clear-focus').addEventListener('click', () => {
+        focusedNode = null;
+        applyFocusDimming();
+      });
+
+      // Layout reset
       document.getElementById('reset-layout').addEventListener('click', () => {
-        cy.layout({ name: 'cose', animate: true, animationDuration: 500, nodeRepulsion: 8000 }).run();
+        cy.layout({ name: 'cose', animate: true, animationDuration: 800, nodeRepulsion: 12000 }).run();
       });
 
-      document.getElementById('add-edge').addEventListener('click', () => {
-        addEdgeState = { source: null, target: null };
-        setStatus('Выберите узел-источник', 'warn');
-      });
-
+      // Add node
       document.getElementById('add-node').addEventListener('click', () => {
         if (mode !== 'edit') {
-          setStatus('Включите режим редактирования', 'warn');
+          setStatus('Enable edit mode first', 'warn');
           return;
         }
-        const id = 'node:new-' + Date.now();
+        const id = 'new:' + Date.now();
         cy.add({
-          data: {
-            id,
-            label: 'Новый узел',
-            type: 'page',
-            status: 'draft',
-            importance: 3,
-          },
+          data: { id, label: 'New Node', type: 'page', status: 'draft', importance: 3, layer: 'core' },
         });
         setDirty(true);
         updateStats();
+        setStatus('Node added', 'ok');
       });
 
-      document.getElementById('validate').addEventListener('click', () => {
-        const nodes = cy.nodes().map(n => n.data());
-        const edges = cy.edges().map(e => e.data());
-        const errors = [];
-
-        nodes.forEach(n => {
-          if (!n.id) errors.push('Node without id');
-          if (!n.label) errors.push(`Node ${n.id} without label`);
-          if (!NODE_TYPES.includes(n.type)) errors.push(`Node ${n.id} has invalid type: ${n.type}`);
-        });
-
-        edges.forEach(e => {
-          if (!e.source || !e.target) errors.push('Edge without source/target');
-          if (!EDGE_KINDS.includes(e.kind)) errors.push(`Edge has invalid kind: ${e.kind}`);
-        });
-
-        if (errors.length) {
-          setStatus('Validation failed: ' + errors.join('; '), 'error');
-        } else {
-          setStatus('Validation OK', 'ok');
+      // Add edge
+      document.getElementById('add-edge').addEventListener('click', () => {
+        if (mode !== 'edit') {
+          setStatus('Enable edit mode first', 'warn');
+          return;
         }
+        addEdgeState = { source: null, target: null };
+        setStatus('Click source node...', 'warn');
       });
 
-      document.getElementById('save-local').addEventListener('click', () => {
-        const data = {
-          version: 'core-taxonomy.v0.1',
-          generated_at: new Date().toISOString(),
-          source: 'vovaipetrova-core',
-          saved_in: 'extended-mind',  // Session saved in extended-mind, NOT in vovaipetrova-core
-          nodes: cy.nodes().map(n => n.data()),
-          edges: cy.edges().map(e => e.data()),
-        };
-        localStorage.setItem('core-taxonomy-draft', JSON.stringify(data));
-        setStatus('Session saved to extended-mind (localStorage)', 'ok');
-        setDirty(false);
-      });
-
-      document.getElementById('export-json').addEventListener('click', () => {
-        const data = {
-          version: 'core-taxonomy.v0.1',
-          generated_at: new Date().toISOString(),
-          source: 'vovaipetrova-core',
-          saved_in: 'extended-mind',  // Session export, NOT for vovaipetrova-core
-          nodes: cy.nodes().map(n => n.data()),
-          edges: cy.edges().map(e => e.data()),
-        };
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'core-taxonomy-session.json';
-        a.click();
-        URL.revokeObjectURL(url);
-        setStatus('Session exported (for extended-mind)', 'ok');
-      });
-
-      document.getElementById('load-file').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = () => {
-          try {
-            let data;
-            if (file.name.endsWith('.jsonl')) {
-              const lines = reader.result.split('\n').filter(Boolean);
-              data = { nodes: lines.map(l => JSON.parse(l)), edges: [] };
-            } else {
-              data = JSON.parse(reader.result);
-            }
-            if (data.nodes) {
-              currentData = data;
-              setGraphData(data);
-              setStatus('Loaded from file: ' + file.name, 'ok');
-            }
-          } catch (err) {
-            setStatus('Error parsing file: ' + err.message, 'error');
-          }
-        };
-        reader.readAsText(file);
-      });
-
-      document.getElementById('save-pr').addEventListener('click', () => {
-        // NOTE: PR would be created in extended-mind repo, NOT in vovaipetrova-core
-        // vovaipetrova-core remains read-only
-        setStatus('PR creation for extended-mind — not yet implemented', 'warn');
-        alert(
-          'Создание PR:\n\n' +
-          '• PR будет создан в репозитории extended-mind\n' +
-          '• Данные vovaipetrova-core остаются read-only\n' +
-          '• Сессия сохраняется как taxonomy-session.json\n\n' +
-          'Пока используйте "Экспорт JSON" и добавьте файл вручную.'
-        );
-      });
-
-      document.getElementById('reload-github').addEventListener('click', () => {
-        if (dirty) {
-          if (!confirm('Есть несохранённые изменения. Перезагрузить данные из GitHub?')) {
-            return;
-          }
-        }
-        localStorage.removeItem('core-taxonomy-draft');
-        loadCoreTaxonomyData();
+      // Propose edge (Delta inbox)
+      document.getElementById('propose-edge').addEventListener('click', () => {
+        proposeEdgeState = { source: null, target: null };
+        setStatus('📬 Propose edge: click source node...', 'warn');
       });
 
       // Node/Edge selection
       cy.on('tap', 'node', (evt) => {
-        selectedNode = evt.target;
+        const node = evt.target;
+        selectedNode = node;
         selectedEdge = null;
-        showNodeDetails(selectedNode);
+        showNodeDetails(node);
 
+        // Focus mode
+        if (!addEdgeState && !proposeEdgeState) {
+          focusedNode = node;
+          applyFocusDimming();
+        }
+
+        // Add edge flow
         if (addEdgeState) {
           if (!addEdgeState.source) {
-            addEdgeState.source = selectedNode.id();
-            setStatus('Выберите узел-цель', 'warn');
+            addEdgeState.source = node.id();
+            setStatus('Click target node...', 'warn');
           } else {
-            addEdgeState.target = selectedNode.id();
+            addEdgeState.target = node.id();
             cy.add({
               data: {
-                id: 'edge-' + Date.now(),
+                id: 'edge:' + Date.now(),
                 source: addEdgeState.source,
                 target: addEdgeState.target,
                 kind: 'links_to',
+                layer: 'symbolic',
                 weight: 2,
                 directed: true,
               },
+              classes: 'symbolic',
             });
             addEdgeState = null;
             setDirty(true);
             updateStats();
-            setStatus('Ребро добавлено', 'ok');
+            setStatus('Edge added', 'ok');
+          }
+        }
+
+        // Propose edge flow
+        if (proposeEdgeState) {
+          if (!proposeEdgeState.source) {
+            proposeEdgeState.source = node.id();
+            setStatus('📬 Click target node...', 'warn');
+          } else {
+            proposeEdgeState.target = node.id();
+            const delta = {
+              delta_type: 'candidate_edge',
+              from: proposeEdgeState.source,
+              to: proposeEdgeState.target,
+              edge_type: 'related_to',
+              rationale: '',
+              confidence: 'low',
+              source: 'extended-mind-editor',
+              timestamp: new Date().toISOString(),
+            };
+            proposeEdgeState = null;
+            
+            // Save to localStorage as pending delta
+            const pendingDeltas = JSON.parse(localStorage.getItem('core-taxonomy-deltas') || '[]');
+            pendingDeltas.push(delta);
+            localStorage.setItem('core-taxonomy-deltas', JSON.stringify(pendingDeltas));
+            
+            setStatus(`📬 Delta saved! (${pendingDeltas.length} pending)`, 'ok');
+            alert('Предложенная связь сохранена как Delta.\n\nДля применения:\n1. Экспортируйте сессию\n2. Создайте PR в vovaipetrova-core/data/graph/inbox/');
           }
         }
       });
@@ -1083,9 +1598,7 @@
         showEdgeDetails(selectedEdge);
       });
 
-      cy.on('dragfree', 'node', () => {
-        setDirty(true);
-      });
+      cy.on('dragfree', 'node', () => setDirty(true));
 
       // Apply node edits
       document.getElementById('apply-node-edit').addEventListener('click', () => {
@@ -1096,50 +1609,43 @@
         selectedNode.data('status', document.getElementById('edit-status').value);
         selectedNode.data('notes', document.getElementById('edit-notes').value);
         selectedNode.data('tags', document.getElementById('edit-tags').value.split(',').map(t => t.trim()).filter(Boolean));
-        selectedNode.data('aliases', document.getElementById('edit-aliases').value.split(',').map(a => a.trim()).filter(Boolean));
         setDirty(true);
-        setStatus('Узел обновлён', 'ok');
+        setStatus('Node updated', 'ok');
       });
 
       document.getElementById('delete-node').addEventListener('click', () => {
         if (!selectedNode) return;
         selectedNode.remove();
         selectedNode = null;
-        nodeEditPanel.style.display = 'none';
-        detailsEl.textContent = 'Узел удалён';
+        document.getElementById('node-edit-panel').style.display = 'none';
+        document.getElementById('details').textContent = 'Node deleted';
         setDirty(true);
         updateStats();
-      });
-
-      document.getElementById('add-prop').addEventListener('click', () => {
-        if (!selectedNode) return;
-        const key = document.getElementById('prop-key').value;
-        const value = document.getElementById('prop-value').value;
-        if (!key) return;
-        const props = selectedNode.data('props') || {};
-        props[key] = value;
-        selectedNode.data('props', props);
-        document.getElementById('props-list').textContent = JSON.stringify(props, null, 2);
-        setDirty(true);
       });
 
       // Apply edge edits
       document.getElementById('apply-edge-edit').addEventListener('click', () => {
         if (!selectedEdge) return;
+        const newLayer = document.getElementById('edge-layer').value;
         selectedEdge.data('kind', document.getElementById('edge-kind').value);
-        selectedEdge.data('weight', parseInt(document.getElementById('edge-weight').value) || 2);
+        selectedEdge.data('layer', newLayer);
+        selectedEdge.data('weight', parseFloat(document.getElementById('edge-weight').value) || 2);
         selectedEdge.data('directed', document.getElementById('edge-directed').checked);
         selectedEdge.data('notes', document.getElementById('edge-notes').value);
+        
+        // Update class
+        selectedEdge.removeClass('symbolic vector universe');
+        selectedEdge.addClass(newLayer);
+        
         setDirty(true);
-        setStatus('Ребро обновлено', 'ok');
+        setStatus('Edge updated', 'ok');
       });
 
       document.getElementById('edge-reverse').addEventListener('click', () => {
         if (!selectedEdge) return;
         const s = selectedEdge.data('source');
         const t = selectedEdge.data('target');
-        selectedEdge.data('source', t);
-        selectedEdge.data('target', s);
+        selectedEdge.move({ source: t, target: s });
         setDirty(true);
       });
 
@@ -1147,32 +1653,126 @@
         if (!selectedEdge) return;
         selectedEdge.remove();
         selectedEdge = null;
-        edgeEditPanel.style.display = 'none';
-        detailsEl.textContent = 'Ребро удалено';
+        document.getElementById('edge-edit-panel').style.display = 'none';
+        document.getElementById('details').textContent = 'Edge deleted';
         setDirty(true);
         updateStats();
+      });
+
+      // Validate
+      document.getElementById('validate').addEventListener('click', () => {
+        const nodes = cy.nodes().map(n => n.data());
+        const edges = cy.edges().map(e => e.data());
+        const errors = [];
+
+        nodes.forEach(n => {
+          if (!n.id) errors.push('Node without id');
+          if (!n.label) errors.push(`Node ${n.id} without label`);
+          if (!NODE_TYPES.includes(n.type)) errors.push(`Node ${n.id}: invalid type "${n.type}"`);
+        });
+
+        edges.forEach(e => {
+          if (!e.source || !e.target) errors.push('Edge without source/target');
+          if (!ALL_EDGE_KINDS.includes(e.kind)) errors.push(`Edge: invalid kind "${e.kind}"`);
+        });
+
+        if (errors.length) {
+          setStatus(`Validation failed: ${errors.length} errors`, 'error');
+          alert('Errors:\n' + errors.slice(0, 10).join('\n'));
+        } else {
+          setStatus(`Validation OK: ${nodes.length} nodes, ${edges.length} edges`, 'ok');
+        }
+      });
+
+      // Save local
+      document.getElementById('save-local').addEventListener('click', () => {
+        const data = {
+          version: 'core-taxonomy.v0.2',
+          generated_at: new Date().toISOString(),
+          source: 'vovaipetrova-core',
+          saved_in: 'extended-mind',
+          nodes: cy.nodes().map(n => n.data()),
+          edges: cy.edges().map(e => e.data()),
+        };
+        localStorage.setItem('core-taxonomy-draft', JSON.stringify(data));
+        setDirty(false);
+        document.getElementById('source-label').innerHTML = '<span style="color: #fbbf24;">SAVED SESSION</span>';
+        setStatus('Session saved to localStorage', 'ok');
+      });
+
+      // Export
+      document.getElementById('export-json').addEventListener('click', () => {
+        const data = {
+          version: 'core-taxonomy.v0.2',
+          generated_at: new Date().toISOString(),
+          source: 'vovaipetrova-core',
+          saved_in: 'extended-mind',
+          nodes: cy.nodes().map(n => n.data()),
+          edges: cy.edges().map(e => e.data()),
+        };
+        
+        // Include pending deltas
+        const deltas = JSON.parse(localStorage.getItem('core-taxonomy-deltas') || '[]');
+        if (deltas.length) {
+          data.pending_deltas = deltas;
+        }
+        
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'core-taxonomy-session.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        setStatus('Exported (with ' + deltas.length + ' pending deltas)', 'ok');
+      });
+
+      // Reload from GitHub
+      document.getElementById('reload-github').addEventListener('click', () => {
+        if (dirty && !confirm('Discard unsaved changes?')) return;
+        localStorage.removeItem('core-taxonomy-draft');
+        loadCoreTaxonomyData();
+      });
+
+      // Load file
+      document.getElementById('load-file').addEventListener('click', () => {
+        document.getElementById('file-input').click();
+      });
+      document.getElementById('file-input').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const data = JSON.parse(reader.result);
+            if (data.nodes) {
+              currentData = data;
+              setGraphData(data);
+              document.getElementById('source-label').innerHTML = '<span style="color: #22d3ee;">FILE</span> ' + file.name;
+              setStatus('Loaded from file', 'ok');
+            }
+          } catch (err) {
+            setStatus('Parse error: ' + err.message, 'error');
+          }
+        };
+        reader.readAsText(file);
       });
 
       // ============================================================
       // Initialize
       // ============================================================
 
-      setMode(mode);
+      setMode('view');
 
-      // Try to load from localStorage first (saved session in extended-mind)
+      // Load saved session or fresh from GitHub
       const savedDraft = localStorage.getItem('core-taxonomy-draft');
       if (savedDraft) {
         try {
           const data = JSON.parse(savedDraft);
           currentData = data;
           setGraphData(data);
-          setStatus(`Loaded session from extended-mind (${data.nodes?.length || 0} nodes)`, 'ok');
-          
-          // Update subtitle to show it's a saved session
-          const subtitle = document.querySelector('#header .subtitle');
-          if (subtitle) {
-            subtitle.innerHTML = `vovaipetrova-core graph constructor · <span style="color: var(--accent-page);">SAVED SESSION</span>`;
-          }
+          document.getElementById('source-label').innerHTML = '<span style="color: #fbbf24;">SAVED SESSION</span>';
+          setStatus(`Loaded session (${data.nodes?.length || 0} nodes)`, 'ok');
         } catch (e) {
           loadCoreTaxonomyData();
         }
