@@ -79,7 +79,25 @@ story-node → тезис, обсуждение → ADR, идея → проек
 ### 10. **graph/**
 Будущий слой графовых моделей (GraphRAG).
 
-### 11. **experiments/**
+### 11. **ecosystem/**
+Экосистемный слой — согласование проектов через Universe Graph.
+
+Ключевые компоненты:
+- `ECOSYSTEM_LAYER.md` — правила экосистемного слоя
+- `graph/` — узлы и рёбра межпроектных связей
+- `graph/inbox/` — входящие гипотезы (Graph Delta)
+
+Документация: `docs/ecosystem/`
+
+### 12. **spaces/extended-mind-console/**
+Инструменты экосистемы:
+- **Think Tank Editor** — визуализатор таксономии vovaipetrova-core
+- Три слоя рёбер: SYMBOLIC, VECTOR, UNIVERSE
+- Focus + Context, Provenance, Delta Inbox
+
+Документация: `docs/ecosystem/think-tank-editor.md`
+
+### 13. **experiments/**
 Песочница, ноутбуки, CLI-пробы, исследования.
 
 ---
