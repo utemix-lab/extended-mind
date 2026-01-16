@@ -1,0 +1,1144 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Core Taxonomy Editor — vovaipetrova</title>
+    <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
+    <style>
+      :root {
+        --bg-primary: #0f0f14;
+        --bg-panel: #1a1a24;
+        --bg-input: #252530;
+        --text-primary: #e4e4eb;
+        --text-muted: #8888a0;
+        --accent-page: #f59e0b;
+        --accent-term: #a78bfa;
+        --accent-story: #22d3ee;
+        --accent-tag: #22c55e;
+        --border: #333344;
+        --highlight: #f8fafc;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+        font-size: 12px;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+      }
+      #app {
+        display: grid;
+        grid-template-columns: 280px 1fr 320px;
+        gap: 10px;
+        padding: 10px;
+        height: 100vh;
+      }
+      #cy {
+        height: calc(100vh - 20px);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg-primary);
+      }
+      .panel {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px;
+        background: var(--bg-panel);
+        overflow-y: auto;
+        max-height: calc(100vh - 20px);
+      }
+      .panel h3 {
+        margin: 0 0 10px 0;
+        font-size: 13px;
+        color: var(--accent-term);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .row {
+        margin-bottom: 10px;
+      }
+      label {
+        display: block;
+        font-size: 11px;
+        margin-bottom: 4px;
+        color: var(--text-muted);
+      }
+      input[type="text"], select, textarea {
+        width: 100%;
+        padding: 8px;
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        color: var(--text-primary);
+        font-family: inherit;
+        font-size: 12px;
+      }
+      input[type="text"]:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: var(--accent-term);
+      }
+      textarea {
+        height: 80px;
+        resize: vertical;
+      }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .tag {
+        font-size: 11px;
+        padding: 3px 8px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg-input);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .tag:hover {
+        border-color: var(--accent-term);
+      }
+      .tag.active {
+        background: var(--accent-term);
+        color: var(--bg-primary);
+        border-color: var(--accent-term);
+      }
+      .btn {
+        padding: 8px 14px;
+        border: 1px solid var(--border);
+        background: var(--bg-input);
+        color: var(--text-primary);
+        cursor: pointer;
+        border-radius: 4px;
+        font-family: inherit;
+        font-size: 12px;
+        transition: all 0.2s;
+      }
+      .btn:hover {
+        background: var(--accent-term);
+        color: var(--bg-primary);
+        border-color: var(--accent-term);
+      }
+      .btn + .btn {
+        margin-left: 6px;
+      }
+      .btn-primary {
+        background: var(--accent-term);
+        color: var(--bg-primary);
+        border-color: var(--accent-term);
+      }
+      .btn-primary:hover {
+        background: var(--accent-page);
+        border-color: var(--accent-page);
+      }
+      .muted {
+        color: var(--text-muted);
+        font-size: 11px;
+      }
+      .mono {
+        font-family: inherit;
+        font-size: 10px;
+        white-space: pre-wrap;
+        background: var(--bg-input);
+        padding: 8px;
+        border-radius: 4px;
+        max-height: 150px;
+        overflow-y: auto;
+      }
+      .status-ok { color: #22c55e; }
+      .status-warn { color: #f59e0b; }
+      .status-error { color: #ef4444; }
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+      }
+      .legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .stat-box {
+        background: var(--bg-input);
+        padding: 10px;
+        border-radius: 6px;
+        text-align: center;
+      }
+      .stat-value {
+        font-size: 18px;
+        font-weight: bold;
+        color: var(--accent-term);
+      }
+      .stat-label {
+        font-size: 10px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+      }
+      .divider {
+        height: 1px;
+        background: var(--border);
+        margin: 12px 0;
+      }
+      #header {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        background: var(--bg-panel);
+        border-radius: 8px;
+        border: 1px solid var(--border);
+      }
+      #header h1 {
+        margin: 0;
+        font-size: 16px;
+        color: var(--accent-page);
+      }
+      #header .subtitle {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="header">
+        <div>
+          <h1>Core Taxonomy Editor</h1>
+          <span class="subtitle">vovaipetrova-core graph constructor</span>
+        </div>
+        <div>
+          <span id="mode-indicator" class="muted">Mode: <span id="mode-label">view</span></span>
+          <span id="dirty-indicator" class="muted" style="margin-left: 12px;">Status: <span id="dirty-flag" class="status-ok">clean</span></span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Фильтры и действия</h3>
+        
+        <div class="row">
+          <label>Поиск</label>
+          <input id="search" type="text" placeholder="Поиск по label, slug..." />
+        </div>
+
+        <div class="row">
+          <label>Типы узлов</label>
+          <div id="type-filters" class="tags"></div>
+        </div>
+
+        <div class="row">
+          <label>Статусы</label>
+          <div id="status-filters" class="tags"></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <button id="reset-layout" class="btn">Пересчитать layout</button>
+        </div>
+        <div class="row">
+          <button id="add-edge" class="btn">Добавить ребро</button>
+          <button id="add-node" class="btn">Добавить узел</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input id="toggle-mode" type="checkbox" />
+            <span>Режим редактирования</span>
+          </label>
+        </div>
+
+        <div class="row">
+          <button id="validate" class="btn">Валидация</button>
+          <button id="save-local" class="btn">Сохранить локально</button>
+        </div>
+        <div class="row">
+          <button id="save-pr" class="btn btn-primary">Создать PR</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <label>Загрузить из файла</label>
+          <input id="load-file" type="file" accept=".json,.jsonl" style="font-size: 11px;" />
+        </div>
+        <div class="row">
+          <button id="export-json" class="btn">Экспорт JSON</button>
+        </div>
+
+        <div id="status" class="muted" style="margin-top: 12px;">Status: idle</div>
+
+        <div class="divider"></div>
+
+        <details>
+          <summary class="muted" style="cursor: pointer;">Справка</summary>
+          <div class="muted" style="margin-top: 8px;">
+            <strong>Core Taxonomy Editor</strong> — конструктор графа таксономии vovaipetrova-core.
+            <br /><br />
+            <strong>Типы узлов:</strong>
+            <br />
+            • <span style="color: var(--accent-page);">page</span> — страницы из canon_map
+            <br />
+            • <span style="color: var(--accent-term);">term</span> — термины KB (kb_terms)
+            <br />
+            • <span style="color: var(--accent-story);">story</span> — эпизоды Stories
+            <br />
+            • <span style="color: var(--accent-tag);">tag</span> — теги/фасеты
+            <br /><br />
+            <strong>Типы рёбер:</strong>
+            <br />
+            • <strong>links_to</strong> — явная ссылка в тексте
+            <br />
+            • <strong>mentions</strong> — упоминание термина
+            <br />
+            • <strong>has_tag</strong> — страница → тег
+            <br />
+            • <strong>alias_of</strong> — синоним
+            <br />
+            • <strong>related_to</strong> — связанные темы
+            <br /><br />
+            <strong>Режимы:</strong>
+            <br />
+            • <strong>view</strong> — только просмотр
+            <br />
+            • <strong>edit</strong> — редактирование узлов, рёбер, свойств
+          </div>
+        </details>
+      </div>
+
+      <div id="cy"></div>
+
+      <div class="panel">
+        <h3>Статистика</h3>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div id="stat-nodes" class="stat-value">0</div>
+            <div class="stat-label">Узлов</div>
+          </div>
+          <div class="stat-box">
+            <div id="stat-edges" class="stat-value">0</div>
+            <div class="stat-label">Рёбер</div>
+          </div>
+        </div>
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-dot" style="background: var(--accent-page);"></div>
+            <span>page</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: var(--accent-term);"></div>
+            <span>term</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: var(--accent-story);"></div>
+            <span>story</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: var(--accent-tag);"></div>
+            <span>tag</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3>Детали</h3>
+        <div id="details" class="muted">Выберите узел или ребро</div>
+
+        <div id="node-edit-panel" style="margin-top: 12px; display: none;">
+          <label>Label</label>
+          <input id="edit-label" type="text" />
+          <label>Slug</label>
+          <input id="edit-slug" type="text" />
+          <label>Type</label>
+          <select id="edit-type"></select>
+          <label>Status</label>
+          <select id="edit-status"></select>
+          <label>Notes</label>
+          <textarea id="edit-notes"></textarea>
+          <label>Tags (comma-separated)</label>
+          <input id="edit-tags" type="text" />
+          <label>Aliases (comma-separated)</label>
+          <input id="edit-aliases" type="text" />
+          <button id="apply-node-edit" class="btn btn-primary" style="margin-top: 8px;">Применить</button>
+          <button id="delete-node" class="btn" style="margin-top: 8px;">Удалить узел</button>
+
+          <div class="divider"></div>
+          <h3>Custom Props</h3>
+          <div id="props-list" class="mono"></div>
+          <label>Key</label>
+          <input id="prop-key" type="text" />
+          <label>Value</label>
+          <input id="prop-value" type="text" />
+          <button id="add-prop" class="btn" style="margin-top: 6px;">Добавить prop</button>
+        </div>
+
+        <div id="edge-edit-panel" style="margin-top: 12px; display: none;">
+          <label>Тип связи</label>
+          <select id="edge-kind"></select>
+          <label>Weight (1..5)</label>
+          <input id="edge-weight" type="text" />
+          <label>Directed</label>
+          <input id="edge-directed" type="checkbox" />
+          <label>Notes</label>
+          <textarea id="edge-notes"></textarea>
+          <button id="apply-edge-edit" class="btn btn-primary" style="margin-top: 8px;">Применить</button>
+          <button id="edge-reverse" class="btn" style="margin-top: 8px;">Reverse</button>
+          <button id="edge-delete" class="btn" style="margin-top: 8px;">Удалить</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3>Raw Data</h3>
+        <div id="raw-data" class="mono">-</div>
+      </div>
+    </div>
+
+    <script>
+      // ============================================================
+      // Core Taxonomy Editor — Domain Model for vovaipetrova-core
+      // ============================================================
+
+      const NODE_TYPES = ['page', 'term', 'story', 'tag'];
+      const STATUS_OPTIONS = ['active', 'draft', 'archived', 'orphan'];
+      const EDGE_KINDS = [
+        'links_to',      // explicit link in text
+        'mentions',      // term mention
+        'has_tag',       // page → tag
+        'alias_of',      // synonym relation
+        'related_to',    // semantic relation
+        'child_of',      // hierarchy
+        'series_of',     // story series
+      ];
+
+      const NODE_COLORS = {
+        page: '#f59e0b',
+        term: '#a78bfa',
+        story: '#22d3ee',
+        tag: '#22c55e',
+      };
+
+      const params = new URLSearchParams(window.location.search);
+      let mode = params.get('mode') || 'view';
+      let dirty = false;
+      let currentData = { nodes: [], edges: [] };
+      let selectedNode = null;
+      let selectedEdge = null;
+      let addEdgeState = null;
+
+      // DOM elements
+      const cyContainer = document.getElementById('cy');
+      const modeLabel = document.getElementById('mode-label');
+      const dirtyFlag = document.getElementById('dirty-flag');
+      const modeToggle = document.getElementById('toggle-mode');
+      const searchInput = document.getElementById('search');
+      const typeFiltersEl = document.getElementById('type-filters');
+      const statusFiltersEl = document.getElementById('status-filters');
+      const statusEl = document.getElementById('status');
+      const detailsEl = document.getElementById('details');
+      const nodeEditPanel = document.getElementById('node-edit-panel');
+      const edgeEditPanel = document.getElementById('edge-edit-panel');
+      const rawDataEl = document.getElementById('raw-data');
+      const statNodes = document.getElementById('stat-nodes');
+      const statEdges = document.getElementById('stat-edges');
+
+      // Filter state
+      const typeState = new Set(NODE_TYPES);
+      const statusState = new Set(STATUS_OPTIONS);
+
+      // Populate dropdowns
+      const editType = document.getElementById('edit-type');
+      const editStatus = document.getElementById('edit-status');
+      const edgeKind = document.getElementById('edge-kind');
+
+      NODE_TYPES.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t;
+        opt.textContent = t;
+        editType.appendChild(opt);
+      });
+      STATUS_OPTIONS.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s;
+        opt.textContent = s;
+        editStatus.appendChild(opt);
+      });
+      EDGE_KINDS.forEach(k => {
+        const opt = document.createElement('option');
+        opt.value = k;
+        opt.textContent = k;
+        edgeKind.appendChild(opt);
+      });
+
+      // Initialize Cytoscape
+      const cy = cytoscape({
+        container: cyContainer,
+        elements: [],
+        layout: { name: 'cose', animate: false, nodeRepulsion: 8000 },
+        style: [
+          {
+            selector: 'node',
+            style: {
+              'background-color': (el) => NODE_COLORS[el.data('type')] || '#888',
+              'label': 'data(label)',
+              'font-size': '10px',
+              'color': '#e4e4eb',
+              'text-wrap': 'wrap',
+              'text-max-width': '100px',
+              'text-valign': 'bottom',
+              'text-margin-y': 5,
+              'width': 'mapData(importance, 1, 5, 20, 40)',
+              'height': 'mapData(importance, 1, 5, 20, 40)',
+            },
+          },
+          {
+            selector: 'node:selected',
+            style: {
+              'border-width': 3,
+              'border-color': '#f8fafc',
+            },
+          },
+          {
+            selector: 'edge',
+            style: {
+              'width': 'mapData(weight, 1, 5, 1, 4)',
+              'line-color': '#555566',
+              'target-arrow-color': '#555566',
+              'target-arrow-shape': 'triangle',
+              'curve-style': 'bezier',
+              'font-size': '8px',
+              'label': 'data(kind)',
+              'color': '#666677',
+              'text-rotation': 'autorotate',
+            },
+          },
+          {
+            selector: 'edge[directed = false]',
+            style: {
+              'target-arrow-shape': 'none',
+            },
+          },
+          {
+            selector: 'edge:selected',
+            style: {
+              'line-color': '#a78bfa',
+              'target-arrow-color': '#a78bfa',
+              'width': 3,
+            },
+          },
+        ],
+      });
+
+      // ============================================================
+      // Data Loading and Transformation
+      // ============================================================
+
+      async function loadCoreTaxonomyData() {
+        setStatus('Loading Core Taxonomy data...', 'warn');
+        
+        // Try to load from vovaipetrova-core exports
+        // In production, these would be served from a backend or fetched from GitHub
+        const CANON_MAP_URL = '../../../vovaipetrova-core/data/exports/canon_map.v1.json';
+        const KB_TERMS_URL = '../../../vovaipetrova-core/data/exports/kb_terms.v1.jsonl';
+        const STORIES_URL = '../../../vovaipetrova-core/data/exports/stories.v1.jsonl';
+        
+        try {
+          const nodes = [];
+          const edges = [];
+          const nodeIds = new Set();
+          const tagNodes = new Map();
+
+          // Load canon_map.v1.json (pages)
+          try {
+            const canonRes = await fetch(CANON_MAP_URL);
+            if (canonRes.ok) {
+              const canonMap = await canonRes.json();
+              Object.entries(canonMap).forEach(([slug, data]) => {
+                const nodeId = `page:${slug}`;
+                nodes.push({
+                  id: nodeId,
+                  label: data.preferred_title || slug,
+                  type: 'page',
+                  status: 'active',
+                  slug: slug,
+                  aliases: data.aliases || [],
+                  importance: 3,
+                  notes: '',
+                  props: {},
+                });
+                nodeIds.add(nodeId);
+
+                // Create alias edges
+                (data.aliases || []).forEach(alias => {
+                  const aliasId = `alias:${alias}`;
+                  if (!nodeIds.has(aliasId)) {
+                    nodes.push({
+                      id: aliasId,
+                      label: alias,
+                      type: 'tag',
+                      status: 'active',
+                      slug: alias,
+                      importance: 1,
+                    });
+                    nodeIds.add(aliasId);
+                  }
+                  edges.push({
+                    id: `edge:${aliasId}-${nodeId}`,
+                    source: aliasId,
+                    target: nodeId,
+                    kind: 'alias_of',
+                    weight: 2,
+                    directed: true,
+                  });
+                });
+              });
+            }
+          } catch (e) {
+            console.warn('Failed to load canon_map:', e);
+          }
+
+          // Load kb_terms.v1.jsonl (terms)
+          try {
+            const termsRes = await fetch(KB_TERMS_URL);
+            if (termsRes.ok) {
+              const termsText = await termsRes.text();
+              termsText.split('\n').filter(Boolean).forEach(line => {
+                const term = JSON.parse(line);
+                const nodeId = `term:${term.slug}`;
+                nodes.push({
+                  id: nodeId,
+                  label: term.title,
+                  type: 'term',
+                  status: 'active',
+                  slug: term.slug,
+                  stable_id: term.stable_id,
+                  lite_summary: term.lite_summary,
+                  tags: term.tags || [],
+                  importance: 4,
+                  notes: term.lite_summary || '',
+                  props: { project_id: term.project_id },
+                });
+                nodeIds.add(nodeId);
+
+                // Create tag nodes and edges
+                (term.tags || []).forEach(tag => {
+                  const tagId = `tag:${tag}`;
+                  if (!tagNodes.has(tagId)) {
+                    tagNodes.set(tagId, {
+                      id: tagId,
+                      label: tag,
+                      type: 'tag',
+                      status: 'active',
+                      slug: tag,
+                      importance: 2,
+                    });
+                  }
+                  edges.push({
+                    id: `edge:${nodeId}-${tagId}`,
+                    source: nodeId,
+                    target: tagId,
+                    kind: 'has_tag',
+                    weight: 1,
+                    directed: true,
+                  });
+                });
+
+                // Create links_to edges from term.links
+                (term.links || []).forEach(link => {
+                  const targetId = `page:${link.replace(/^\.\.\//, '').replace(/\.md$/, '')}`;
+                  if (nodeIds.has(targetId) || link.startsWith('/') || link.startsWith('http')) {
+                    return; // Skip external or non-existent
+                  }
+                  edges.push({
+                    id: `edge:${nodeId}-${targetId}`,
+                    source: nodeId,
+                    target: targetId,
+                    kind: 'links_to',
+                    weight: 2,
+                    directed: true,
+                  });
+                });
+              });
+            }
+          } catch (e) {
+            console.warn('Failed to load kb_terms:', e);
+          }
+
+          // Load stories.v1.jsonl
+          try {
+            const storiesRes = await fetch(STORIES_URL);
+            if (storiesRes.ok) {
+              const storiesText = await storiesRes.text();
+              storiesText.split('\n').filter(Boolean).forEach(line => {
+                const story = JSON.parse(line);
+                const nodeId = `story:${story.slug}`;
+                nodes.push({
+                  id: nodeId,
+                  label: story.slug,
+                  type: 'story',
+                  status: 'active',
+                  slug: story.slug,
+                  stable_id: story.stable_id,
+                  tldr: story.tldr,
+                  importance: 3,
+                  notes: story.tldr || '',
+                  props: { series_id: story.series_id, project_id: story.project_id },
+                });
+                nodeIds.add(nodeId);
+              });
+            }
+          } catch (e) {
+            console.warn('Failed to load stories:', e);
+          }
+
+          // Add collected tag nodes
+          tagNodes.forEach(node => {
+            if (!nodeIds.has(node.id)) {
+              nodes.push(node);
+              nodeIds.add(node.id);
+            }
+          });
+
+          currentData = { nodes, edges };
+          setGraphData(currentData);
+          setStatus(`Loaded: ${nodes.length} nodes, ${edges.length} edges`, 'ok');
+        } catch (e) {
+          console.error('Error loading data:', e);
+          setStatus('Error loading data: ' + e.message, 'error');
+          loadDemoData();
+        }
+      }
+
+      function loadDemoData() {
+        // Demo data for testing when real data is not available
+        currentData = {
+          nodes: [
+            { id: 'page:vova-i-petrova', label: 'Вова и Петрова', type: 'page', status: 'active', importance: 5 },
+            { id: 'page:arhitektura-proekta', label: 'Архитектура проекта', type: 'page', status: 'active', importance: 4 },
+            { id: 'term:aliases', label: 'Aliases', type: 'term', status: 'active', importance: 4 },
+            { id: 'term:autolink', label: 'Autolink', type: 'term', status: 'active', importance: 4 },
+            { id: 'term:tags', label: 'Tags', type: 'term', status: 'active', importance: 4 },
+            { id: 'story:001-rannie-stranicy', label: '001: Ранние страницы', type: 'story', status: 'active', importance: 3 },
+            { id: 'story:002-adr-source-of-truth', label: '002: ADR Source of Truth', type: 'story', status: 'active', importance: 3 },
+            { id: 'tag:База_знаний', label: 'База_знаний', type: 'tag', status: 'active', importance: 2 },
+            { id: 'tag:Навигация', label: 'Навигация', type: 'tag', status: 'active', importance: 2 },
+          ],
+          edges: [
+            { id: 'e1', source: 'page:vova-i-petrova', target: 'page:arhitektura-proekta', kind: 'links_to', weight: 3, directed: true },
+            { id: 'e2', source: 'term:aliases', target: 'term:autolink', kind: 'related_to', weight: 2, directed: false },
+            { id: 'e3', source: 'term:aliases', target: 'tag:База_знаний', kind: 'has_tag', weight: 1, directed: true },
+            { id: 'e4', source: 'term:tags', target: 'tag:Навигация', kind: 'has_tag', weight: 1, directed: true },
+            { id: 'e5', source: 'story:001-rannie-stranicy', target: 'page:vova-i-petrova', kind: 'mentions', weight: 2, directed: true },
+          ],
+        };
+        setGraphData(currentData);
+        setStatus('Loaded demo data', 'warn');
+      }
+
+      function setGraphData(data) {
+        cy.elements().remove();
+        cy.add([
+          ...data.nodes.map(n => ({ data: { ...n, importance: n.importance || 3 } })),
+          ...data.edges.map(e => ({ data: { ...e, weight: e.weight || 2 } })),
+        ]);
+        cy.layout({ name: 'cose', animate: false, nodeRepulsion: 8000 }).run();
+        updateStats();
+        buildFilters();
+        applyFilters();
+        setDirty(false);
+      }
+
+      // ============================================================
+      // UI Helpers
+      // ============================================================
+
+      function setStatus(msg, type) {
+        statusEl.textContent = 'Status: ' + msg;
+        statusEl.className = 'muted status-' + (type || 'ok');
+      }
+
+      function setDirty(flag) {
+        dirty = flag;
+        dirtyFlag.textContent = flag ? 'unsaved changes' : 'clean';
+        dirtyFlag.className = flag ? 'status-warn' : 'status-ok';
+      }
+
+      function setMode(newMode) {
+        mode = newMode;
+        modeLabel.textContent = mode;
+        modeToggle.checked = mode === 'edit';
+        if (mode === 'edit') {
+          cy.nodes().grabify();
+        } else {
+          cy.nodes().ungrabify();
+        }
+      }
+
+      function updateStats() {
+        statNodes.textContent = cy.nodes().length;
+        statEdges.textContent = cy.edges().length;
+      }
+
+      function buildFilters() {
+        typeFiltersEl.innerHTML = '';
+        statusFiltersEl.innerHTML = '';
+
+        NODE_TYPES.forEach(t => {
+          const tag = document.createElement('span');
+          tag.className = 'tag' + (typeState.has(t) ? ' active' : '');
+          tag.textContent = t;
+          tag.addEventListener('click', () => {
+            if (typeState.has(t)) {
+              typeState.delete(t);
+              tag.classList.remove('active');
+            } else {
+              typeState.add(t);
+              tag.classList.add('active');
+            }
+            applyFilters();
+          });
+          typeFiltersEl.appendChild(tag);
+        });
+
+        STATUS_OPTIONS.forEach(s => {
+          const tag = document.createElement('span');
+          tag.className = 'tag' + (statusState.has(s) ? ' active' : '');
+          tag.textContent = s;
+          tag.addEventListener('click', () => {
+            if (statusState.has(s)) {
+              statusState.delete(s);
+              tag.classList.remove('active');
+            } else {
+              statusState.add(s);
+              tag.classList.add('active');
+            }
+            applyFilters();
+          });
+          statusFiltersEl.appendChild(tag);
+        });
+      }
+
+      function applyFilters() {
+        const q = searchInput.value.toLowerCase();
+        cy.nodes().forEach(n => {
+          const matchType = typeState.has(n.data('type'));
+          const matchStatus = statusState.has(n.data('status') || 'active');
+          const label = (n.data('label') || '').toLowerCase();
+          const slug = (n.data('slug') || '').toLowerCase();
+          const matchSearch = !q || label.includes(q) || slug.includes(q);
+          n.style('display', matchType && matchStatus && matchSearch ? 'element' : 'none');
+        });
+        cy.edges().forEach(e => {
+          const s = e.source().style('display') !== 'none';
+          const t = e.target().style('display') !== 'none';
+          e.style('display', s && t ? 'element' : 'none');
+        });
+      }
+
+      function showNodeDetails(node) {
+        const d = node.data();
+        detailsEl.innerHTML = `
+          <strong>${d.label}</strong><br />
+          <span class="muted">id: ${d.id}</span><br />
+          <span class="muted">type: ${d.type} | status: ${d.status || 'active'}</span>
+        `;
+        rawDataEl.textContent = JSON.stringify(d, null, 2);
+
+        if (mode === 'edit') {
+          nodeEditPanel.style.display = 'block';
+          edgeEditPanel.style.display = 'none';
+          document.getElementById('edit-label').value = d.label || '';
+          document.getElementById('edit-slug').value = d.slug || '';
+          document.getElementById('edit-type').value = d.type || 'page';
+          document.getElementById('edit-status').value = d.status || 'active';
+          document.getElementById('edit-notes').value = d.notes || '';
+          document.getElementById('edit-tags').value = (d.tags || []).join(', ');
+          document.getElementById('edit-aliases').value = (d.aliases || []).join(', ');
+          document.getElementById('props-list').textContent = JSON.stringify(d.props || {}, null, 2);
+        }
+      }
+
+      function showEdgeDetails(edge) {
+        const d = edge.data();
+        detailsEl.innerHTML = `
+          <strong>Edge: ${d.kind}</strong><br />
+          <span class="muted">${d.source} → ${d.target}</span><br />
+          <span class="muted">weight: ${d.weight || 2}</span>
+        `;
+        rawDataEl.textContent = JSON.stringify(d, null, 2);
+
+        if (mode === 'edit') {
+          nodeEditPanel.style.display = 'none';
+          edgeEditPanel.style.display = 'block';
+          document.getElementById('edge-kind').value = d.kind || 'links_to';
+          document.getElementById('edge-weight').value = d.weight || 2;
+          document.getElementById('edge-directed').checked = d.directed !== false;
+          document.getElementById('edge-notes').value = d.notes || '';
+        }
+      }
+
+      // ============================================================
+      // Event Handlers
+      // ============================================================
+
+      modeToggle.addEventListener('change', () => {
+        setMode(modeToggle.checked ? 'edit' : 'view');
+      });
+
+      searchInput.addEventListener('input', applyFilters);
+
+      document.getElementById('reset-layout').addEventListener('click', () => {
+        cy.layout({ name: 'cose', animate: true, animationDuration: 500, nodeRepulsion: 8000 }).run();
+      });
+
+      document.getElementById('add-edge').addEventListener('click', () => {
+        addEdgeState = { source: null, target: null };
+        setStatus('Выберите узел-источник', 'warn');
+      });
+
+      document.getElementById('add-node').addEventListener('click', () => {
+        if (mode !== 'edit') {
+          setStatus('Включите режим редактирования', 'warn');
+          return;
+        }
+        const id = 'node:new-' + Date.now();
+        cy.add({
+          data: {
+            id,
+            label: 'Новый узел',
+            type: 'page',
+            status: 'draft',
+            importance: 3,
+          },
+        });
+        setDirty(true);
+        updateStats();
+      });
+
+      document.getElementById('validate').addEventListener('click', () => {
+        const nodes = cy.nodes().map(n => n.data());
+        const edges = cy.edges().map(e => e.data());
+        const errors = [];
+
+        nodes.forEach(n => {
+          if (!n.id) errors.push('Node without id');
+          if (!n.label) errors.push(`Node ${n.id} without label`);
+          if (!NODE_TYPES.includes(n.type)) errors.push(`Node ${n.id} has invalid type: ${n.type}`);
+        });
+
+        edges.forEach(e => {
+          if (!e.source || !e.target) errors.push('Edge without source/target');
+          if (!EDGE_KINDS.includes(e.kind)) errors.push(`Edge has invalid kind: ${e.kind}`);
+        });
+
+        if (errors.length) {
+          setStatus('Validation failed: ' + errors.join('; '), 'error');
+        } else {
+          setStatus('Validation OK', 'ok');
+        }
+      });
+
+      document.getElementById('save-local').addEventListener('click', () => {
+        const data = {
+          version: 'core-taxonomy.v0.1',
+          generated_at: new Date().toISOString(),
+          source: 'vovaipetrova-core',
+          nodes: cy.nodes().map(n => n.data()),
+          edges: cy.edges().map(e => e.data()),
+        };
+        localStorage.setItem('core-taxonomy-draft', JSON.stringify(data));
+        setStatus('Saved to localStorage', 'ok');
+        setDirty(false);
+      });
+
+      document.getElementById('export-json').addEventListener('click', () => {
+        const data = {
+          version: 'core-taxonomy.v0.1',
+          generated_at: new Date().toISOString(),
+          source: 'vovaipetrova-core',
+          nodes: cy.nodes().map(n => n.data()),
+          edges: cy.edges().map(e => e.data()),
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'core-taxonomy-export.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      document.getElementById('load-file').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            let data;
+            if (file.name.endsWith('.jsonl')) {
+              const lines = reader.result.split('\n').filter(Boolean);
+              data = { nodes: lines.map(l => JSON.parse(l)), edges: [] };
+            } else {
+              data = JSON.parse(reader.result);
+            }
+            if (data.nodes) {
+              currentData = data;
+              setGraphData(data);
+              setStatus('Loaded from file: ' + file.name, 'ok');
+            }
+          } catch (err) {
+            setStatus('Error parsing file: ' + err.message, 'error');
+          }
+        };
+        reader.readAsText(file);
+      });
+
+      document.getElementById('save-pr').addEventListener('click', () => {
+        setStatus('PR creation not implemented in standalone mode', 'warn');
+        // TODO: Integrate with GitHub API or backend
+      });
+
+      // Node/Edge selection
+      cy.on('tap', 'node', (evt) => {
+        selectedNode = evt.target;
+        selectedEdge = null;
+        showNodeDetails(selectedNode);
+
+        if (addEdgeState) {
+          if (!addEdgeState.source) {
+            addEdgeState.source = selectedNode.id();
+            setStatus('Выберите узел-цель', 'warn');
+          } else {
+            addEdgeState.target = selectedNode.id();
+            cy.add({
+              data: {
+                id: 'edge-' + Date.now(),
+                source: addEdgeState.source,
+                target: addEdgeState.target,
+                kind: 'links_to',
+                weight: 2,
+                directed: true,
+              },
+            });
+            addEdgeState = null;
+            setDirty(true);
+            updateStats();
+            setStatus('Ребро добавлено', 'ok');
+          }
+        }
+      });
+
+      cy.on('tap', 'edge', (evt) => {
+        selectedEdge = evt.target;
+        selectedNode = null;
+        showEdgeDetails(selectedEdge);
+      });
+
+      cy.on('dragfree', 'node', () => {
+        setDirty(true);
+      });
+
+      // Apply node edits
+      document.getElementById('apply-node-edit').addEventListener('click', () => {
+        if (!selectedNode) return;
+        selectedNode.data('label', document.getElementById('edit-label').value);
+        selectedNode.data('slug', document.getElementById('edit-slug').value);
+        selectedNode.data('type', document.getElementById('edit-type').value);
+        selectedNode.data('status', document.getElementById('edit-status').value);
+        selectedNode.data('notes', document.getElementById('edit-notes').value);
+        selectedNode.data('tags', document.getElementById('edit-tags').value.split(',').map(t => t.trim()).filter(Boolean));
+        selectedNode.data('aliases', document.getElementById('edit-aliases').value.split(',').map(a => a.trim()).filter(Boolean));
+        setDirty(true);
+        setStatus('Узел обновлён', 'ok');
+      });
+
+      document.getElementById('delete-node').addEventListener('click', () => {
+        if (!selectedNode) return;
+        selectedNode.remove();
+        selectedNode = null;
+        nodeEditPanel.style.display = 'none';
+        detailsEl.textContent = 'Узел удалён';
+        setDirty(true);
+        updateStats();
+      });
+
+      document.getElementById('add-prop').addEventListener('click', () => {
+        if (!selectedNode) return;
+        const key = document.getElementById('prop-key').value;
+        const value = document.getElementById('prop-value').value;
+        if (!key) return;
+        const props = selectedNode.data('props') || {};
+        props[key] = value;
+        selectedNode.data('props', props);
+        document.getElementById('props-list').textContent = JSON.stringify(props, null, 2);
+        setDirty(true);
+      });
+
+      // Apply edge edits
+      document.getElementById('apply-edge-edit').addEventListener('click', () => {
+        if (!selectedEdge) return;
+        selectedEdge.data('kind', document.getElementById('edge-kind').value);
+        selectedEdge.data('weight', parseInt(document.getElementById('edge-weight').value) || 2);
+        selectedEdge.data('directed', document.getElementById('edge-directed').checked);
+        selectedEdge.data('notes', document.getElementById('edge-notes').value);
+        setDirty(true);
+        setStatus('Ребро обновлено', 'ok');
+      });
+
+      document.getElementById('edge-reverse').addEventListener('click', () => {
+        if (!selectedEdge) return;
+        const s = selectedEdge.data('source');
+        const t = selectedEdge.data('target');
+        selectedEdge.data('source', t);
+        selectedEdge.data('target', s);
+        setDirty(true);
+      });
+
+      document.getElementById('edge-delete').addEventListener('click', () => {
+        if (!selectedEdge) return;
+        selectedEdge.remove();
+        selectedEdge = null;
+        edgeEditPanel.style.display = 'none';
+        detailsEl.textContent = 'Ребро удалено';
+        setDirty(true);
+        updateStats();
+      });
+
+      // ============================================================
+      // Initialize
+      // ============================================================
+
+      setMode(mode);
+
+      // Try to load from localStorage first
+      const savedDraft = localStorage.getItem('core-taxonomy-draft');
+      if (savedDraft) {
+        try {
+          const data = JSON.parse(savedDraft);
+          currentData = data;
+          setGraphData(data);
+          setStatus('Loaded from localStorage', 'ok');
+        } catch (e) {
+          loadCoreTaxonomyData();
+        }
+      } else {
+        loadCoreTaxonomyData();
+      }
+    </script>
+  </body>
+</html>
