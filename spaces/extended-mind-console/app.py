@@ -891,5 +891,33 @@ with gr.Blocks(title="extended-mind console") as demo:
             else:
                 gr.Markdown("Cosmos map UI not found.")
 
+        with gr.TabItem("Core Taxonomy"):
+            gr.Markdown("## Core Taxonomy Editor")
+            gr.Markdown(
+                "Конструктор графа таксономии **vovaipetrova-core**. "
+                "Визуализация и редактирование страниц, терминов KB, Stories и их связей."
+            )
+            core_taxonomy_html_path = Path(__file__).parent / "core-taxonomy" / "index.html"
+            if core_taxonomy_html_path.exists():
+                import html as html_module
+
+                core_taxonomy_html = core_taxonomy_html_path.read_text(encoding="utf-8")
+                core_taxonomy_srcdoc = html_module.escape(core_taxonomy_html, quote=True)
+                gr.HTML(
+                    f'<iframe srcdoc="{core_taxonomy_srcdoc}" '
+                    'style="width:100%;height:800px;border:0;"></iframe>'
+                )
+                gr.Markdown(
+                    "**Режимы:** `?mode=view` (просмотр) или `?mode=edit` (редактирование)\n\n"
+                    "**Типы узлов:**\n"
+                    "- `page` — страницы из canon_map\n"
+                    "- `term` — термины KB\n"
+                    "- `story` — эпизоды Stories\n"
+                    "- `tag` — теги/фасеты\n\n"
+                    "**Типы рёбер:** links_to, mentions, has_tag, alias_of, related_to, child_of, series_of"
+                )
+            else:
+                gr.Markdown("Core Taxonomy editor not found.")
+
 if __name__ == "__main__":
     demo.launch()
