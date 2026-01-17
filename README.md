@@ -9,9 +9,28 @@ graph:
 ---
 
 # extended-mind  
+
 ## Links
 - Space: https://huggingface.co/spaces/utemix/extended-mind-console
 - How to use console: docs/console/how-to-use-console.md
+- Ecosystem: docs/ecosystem/index.md
+
+---
+
+## Философия
+
+> **Backend не скрыт. Backend — это сама экосистема.**
+
+Это живая исследовательская лаборатория, где контент, код и архитектура развиваются одновременно и образуют **единую экосистему мышления**.
+
+Три ракурса интерфейса:
+- **Narrative** — что происходит (контент, истории)
+- **System** — как это работает (графы, таксономия, решения)
+- **Service** — что делать дальше (действия поверх графа)
+
+Полный манифест: **[VISION.md](./VISION.md)**
+
+---
 
 **Система мышления и архитектурное ядро экосистемы utemix-lab**
 
