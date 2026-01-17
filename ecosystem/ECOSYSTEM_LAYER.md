@@ -22,25 +22,46 @@
 | **VECTOR** | Мягкие (semantic_near, similarity) | Нет |
 | **UNIVERSE** | Межпроектные (экосистемные) | Нет |
 
-## Инструменты: extended-mind-console
+## Инструменты экосистемы
 
-**extended-mind-console** — платформа с вкладками для работы с экосистемой.
+### extended-mind-console (редактирование)
+
+**Платформа с вкладками** для редактирования таксономий.
 
 | Вкладка | Назначение | Статус |
 |---------|------------|--------|
-| **Console** | RAG-среда для разработки движка extended-mind | Эксперимент |
+| **Console** | RAG-среда для разработки движка | Эксперимент |
 | **Core Taxonomy Editor** | Редактор таксономии vovaipetrova-core | Активен |
 | *(будущие)* | Редакторы для других проектов | Планируется |
 
-### Core Taxonomy Editor
-
-Среда для работы с таксономией vovaipetrova-core:
-- Визуализация графа страниц, терминов, сторис, тегов
-- Три слоя рёбер: SYMBOLIC, VECTOR, UNIVERSE
-- Delta Inbox для предложения связей
-
-- **Расположение**: `spaces/extended-mind-console/core-taxonomy/`
+- **Расположение**: `spaces/extended-mind-console/`
 - **Документация**: [docs/ecosystem/think-tank-editor.md](../docs/ecosystem/think-tank-editor.md)
+
+### dream-graph (визуализация)
+
+**Рендер со вкладками разных сцен и стеков**.
+
+Среда для поиска визуальных выразительных средств и элементов UI.
+
+| Сцена | Описание |
+|-------|----------|
+| **Planetary** | Орбитальная модель |
+| **Universe Map** | Экосистемный вид |
+| **Core Taxonomy** | Граф vovaipetrova-core |
+
+- **Репозиторий**: `dream-graph`
+- **Документация**: [docs/ecosystem/dream-graph-overview.md](../docs/ecosystem/dream-graph-overview.md)
+- **Демо**: https://utemix-lab.github.io/dream-graph/
+
+### Связь инструментов
+
+```
+extended-mind-console (редактирование)
+        ↓ экспорт Cosmos Map
+dream-graph (визуализация)
+```
+
+dream-graph **экспортирует данные** для построения графов из разных сред extended-mind.
 
 ## Где живут данные
 
@@ -71,3 +92,4 @@
 
 - [Экосистемный слой (docs)](../docs/ecosystem/index.md)
 - [Core Taxonomy Editor](../docs/ecosystem/think-tank-editor.md)
+- [dream-graph](../docs/ecosystem/dream-graph-overview.md)
