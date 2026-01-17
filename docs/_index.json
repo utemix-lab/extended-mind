@@ -463,6 +463,7 @@
     "type": "",
     "tags": [],
     "links": [
+      "VISION.md",
       "docs/ecosystem/dream-graph-overview.md",
       "docs/ecosystem/think-tank-editor.md",
       "ecosystem/ECOSYSTEM_LAYER.md"
@@ -625,6 +626,14 @@
     "path": "docs/machine-log/kb/2026-01-16T21-01-52Z-kb-update.md",
     "id": "docs__machine-log__kb__2026-01-16T21-01-52Z-kb-update",
     "title": "KB update 2026-01-16T21:01:52Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/machine-log/kb/2026-01-17T10-58-59Z-kb-update.md",
+    "id": "docs__machine-log__kb__2026-01-17T10-58-59Z-kb-update",
+    "title": "KB update 2026-01-17T10:58:59Z",
     "type": "",
     "tags": [],
     "links": []
