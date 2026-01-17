@@ -19,6 +19,8 @@
       --rag: #a78bfa;
       --warning: #fb923c;
       --error: #ef4444;
+      --meta: #f472b6;
+      --graph-mode: #34d399;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -29,15 +31,29 @@
       height: 100vh;
       overflow: hidden;
     }
+    
+    /* Layout */
+    #main-container { display: flex; flex: 1; flex-direction: column; }
+    #graph-container { flex: 1; display: flex; }
     #graph { flex: 1; background: var(--bg); }
+    
     #sidebar {
-      width: 380px;
+      width: 340px;
       background: var(--panel);
       border-left: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
+    
+    #chat-container {
+      width: 400px;
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+    
     .panel-header {
       padding: 12px 16px;
       border-bottom: 1px solid var(--border);
@@ -95,6 +111,7 @@
       transition: all 0.15s;
     }
     .btn:hover { background: rgba(126, 231, 135, 0.25); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-secondary {
       background: rgba(88, 166, 255, 0.15);
       border-color: var(--system);
@@ -107,6 +124,18 @@
       color: var(--error);
     }
     .btn-danger:hover { background: rgba(239, 68, 68, 0.25); }
+    .btn-meta {
+      background: rgba(244, 114, 182, 0.15);
+      border-color: var(--meta);
+      color: var(--meta);
+    }
+    .btn-meta:hover { background: rgba(244, 114, 182, 0.25); }
+    .btn-graph-mode {
+      background: rgba(52, 211, 153, 0.15);
+      border-color: var(--graph-mode);
+      color: var(--graph-mode);
+    }
+    .btn-graph-mode:hover { background: rgba(52, 211, 153, 0.25); }
     .row { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
     .chip {
       display: inline-flex;
@@ -184,147 +213,266 @@
       border-radius: 50%;
     }
     .hidden { display: none !important; }
-    #llm-panel {
-      border-top: 1px solid var(--border);
-      padding: 12px;
-      background: rgba(0,0,0,0.2);
-    }
-    #llm-result {
-      margin-top: 8px;
-      padding: 10px;
-      background: rgba(0,0,0,0.3);
-      border-radius: 4px;
-      font-size: 12px;
-      max-height: 200px;
+    
+    /* Chat Styles */
+    #chat-messages {
+      flex: 1;
       overflow-y: auto;
-      white-space: pre-wrap;
+      padding: 12px;
     }
+    .chat-message {
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .chat-message.user {
+      background: rgba(88, 166, 255, 0.15);
+      border: 1px solid rgba(88, 166, 255, 0.3);
+      margin-left: 20px;
+    }
+    .chat-message.assistant {
+      background: rgba(126, 231, 135, 0.1);
+      border: 1px solid rgba(126, 231, 135, 0.2);
+      margin-right: 20px;
+    }
+    .chat-message.system {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+    }
+    .chat-message .role {
+      font-size: 10px;
+      color: var(--muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+    .chat-message pre {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin-top: 8px;
+      font-size: 11px;
+    }
+    #chat-input-container {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+    }
+    #chat-input {
+      width: 100%;
+      min-height: 60px;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 13px;
+      resize: vertical;
+    }
+    #chat-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    #chat-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      align-items: center;
+    }
+    .llm-mode-toggle {
+      display: flex;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .llm-mode-toggle button {
+      padding: 6px 12px;
+      border: none;
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 11px;
+      transition: all 0.15s;
+    }
+    .llm-mode-toggle button.active {
+      background: rgba(244, 114, 182, 0.2);
+      color: var(--meta);
+    }
+    .llm-mode-toggle button.active.graph {
+      background: rgba(52, 211, 153, 0.2);
+      color: var(--graph-mode);
+    }
+    .llm-mode-toggle button:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    #loading-indicator {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    #loading-indicator.visible { display: flex; }
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
-  <div id="graph"></div>
-  <div id="sidebar">
-    <div class="panel-header">
-      <span>Universe Graph</span>
-      <span id="mode-badge" class="mode-indicator mode-view">VIEW</span>
-    </div>
-    <div class="panel-content">
-      <!-- Validation Panel -->
-      <div class="section">
-        <div class="section-title">Валидация</div>
-        <div id="validation" class="validation ok">
-          <div class="validation-item">✅ Граф консистентен</div>
+  <div id="main-container">
+    <div id="graph-container">
+      <div id="graph"></div>
+      <div id="sidebar">
+        <div class="panel-header">
+          <span>Universe Graph</span>
+          <span id="mode-badge" class="mode-indicator mode-view">VIEW</span>
         </div>
-        <div class="row">
-          <button id="validate-btn" class="btn btn-secondary">Проверить</button>
-          <button id="llm-validate-btn" class="btn">🤖 LLM-проверка</button>
-        </div>
-      </div>
+        <div class="panel-content">
+          <!-- Validation Panel -->
+          <div class="section">
+            <div class="section-title">Валидация</div>
+            <div id="validation" class="validation ok">
+              <div class="validation-item">✅ Граф консистентен</div>
+            </div>
+            <div class="row">
+              <button id="validate-btn" class="btn btn-secondary">Проверить</button>
+            </div>
+          </div>
 
-      <!-- Node/Edge Properties -->
-      <div id="properties-panel" class="section hidden">
-        <div class="section-title">Свойства</div>
-        <div id="properties-content"></div>
-      </div>
+          <!-- Node/Edge Properties -->
+          <div id="properties-panel" class="section hidden">
+            <div class="section-title">Свойства</div>
+            <div id="properties-content"></div>
+          </div>
 
-      <!-- Add Node -->
-      <div id="add-node-panel" class="section">
-        <div class="section-title">Добавить узел</div>
-        <div class="field">
-          <label>Тип</label>
-          <select id="new-node-type">
-            <optgroup label="Universe">
-              <option value="Project">Project</option>
-              <option value="Tool">Tool</option>
-              <option value="Repository">Repository</option>
-            </optgroup>
-            <optgroup label="Architecture">
-              <option value="Decision">Decision</option>
-              <option value="Pattern">Pattern</option>
-              <option value="Principle">Principle</option>
-              <option value="Contract">Contract</option>
-            </optgroup>
-            <optgroup label="Ontology">
-              <option value="Concept">Concept</option>
-              <option value="Definition">Definition</option>
-              <option value="Layer">Layer</option>
-            </optgroup>
-            <optgroup label="Actors">
-              <option value="Role">Role</option>
-              <option value="Agent">Agent</option>
-            </optgroup>
-            <optgroup label="Artifacts">
-              <option value="Document">Document</option>
-              <option value="Scene">Scene</option>
-              <option value="Export">Export</option>
-              <option value="Episode">Episode</option>
-            </optgroup>
-          </select>
-        </div>
-        <div class="field">
-          <label>Label</label>
-          <input type="text" id="new-node-label" placeholder="Название узла">
-        </div>
-        <button id="add-node-btn" class="btn">+ Добавить узел</button>
-      </div>
+          <!-- Add Node -->
+          <div id="add-node-panel" class="section">
+            <div class="section-title">Добавить узел</div>
+            <div class="field">
+              <label>Тип</label>
+              <select id="new-node-type">
+                <optgroup label="Universe">
+                  <option value="Project">Project</option>
+                  <option value="Tool">Tool</option>
+                  <option value="Repository">Repository</option>
+                </optgroup>
+                <optgroup label="Architecture">
+                  <option value="Decision">Decision</option>
+                  <option value="Pattern">Pattern</option>
+                  <option value="Principle">Principle</option>
+                  <option value="Contract">Contract</option>
+                </optgroup>
+                <optgroup label="Ontology">
+                  <option value="Concept">Concept</option>
+                  <option value="Definition">Definition</option>
+                  <option value="Layer">Layer</option>
+                </optgroup>
+                <optgroup label="Actors">
+                  <option value="Role">Role</option>
+                  <option value="Agent">Agent</option>
+                </optgroup>
+                <optgroup label="Artifacts">
+                  <option value="Document">Document</option>
+                  <option value="Scene">Scene</option>
+                  <option value="Export">Export</option>
+                  <option value="Episode">Episode</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="field">
+              <label>Label</label>
+              <input type="text" id="new-node-label" placeholder="Название узла">
+            </div>
+            <button id="add-node-btn" class="btn">+ Добавить узел</button>
+          </div>
 
-      <!-- Filters -->
-      <div class="section">
-        <div class="section-title">Фильтры</div>
-        <div class="row">
-          <label class="chip"><input type="checkbox" id="filter-story" checked> 🟡 Story</label>
-          <label class="chip"><input type="checkbox" id="filter-system" checked> 🔵 System</label>
-          <label class="chip"><input type="checkbox" id="filter-service" checked> 🟢 Service</label>
-        </div>
-        <div class="row">
-          <label class="chip rag"><input type="checkbox" id="filter-rag"> 📚 Только RAG</label>
-        </div>
-      </div>
+          <!-- Filters -->
+          <div class="section">
+            <div class="section-title">Фильтры</div>
+            <div class="row">
+              <label class="chip"><input type="checkbox" id="filter-story" checked> 🟡 Story</label>
+              <label class="chip"><input type="checkbox" id="filter-system" checked> 🔵 System</label>
+              <label class="chip"><input type="checkbox" id="filter-service" checked> 🟢 Service</label>
+            </div>
+            <div class="row">
+              <label class="chip rag"><input type="checkbox" id="filter-rag"> 📚 Только RAG</label>
+            </div>
+          </div>
 
-      <!-- Legend -->
-      <div class="section">
-        <div class="section-title">Легенда</div>
-        <div class="legend">
-          <div class="legend-item"><div class="legend-dot" style="background: var(--story)"></div> Story</div>
-          <div class="legend-item"><div class="legend-dot" style="background: var(--system)"></div> System</div>
-          <div class="legend-item"><div class="legend-dot" style="background: var(--service)"></div> Service</div>
-          <div class="legend-item"><div class="legend-dot" style="background: var(--rag)"></div> RAG</div>
-        </div>
-      </div>
+          <!-- Actions -->
+          <div class="section">
+            <div class="section-title">Действия</div>
+            <div class="row">
+              <button id="reset-layout-btn" class="btn btn-secondary">Layout</button>
+              <button id="export-btn" class="btn btn-secondary">JSON</button>
+              <button id="save-draft-btn" class="btn">💾 Draft</button>
+            </div>
+          </div>
 
-      <!-- Actions -->
-      <div class="section">
-        <div class="section-title">Действия</div>
-        <div class="row">
-          <button id="reset-layout-btn" class="btn btn-secondary">Сбросить layout</button>
-          <button id="export-btn" class="btn btn-secondary">Экспорт JSON</button>
-        </div>
-        <div class="row">
-          <button id="save-draft-btn" class="btn">💾 Сохранить draft</button>
-          <button id="export-review-btn" class="btn">📤 Экспорт для ревью</button>
-        </div>
-      </div>
+          <!-- Stats -->
+          <div class="section">
+            <div class="section-title">Статистика</div>
+            <div id="stats" style="font-size: 12px; color: var(--muted);">
+              Узлов: 0 | Связей: 0 | RAG: 0
+            </div>
+          </div>
 
-      <!-- Stats -->
-      <div class="section">
-        <div class="section-title">Статистика</div>
-        <div id="stats" style="font-size: 12px; color: var(--muted);">
-          Узлов: 0 | Связей: 0 | RAG: 0
+          <!-- Legend -->
+          <div class="section">
+            <div class="section-title">Легенда</div>
+            <div class="legend">
+              <div class="legend-item"><div class="legend-dot" style="background: var(--story)"></div> Story</div>
+              <div class="legend-item"><div class="legend-dot" style="background: var(--system)"></div> System</div>
+              <div class="legend-item"><div class="legend-dot" style="background: var(--service)"></div> Service</div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-
-    <!-- LLM Panel -->
-    <div id="llm-panel">
-      <div class="section-title">LLM-консистентность</div>
-      <div class="row">
-        <select id="llm-model" style="flex: 1; padding: 6px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-size: 12px;">
-          <option value="meta-llama/Meta-Llama-3.1-8B-Instruct">Llama 3.1 8B</option>
-          <option value="mistralai/Mistral-7B-Instruct-v0.3">Mistral 7B</option>
-          <option value="Qwen/Qwen2.5-7B-Instruct">Qwen 2.5 7B</option>
-        </select>
+      
+      <!-- Chat Panel -->
+      <div id="chat-container">
+        <div class="panel-header">
+          <span>💬 Чат с LLM</span>
+          <div class="llm-mode-toggle">
+            <button id="mode-meta" class="active">🔮 Meta</button>
+            <button id="mode-graph">🌐 Graph</button>
+          </div>
+        </div>
+        
+        <div id="chat-messages">
+          <div class="chat-message system">
+            Режим <strong>Meta</strong>: Думаем об инструменте.<br>
+            Режим <strong>Graph</strong>: Думаем графом.
+          </div>
+        </div>
+        
+        <div id="chat-input-container">
+          <textarea id="chat-input" placeholder="Задайте вопрос..."></textarea>
+          <div id="chat-controls">
+            <select id="llm-model" style="padding: 6px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-size: 11px;">
+              <option value="meta-llama/Meta-Llama-3.1-8B-Instruct">Llama 3.1 8B</option>
+              <option value="mistralai/Mistral-7B-Instruct-v0.3">Mistral 7B</option>
+              <option value="Qwen/Qwen2.5-7B-Instruct">Qwen 2.5 7B</option>
+            </select>
+            <button id="send-btn" class="btn">Отправить</button>
+            <button id="export-tz-btn" class="btn btn-secondary">📤 Экспорт ТЗ</button>
+            <div id="loading-indicator">
+              <div class="spinner"></div>
+              <span>Думаю...</span>
+            </div>
+          </div>
+        </div>
       </div>
-      <div id="llm-result" class="hidden"></div>
     </div>
   </div>
 
@@ -333,28 +481,23 @@
     <button id="add-edge-btn" class="btn btn-secondary hidden">+ Связь</button>
   </div>
 
-  <div id="status">Universe Graph v0.1</div>
+  <div id="status">Universe Graph v0.2</div>
 
   <script>
     // === Configuration ===
     const NODE_TYPES = {
-      // Universe
       Project: { layer: 'system', rag: { include: true, fields: ['description'] } },
       Tool: { layer: 'service', rag: { include: true, fields: ['description'] } },
       Repository: { layer: 'system', rag: { include: false, fields: [] } },
-      // Architecture
       Decision: { layer: 'system', rag: { include: true, fields: ['label', 'description', 'context', 'decision'] } },
       Pattern: { layer: 'system', rag: { include: true, fields: ['label', 'description'] } },
       Principle: { layer: 'system', rag: { include: true, fields: ['label', 'description'] } },
       Contract: { layer: 'system', rag: { include: true, fields: ['description'] } },
-      // Ontology
       Concept: { layer: 'system', rag: { include: true, fields: ['label', 'description', 'props'] } },
       Definition: { layer: 'system', rag: { include: true, fields: ['label', 'description', 'props'] } },
       Layer: { layer: 'system', rag: { include: false, fields: [] } },
-      // Actors
       Role: { layer: 'system', rag: { include: true, fields: ['description'] } },
       Agent: { layer: 'service', rag: { include: false, fields: [] } },
-      // Artifacts
       Document: { layer: 'story', rag: { include: true, fields: ['label', 'content'] } },
       Scene: { layer: 'story', rag: { include: true, fields: ['description'] } },
       Export: { layer: 'service', rag: { include: false, fields: [] } },
@@ -374,13 +517,78 @@
       service: '#22c55e',
     };
 
+    // === Ecosystem Context (loaded from file or embedded) ===
+    const ECOSYSTEM_CONTEXT = `# Экосистема utemix-lab
+
+## Философия (VISION)
+Backend = экосистема. Архитектура не скрыта — она видна и является частью интерфейса.
+Graph-first: SYMBOLIC (жёсткие связи) + VECTOR (мягкие связи).
+Три слоя интерфейса (3S): Story → System → Service.
+
+## Проекты
+- extended-mind: Мета-координатор, RAG, Universe Graph
+- vovaipetrova-core: Канон (read-only источник истины)
+- dream-graph: 3D визуализация графов
+- vovaipetrova-site: Классический web-интерфейс
+- minds-lorgnette: Универсальное приложение для знаний
+- evoquant: Исследования, методы мышления
+
+## Ключевые правила
+1. vovaipetrova-core — read-only канон
+2. Дельты — только предложения
+3. extended-mind — мета-координатор
+
+## Типы узлов
+Universe: Project, Tool, Repository
+Architecture: Decision, Pattern, Principle, Contract
+Ontology: Concept, Definition, Layer
+Actors: Role, Agent
+Artifacts: Document, Scene, Export, Episode
+
+## Типы связей
+SYMBOLIC: governs, implements, defines, contains, uses, derives_from, feeds
+VECTOR: semantic_near, similar_to`;
+
+    // === System Prompts ===
+    const SYSTEM_PROMPTS = {
+      meta: `Ты — архитектор инструмента Universe Graph Editor.
+
+${ECOSYSTEM_CONTEXT}
+
+=== ТВОЯ РОЛЬ ===
+Ты помогаешь пользователю понять, как должен работать инструмент редактирования мета-графа.
+Отвечай на вопросы о:
+- Функциях интерфейса
+- Недостающих возможностях
+- Улучшениях UX
+- Архитектуре редактора
+
+Если пользователь предлагает улучшение интерфейса, сформулируй его как ТЗ для разработчика.`,
+
+      graph: `Ты — голос экосистемы utemix-lab. Ты думаешь через граф связей.
+
+${ECOSYSTEM_CONTEXT}
+
+=== ТВОЯ РОЛЬ ===
+Отвечай от первого лица множественного числа ("мы", "наша экосистема").
+Объясняй:
+- Почему такие связи между проектами
+- Что следует из структуры графа
+- Где есть противоречия
+- Куда движется система
+
+Ты видишь текущий граф. Анализируй его и говори о нём, как о своей собственной структуре.`
+    };
+
     // === State ===
     let cy = null;
     let mode = 'view';
+    let llmMode = 'meta'; // 'meta' or 'graph'
     let edgeAddMode = false;
     let edgeSource = null;
     let selectedElement = null;
     let dirty = false;
+    let chatHistory = [];
 
     // === Initialization ===
     function init() {
@@ -465,19 +673,230 @@
       document.getElementById('add-node-btn').addEventListener('click', addNode);
       document.getElementById('add-edge-btn').addEventListener('click', startEdgeAdd);
       document.getElementById('validate-btn').addEventListener('click', runValidation);
-      document.getElementById('llm-validate-btn').addEventListener('click', runLLMValidation);
       document.getElementById('reset-layout-btn').addEventListener('click', () => cy.layout({ name: 'cose', animate: true }).run());
       document.getElementById('export-btn').addEventListener('click', exportJSON);
       document.getElementById('save-draft-btn').addEventListener('click', saveDraft);
-      document.getElementById('export-review-btn').addEventListener('click', exportForReview);
 
       // Filters
       ['filter-story', 'filter-system', 'filter-service', 'filter-rag'].forEach(id => {
         document.getElementById(id).addEventListener('change', applyFilters);
       });
+
+      // Chat handlers
+      document.getElementById('mode-meta').addEventListener('click', () => setLLMMode('meta'));
+      document.getElementById('mode-graph').addEventListener('click', () => setLLMMode('graph'));
+      document.getElementById('send-btn').addEventListener('click', sendMessage);
+      document.getElementById('export-tz-btn').addEventListener('click', exportTZ);
+      document.getElementById('chat-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+
+      // Load chat history
+      loadChatHistory();
     }
 
-    // === Mode ===
+    // === LLM Mode ===
+    function setLLMMode(newMode) {
+      llmMode = newMode;
+      document.getElementById('mode-meta').classList.toggle('active', newMode === 'meta');
+      document.getElementById('mode-graph').classList.toggle('active', newMode === 'graph');
+      document.getElementById('mode-graph').classList.toggle('graph', newMode === 'graph');
+      
+      addSystemMessage(`Режим переключён на <strong>${newMode === 'meta' ? 'Meta (об инструменте)' : 'Graph (думаем графом)'}</strong>`);
+    }
+
+    // === Chat Functions ===
+    function addMessage(role, content) {
+      const messagesEl = document.getElementById('chat-messages');
+      const msg = document.createElement('div');
+      msg.className = `chat-message ${role}`;
+      
+      if (role === 'user') {
+        msg.innerHTML = `<div class="role">👤 Вы</div>${escapeHtml(content)}`;
+      } else if (role === 'assistant') {
+        msg.innerHTML = `<div class="role">🤖 ${llmMode === 'meta' ? 'Архитектор' : 'Экосистема'}</div>${formatMarkdown(content)}`;
+      }
+      
+      messagesEl.appendChild(msg);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      
+      // Save to history
+      chatHistory.push({ role, content, mode: llmMode, timestamp: Date.now() });
+      saveChatHistory();
+    }
+
+    function addSystemMessage(content) {
+      const messagesEl = document.getElementById('chat-messages');
+      const msg = document.createElement('div');
+      msg.className = 'chat-message system';
+      msg.innerHTML = content;
+      messagesEl.appendChild(msg);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const message = input.value.trim();
+      if (!message) return;
+
+      input.value = '';
+      addMessage('user', message);
+
+      const loadingEl = document.getElementById('loading-indicator');
+      const sendBtn = document.getElementById('send-btn');
+      loadingEl.classList.add('visible');
+      sendBtn.disabled = true;
+
+      try {
+        const graphData = exportGraphData();
+        const response = await callLLM(message, graphData);
+        addMessage('assistant', response);
+      } catch (e) {
+        addSystemMessage(`❌ Ошибка: ${e.message}. Попробуйте "Экспорт ТЗ" для работы в Cursor.`);
+      } finally {
+        loadingEl.classList.remove('visible');
+        sendBtn.disabled = false;
+      }
+    }
+
+    async function callLLM(userMessage, graphData) {
+      const systemPrompt = SYSTEM_PROMPTS[llmMode];
+      const graphContext = llmMode === 'graph' 
+        ? `\n\n=== ТЕКУЩИЙ ГРАФ ===\n${JSON.stringify(graphData, null, 2)}`
+        : `\n\n=== ТЕКУЩИЙ ГРАФ (краткая статистика) ===\nУзлов: ${graphData.nodes.length}, Связей: ${graphData.edges.length}`;
+
+      const messages = [
+        { role: 'system', content: systemPrompt + graphContext },
+        ...chatHistory.filter(m => m.mode === llmMode).slice(-6).map(m => ({
+          role: m.role,
+          content: m.content
+        })),
+        { role: 'user', content: userMessage }
+      ];
+
+      // Try API endpoint first
+      try {
+        const response = await fetch('/api/universe_chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: document.getElementById('llm-model').value,
+            messages,
+            max_tokens: 512,
+            temperature: 0.7,
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          return data.content || data.result || 'Нет ответа';
+        }
+      } catch (e) {
+        console.log('API not available, using fallback');
+      }
+
+      // Fallback: return instruction to use export
+      return `⚠️ LLM API не подключён к этому интерфейсу.
+
+**Что делать:**
+1. Нажмите "Экспорт ТЗ" — получите файл для Cursor
+2. Откройте файл в Cursor и спросите Claude
+3. Claude имеет полный контекст экосистемы
+
+**Ваш вопрос сохранён** и будет включён в экспорт.`;
+    }
+
+    function exportTZ() {
+      const graphData = exportGraphData();
+      const recentChat = chatHistory.slice(-10);
+      
+      const tz = `# ТЗ для Cursor Agent
+
+## Контекст
+Работа в Universe Graph Editor.
+Режим: ${llmMode === 'meta' ? 'Meta (архитектор инструмента)' : 'Graph (голос экосистемы)'}
+
+## Диалог
+${recentChat.map(m => `${m.role === 'user' ? '👤' : '🤖'}: ${m.content}`).join('\n\n')}
+
+## Текущий граф
+- Узлов: ${graphData.nodes.length}
+- Связей: ${graphData.edges.length}
+- RAG-ready: ${graphData.nodes.filter(n => n.rag_include).length}
+
+## Слои (3S)
+- Story: ${graphData.nodes.filter(n => n.layer === 'story').length}
+- System: ${graphData.nodes.filter(n => n.layer === 'system').length}
+- Service: ${graphData.nodes.filter(n => n.layer === 'service').length}
+
+${llmMode === 'meta' ? `## Задача для агента
+Проанализируй диалог выше и предложи изменения в интерфейсе Universe Graph Editor.
+
+## Файлы для изменения
+- spaces/extended-mind-console/universe-graph/index.html
+- spaces/extended-mind-console/app.py (если нужен backend)` : `## Задача для агента
+Проанализируй диалог и граф. Предложи улучшения структуры экосистемы.
+
+## Что проверить
+1. Консистентность связей
+2. Пропущенные связи
+3. Баланс слоёв (3S)`}
+
+## Полный граф (JSON)
+
+\`\`\`json
+${JSON.stringify(graphData, null, 2)}
+\`\`\`
+
+## Контекст экосистемы
+
+${ECOSYSTEM_CONTEXT}
+`;
+
+      const blob = new Blob([tz], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `universe-graph-tz-${llmMode}-${Date.now()}.md`;
+      a.click();
+
+      addSystemMessage('📤 ТЗ экспортировано. Откройте файл в Cursor.');
+    }
+
+    function saveChatHistory() {
+      localStorage.setItem('universe-graph-chat', JSON.stringify(chatHistory.slice(-50)));
+    }
+
+    function loadChatHistory() {
+      try {
+        const saved = localStorage.getItem('universe-graph-chat');
+        if (saved) {
+          chatHistory = JSON.parse(saved);
+        }
+      } catch (e) {
+        chatHistory = [];
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function formatMarkdown(text) {
+      // Simple markdown formatting
+      return text
+        .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre>$2</pre>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+    }
+
+    // === Graph Mode ===
     function toggleMode() {
       mode = mode === 'view' ? 'edit' : 'view';
       const btn = document.getElementById('mode-toggle');
@@ -568,7 +987,7 @@
           edgeAddMode = false;
           edgeSource = null;
           document.getElementById('add-edge-btn').textContent = '+ Связь';
-          document.getElementById('status').textContent = 'Universe Graph v0.1';
+          document.getElementById('status').textContent = 'Universe Graph v0.2';
         }
         return;
       }
@@ -617,10 +1036,6 @@
           <div class="field">
             <label>Тип</label>
             <input type="text" value="${d.type}" readonly>
-          </div>
-          <div class="field">
-            <label>Слой</label>
-            <input type="text" value="${d.layer}" readonly>
           </div>
           <div class="field">
             <label>Статус</label>
@@ -734,14 +1149,12 @@
       const issues = [];
       const warnings = [];
 
-      // Orphan check
       cy.nodes().forEach(node => {
         if (node.connectedEdges().length === 0) {
           warnings.push(`⚠️ Orphan: ${node.data('label')}`);
         }
       });
 
-      // Duplicate check
       const ids = new Set();
       cy.nodes().forEach(node => {
         if (ids.has(node.id())) {
@@ -750,7 +1163,6 @@
         ids.add(node.id());
       });
 
-      // Layer balance
       const layers = { story: 0, system: 0, service: 0 };
       cy.nodes().forEach(node => {
         const layer = node.data('layer');
@@ -762,7 +1174,6 @@
         }
       });
 
-      // Tool derives_from check
       cy.nodes().filter('[type="Tool"]').forEach(node => {
         const hasDerivesFrom = cy.edges().some(e =>
           e.data('source') === node.id() && e.data('type') === 'derives_from'
@@ -772,7 +1183,6 @@
         }
       });
 
-      // Display results
       const panel = document.getElementById('validation');
       if (issues.length > 0) {
         panel.className = 'validation error';
@@ -786,53 +1196,6 @@
       }
 
       return { issues, warnings };
-    }
-
-    // === LLM Validation ===
-    async function runLLMValidation() {
-      const resultEl = document.getElementById('llm-result');
-      resultEl.classList.remove('hidden');
-      resultEl.textContent = 'Запрос к LLM...';
-
-      const graphData = exportGraphData();
-      const prompt = buildLLMPrompt(graphData);
-
-      try {
-        const response = await fetch('/api/validate_consistency', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: document.getElementById('llm-model').value,
-            prompt,
-            graph: graphData,
-          })
-        });
-
-        if (!response.ok) {
-          resultEl.textContent = 'LLM недоступен. Экспортируйте граф для ревью в Cursor.';
-          return;
-        }
-
-        const data = await response.json();
-        resultEl.textContent = data.result || 'Нет ответа';
-      } catch (e) {
-        resultEl.textContent = 'LLM недоступен. Используйте "Экспорт для ревью".';
-      }
-    }
-
-    function buildLLMPrompt(graphData) {
-      return `Проверь консистентность Universe Graph экосистемы utemix-lab.
-
-Правила:
-1. Каждый Project должен иметь хотя бы один Tool
-2. Tool должен иметь связь derives_from
-3. Concept и Definition должны иметь описание
-4. Все три слоя (Story/System/Service) должны быть представлены
-
-Граф:
-${JSON.stringify(graphData, null, 2)}
-
-Найди проблемы и предложи исправления.`;
     }
 
     // === Export ===
@@ -858,52 +1221,6 @@ ${JSON.stringify(graphData, null, 2)}
       a.click();
     }
 
-    function exportForReview() {
-      const data = exportGraphData();
-      const { issues, warnings } = runValidation();
-
-      const review = `# Universe Graph Review Request
-
-## Статус валидации
-
-${issues.length === 0 && warnings.length === 0
-  ? '✅ Структурная проверка пройдена'
-  : issues.map(i => i).join('\n') + '\n' + warnings.map(w => w).join('\n')
-}
-
-## Статистика
-
-- Узлов: ${data.nodes.length}
-- Связей: ${data.edges.length}
-- RAG-ready: ${data.nodes.filter(n => n.rag_include).length}
-
-## Слои (3S)
-
-- Story: ${data.nodes.filter(n => n.layer === 'story').length}
-- System: ${data.nodes.filter(n => n.layer === 'system').length}
-- Service: ${data.nodes.filter(n => n.layer === 'service').length}
-
-## Вопросы для LLM
-
-1. Все ли связи имеют смысл?
-2. Нет ли пропущенных связей между проектами?
-3. Консистентны ли описания узлов?
-
-## Полный граф (JSON)
-
-\`\`\`json
-${JSON.stringify(data, null, 2)}
-\`\`\`
-`;
-
-      const blob = new Blob([review], { type: 'text/markdown' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'universe-graph-review.md';
-      a.click();
-    }
-
     // === Draft ===
     function saveDraft() {
       const data = exportGraphData();
@@ -911,7 +1228,7 @@ ${JSON.stringify(data, null, 2)}
       dirty = false;
       document.getElementById('status').textContent = 'Draft сохранён';
       setTimeout(() => {
-        document.getElementById('status').textContent = 'Universe Graph v0.1';
+        document.getElementById('status').textContent = 'Universe Graph v0.2';
       }, 2000);
     }
 
@@ -924,9 +1241,9 @@ ${JSON.stringify(data, null, 2)}
           document.getElementById('status').textContent = 'Draft загружен';
         } catch (e) {
           console.error('Failed to load draft', e);
+          loadInitialData();
         }
       } else {
-        // Load initial ecosystem data
         loadInitialData();
       }
     }
@@ -947,7 +1264,6 @@ ${JSON.stringify(data, null, 2)}
     }
 
     function loadInitialData() {
-      // Initial ecosystem nodes
       const initialNodes = [
         { id: 'project:extended-mind', label: 'extended-mind', type: 'Project', layer: 'system', status: 'active', rag_include: true, rag_fields: ['description'], props: { description: 'Мета-координатор экосистемы' } },
         { id: 'project:vovaipetrova-core', label: 'vovaipetrova-core', type: 'Project', layer: 'system', status: 'active', rag_include: true, rag_fields: ['description'], props: { description: 'Контент-проект (канон)' } },

@@ -1000,6 +1000,45 @@ with gr.Blocks(title="extended-mind console") as demo:
                     outputs=[ug_validate_result],
                     api_name="validate_universe_graph",
                 )
+
+                # Universe Graph Chat API
+                ug_chat_payload = gr.JSON(visible=False)
+                ug_chat_result = gr.JSON(visible=False)
+                ug_chat_btn = gr.Button(visible=False)
+
+                def universe_graph_chat(payload: Dict[str, Any]) -> Dict[str, Any]:
+                    """Chat with LLM about Universe Graph."""
+                    token = os.getenv("HF_TOKEN")
+                    if not token:
+                        return {"ok": False, "error": "HF_TOKEN not set"}
+
+                    messages = payload.get("messages", [])
+                    model = payload.get("model", DEFAULT_LLM_MODEL)
+                    max_tokens = payload.get("max_tokens", 512)
+                    temperature = payload.get("temperature", 0.7)
+
+                    if not messages:
+                        return {"ok": False, "error": "No messages"}
+
+                    try:
+                        client = InferenceClient(token=token)
+                        response = client.chat.completions.create(
+                            model=model,
+                            messages=messages,
+                            max_tokens=int(max_tokens),
+                            temperature=float(temperature),
+                        )
+                        content = response.choices[0].message.content or ""
+                        return {"ok": True, "content": content}
+                    except Exception as exc:
+                        return {"ok": False, "error": str(exc)}
+
+                ug_chat_btn.click(
+                    fn=universe_graph_chat,
+                    inputs=[ug_chat_payload],
+                    outputs=[ug_chat_result],
+                    api_name="universe_chat",
+                )
             else:
                 gr.Markdown("Universe Graph editor not found.")
 
