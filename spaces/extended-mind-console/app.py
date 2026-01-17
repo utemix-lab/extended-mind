@@ -9,6 +9,8 @@ from typing import Any, Dict, List, Tuple
 import faiss  # type: ignore
 import gradio as gr  # type: ignore
 import numpy as np
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from huggingface_hub import InferenceClient, hf_hub_download
 from jsonschema import Draft202012Validator  # type: ignore
 from sentence_transformers import SentenceTransformer  # type: ignore
@@ -952,36 +954,31 @@ with gr.Blocks(title="extended-mind console") as demo:
           const { requestId, model, messages, max_tokens, temperature } = event.data;
           
           try {
-            // Call Gradio API
-            const response = await fetch('/api/universe_chat', {
+            // Call direct LLM endpoint (FastAPI, not Gradio API)
+            const response = await fetch('/llm/chat', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                data: [{
-                  model: model,
-                  messages: messages,
-                  max_tokens: max_tokens,
-                  temperature: temperature
-                }]
+                model: model,
+                messages: messages,
+                max_tokens: max_tokens,
+                temperature: temperature
               })
             });
             
-            if (response.ok) {
-              const result = await response.json();
-              const content = result.data?.[0]?.content || result.data?.[0] || 'Нет ответа';
-              const error = result.data?.[0]?.error;
-              
+            const result = await response.json();
+            
+            if (result.ok) {
               iframe.contentWindow.postMessage({
                 type: 'llm_response',
                 requestId,
-                content: error ? null : content,
-                error: error
+                content: result.content
               }, '*');
             } else {
               iframe.contentWindow.postMessage({
                 type: 'llm_response',
                 requestId,
-                error: `HTTP ${response.status}`
+                error: result.error || 'Unknown error'
               }, '*');
             }
           } catch (e) {
@@ -1108,5 +1105,46 @@ with gr.Blocks(title="extended-mind console") as demo:
             else:
                 gr.Markdown("Universe Graph editor not found.")
 
+# FastAPI app with custom LLM endpoint
+app = FastAPI()
+
+
+@app.post("/llm/chat")
+async def llm_chat_endpoint(request: Request) -> JSONResponse:
+    """Direct LLM chat endpoint (bypasses Gradio API complexity)."""
+    try:
+        body = await request.json()
+        model = body.get("model", DEFAULT_LLM_MODEL)
+        messages = body.get("messages", [])
+        max_tokens = body.get("max_tokens", 512)
+        temperature = body.get("temperature", 0.7)
+
+        token = os.getenv("HF_TOKEN")
+        if not token:
+            return JSONResponse({"ok": False, "error": "HF_TOKEN not configured"})
+
+        if not messages:
+            return JSONResponse({"ok": False, "error": "No messages provided"})
+
+        client = InferenceClient(token=token)
+        response = client.chat.completions.create(
+            model=model,
+            messages=messages,
+            max_tokens=int(max_tokens),
+            temperature=float(temperature),
+        )
+        content = response.choices[0].message.content or ""
+        return JSONResponse({"ok": True, "content": content})
+
+    except Exception as exc:
+        return JSONResponse({"ok": False, "error": str(exc)})
+
+
+# Mount Gradio app
+app = gr.mount_gradio_app(app, demo, path="/")
+
+
 if __name__ == "__main__":
-    demo.launch()
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=7860)
