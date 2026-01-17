@@ -481,7 +481,7 @@
     <button id="add-edge-btn" class="btn btn-secondary hidden">+ Связь</button>
   </div>
 
-  <div id="status">Universe Graph v0.2</div>
+  <div id="status">Universe Graph v0.3</div>
 
   <script>
     // === Configuration ===
@@ -777,36 +777,71 @@ ${ECOSYSTEM_CONTEXT}
         { role: 'user', content: userMessage }
       ];
 
-      // Try API endpoint first
+      const model = document.getElementById('llm-model').value;
+      
+      // Direct call to HuggingFace Inference API
+      // Using public endpoint (works without token, with rate limits)
+      const HF_API_URL = `https://api-inference.huggingface.co/models/${model}/v1/chat/completions`;
+      
       try {
-        const response = await fetch('/api/universe_chat', {
+        const response = await fetch(HF_API_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            // No Authorization header = public access with rate limits
+          },
           body: JSON.stringify({
-            model: document.getElementById('llm-model').value,
-            messages,
+            model: model,
+            messages: messages,
             max_tokens: 512,
             temperature: 0.7,
+            stream: false,
           })
         });
 
         if (response.ok) {
           const data = await response.json();
-          return data.content || data.result || 'Нет ответа';
+          if (data.choices && data.choices[0] && data.choices[0].message) {
+            return data.choices[0].message.content || 'Нет ответа';
+          }
+          return 'Нет ответа от модели';
         }
-      } catch (e) {
-        console.log('API not available, using fallback');
-      }
 
-      // Fallback: return instruction to use export
-      return `⚠️ LLM API не подключён к этому интерфейсу.
+        // Handle specific errors
+        if (response.status === 503) {
+          return `⏳ Модель загружается. Подождите 20-30 секунд и повторите вопрос.
+
+**Совет:** Попробуйте переключить модель на Mistral 7B — она обычно быстрее.`;
+        }
+
+        if (response.status === 429) {
+          return `⚠️ Превышен лимит запросов. Подождите минуту и повторите.
+
+**Альтернатива:** Нажмите "Экспорт ТЗ" для работы в Cursor.`;
+        }
+
+        const errorData = await response.json().catch(() => ({}));
+        console.error('HF API error:', response.status, errorData);
+        
+        return `❌ Ошибка API (${response.status}). 
 
 **Что делать:**
-1. Нажмите "Экспорт ТЗ" — получите файл для Cursor
-2. Откройте файл в Cursor и спросите Claude
-3. Claude имеет полный контекст экосистемы
+1. Попробуйте другую модель (Mistral или Qwen)
+2. Или используйте "Экспорт ТЗ" для Cursor`;
 
-**Ваш вопрос сохранён** и будет включён в экспорт.`;
+      } catch (e) {
+        console.error('LLM call failed:', e);
+        
+        return `⚠️ Не удалось подключиться к LLM.
+
+**Возможные причины:**
+- Нет интернет-соединения
+- HuggingFace API временно недоступен
+
+**Что делать:**
+1. Проверьте соединение
+2. Или нажмите "Экспорт ТЗ" для работы в Cursor`;
+      }
     }
 
     function exportTZ() {
@@ -987,7 +1022,7 @@ ${ECOSYSTEM_CONTEXT}
           edgeAddMode = false;
           edgeSource = null;
           document.getElementById('add-edge-btn').textContent = '+ Связь';
-          document.getElementById('status').textContent = 'Universe Graph v0.2';
+          document.getElementById('status').textContent = 'Universe Graph v0.3';
         }
         return;
       }
@@ -1228,7 +1263,7 @@ ${ECOSYSTEM_CONTEXT}
       dirty = false;
       document.getElementById('status').textContent = 'Draft сохранён';
       setTimeout(() => {
-        document.getElementById('status').textContent = 'Universe Graph v0.2';
+        document.getElementById('status').textContent = 'Universe Graph v0.3';
       }, 2000);
     }
 
