@@ -466,6 +466,7 @@
       "VISION.md",
       "docs/ecosystem/dream-graph-overview.md",
       "docs/ecosystem/think-tank-editor.md",
+      "docs/graph/META_GRAPH_SPEC.md",
       "ecosystem/ECOSYSTEM_LAYER.md"
     ]
   },
@@ -479,6 +480,14 @@
       "docs/ecosystem/index.md",
       "ecosystem/ECOSYSTEM_LAYER.md"
     ]
+  },
+  {
+    "path": "docs/graph/META_GRAPH_SPEC.md",
+    "id": "docs__graph__META_GRAPH_SPEC",
+    "title": "Universe Graph \u2014 \u0421\u043f\u0435\u0446\u0438\u0444\u0438\u043a\u0430\u0446\u0438\u044f \u043c\u0435\u0442\u0430-\u0433\u0440\u0430\u0444\u0430",
+    "type": "",
+    "tags": [],
+    "links": []
   },
   {
     "path": "docs/index.md",
@@ -634,6 +643,14 @@
     "path": "docs/machine-log/kb/2026-01-17T10-58-59Z-kb-update.md",
     "id": "docs__machine-log__kb__2026-01-17T10-58-59Z-kb-update",
     "title": "KB update 2026-01-17T10:58:59Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/machine-log/kb/2026-01-17T11-35-35Z-kb-update.md",
+    "id": "docs__machine-log__kb__2026-01-17T11-35-35Z-kb-update",
+    "title": "KB update 2026-01-17T11:35:35Z",
     "type": "",
     "tags": [],
     "links": []
