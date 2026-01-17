@@ -919,5 +919,89 @@ with gr.Blocks(title="extended-mind console") as demo:
             else:
                 gr.Markdown("Core Taxonomy editor not found.")
 
+        with gr.TabItem("Universe Graph"):
+            gr.Markdown("## Universe Graph Editor")
+            gr.Markdown(
+                "Редактор мета-графа экосистемы **utemix-lab**.\n\n"
+                "Три слоя (3S): **Story** → **System** → **Service**\n\n"
+                "- Структурная валидация (автоматически)\n"
+                "- LLM-проверка консистентности\n"
+                "- RAG-пометки для векторизации\n"
+                "- Экспорт для ревью в Cursor"
+            )
+            universe_graph_html_path = Path(__file__).parent / "universe-graph" / "index.html"
+            if universe_graph_html_path.exists():
+                import html as html_module_ug
+
+                universe_graph_html = universe_graph_html_path.read_text(encoding="utf-8")
+                universe_graph_srcdoc = html_module_ug.escape(universe_graph_html, quote=True)
+                gr.HTML(
+                    f'<iframe srcdoc="{universe_graph_srcdoc}" '
+                    'style="width:100%;height:800px;border:0;"></iframe>'
+                )
+                gr.Markdown(
+                    "**Спецификация:** [META_GRAPH_SPEC.md](https://github.com/utemix-lab/extended-mind/blob/main/docs/graph/META_GRAPH_SPEC.md)\n\n"
+                    "**Типы узлов:**\n"
+                    "- `Project`, `Tool`, `Repository` — Universe\n"
+                    "- `Decision`, `Pattern`, `Principle`, `Contract` — Architecture\n"
+                    "- `Concept`, `Definition`, `Layer` — Ontology\n"
+                    "- `Role`, `Agent` — Actors\n"
+                    "- `Document`, `Scene`, `Export`, `Episode` — Artifacts\n\n"
+                    "**Типы связей (SYMBOLIC):** governs, implements, defines, contains, uses, derives_from, feeds\n\n"
+                    "**Типы связей (VECTOR):** semantic_near, similar_to"
+                )
+
+                ug_validate_payload = gr.JSON(visible=False)
+                ug_validate_result = gr.JSON(visible=False)
+                ug_validate_btn = gr.Button(visible=False)
+
+                def validate_universe_graph(payload: Dict[str, Any]) -> Dict[str, Any]:
+                    """Validate Universe Graph payload."""
+                    errors = []
+                    warnings = []
+
+                    nodes = payload.get("nodes", [])
+                    edges = payload.get("edges", [])
+
+                    # Check for orphan nodes
+                    node_ids = {n.get("id") for n in nodes}
+                    connected = set()
+                    for e in edges:
+                        connected.add(e.get("source"))
+                        connected.add(e.get("target"))
+                    orphans = node_ids - connected
+                    for o in orphans:
+                        warnings.append(f"Orphan node: {o}")
+
+                    # Check layer balance
+                    layers = {"story": 0, "system": 0, "service": 0}
+                    for n in nodes:
+                        layer = n.get("layer")
+                        if layer in layers:
+                            layers[layer] += 1
+                    for layer, count in layers.items():
+                        if count == 0:
+                            warnings.append(f"Empty layer: {layer}")
+
+                    return {
+                        "ok": len(errors) == 0,
+                        "errors": errors,
+                        "warnings": warnings,
+                        "stats": {
+                            "nodes": len(nodes),
+                            "edges": len(edges),
+                            "rag_ready": len([n for n in nodes if n.get("rag_include")]),
+                        }
+                    }
+
+                ug_validate_btn.click(
+                    fn=validate_universe_graph,
+                    inputs=[ug_validate_payload],
+                    outputs=[ug_validate_result],
+                    api_name="validate_universe_graph",
+                )
+            else:
+                gr.Markdown("Universe Graph editor not found.")
+
 if __name__ == "__main__":
     demo.launch()
