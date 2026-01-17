@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Universe Graph Editor</title>
   <script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+  <script type="module">
+    // Import Gradio client for API calls
+    import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client@1.1.0/dist/index.min.js";
+    window.GradioClient = Client;
+  </script>
   <style>
     :root {
       --bg: #0d0d0f;
@@ -481,7 +486,7 @@
     <button id="add-edge-btn" class="btn btn-secondary hidden">+ Связь</button>
   </div>
 
-  <div id="status">Universe Graph v0.3</div>
+  <div id="status">Universe Graph v0.4</div>
 
   <script>
     // === Configuration ===
@@ -779,69 +784,90 @@ ${ECOSYSTEM_CONTEXT}
 
       const model = document.getElementById('llm-model').value;
       
-      // Direct call to HuggingFace Inference API
-      // Using public endpoint (works without token, with rate limits)
-      const HF_API_URL = `https://api-inference.huggingface.co/models/${model}/v1/chat/completions`;
+      // Use Gradio Client to call the Space API
+      try {
+        // Try using Gradio Client if available
+        if (window.GradioClient) {
+          const client = await window.GradioClient.connect("utemix/extended-mind-console");
+          const result = await client.predict("/universe_chat", {
+            payload: {
+              model: model,
+              messages: messages,
+              max_tokens: 512,
+              temperature: 0.7,
+            }
+          });
+          
+          if (result && result.data && result.data[0]) {
+            const data = result.data[0];
+            if (data.ok && data.content) {
+              return data.content;
+            }
+            if (data.error) {
+              return `❌ Ошибка: ${data.error}`;
+            }
+          }
+        }
+      } catch (gradioError) {
+        console.log('Gradio Client failed, trying direct API:', gradioError);
+      }
+      
+      // Fallback: Direct call to Gradio Space API
+      const SPACE_API_URL = 'https://utemix-extended-mind-console.hf.space/call/universe_chat';
       
       try {
-        const response = await fetch(HF_API_URL, {
+        // Step 1: Initiate the call
+        const initResponse = await fetch(SPACE_API_URL, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            // No Authorization header = public access with rate limits
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            model: model,
-            messages: messages,
-            max_tokens: 512,
-            temperature: 0.7,
-            stream: false,
+            data: [{
+              model: model,
+              messages: messages,
+              max_tokens: 512,
+              temperature: 0.7,
+            }]
           })
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          if (data.choices && data.choices[0] && data.choices[0].message) {
-            return data.choices[0].message.content || 'Нет ответа';
+        if (initResponse.ok) {
+          const initData = await initResponse.json();
+          const eventId = initData.event_id;
+          
+          // Step 2: Get the result
+          const resultResponse = await fetch(`${SPACE_API_URL}/${eventId}`);
+          const resultText = await resultResponse.text();
+          
+          // Parse SSE response
+          const lines = resultText.split('\n');
+          for (const line of lines) {
+            if (line.startsWith('data:')) {
+              const data = JSON.parse(line.slice(5));
+              if (data && data[0]) {
+                const result = data[0];
+                if (result.ok && result.content) {
+                  return result.content;
+                }
+                if (result.error) {
+                  return `❌ Ошибка: ${result.error}`;
+                }
+              }
+            }
           }
-          return 'Нет ответа от модели';
         }
-
-        // Handle specific errors
-        if (response.status === 503) {
-          return `⏳ Модель загружается. Подождите 20-30 секунд и повторите вопрос.
-
-**Совет:** Попробуйте переключить модель на Mistral 7B — она обычно быстрее.`;
-        }
-
-        if (response.status === 429) {
-          return `⚠️ Превышен лимит запросов. Подождите минуту и повторите.
-
-**Альтернатива:** Нажмите "Экспорт ТЗ" для работы в Cursor.`;
-        }
-
-        const errorData = await response.json().catch(() => ({}));
-        console.error('HF API error:', response.status, errorData);
-        
-        return `❌ Ошибка API (${response.status}). 
-
-**Что делать:**
-1. Попробуйте другую модель (Mistral или Qwen)
-2. Или используйте "Экспорт ТЗ" для Cursor`;
-
-      } catch (e) {
-        console.error('LLM call failed:', e);
-        
-        return `⚠️ Не удалось подключиться к LLM.
-
-**Возможные причины:**
-- Нет интернет-соединения
-- HuggingFace API временно недоступен
-
-**Что делать:**
-1. Проверьте соединение
-2. Или нажмите "Экспорт ТЗ" для работы в Cursor`;
+      } catch (apiError) {
+        console.error('Gradio API failed:', apiError);
       }
+
+      // Final fallback
+      return `⚠️ LLM временно недоступен.
+
+**Что делать:**
+1. Нажмите **"📤 Экспорт ТЗ"** — получите файл
+2. Откройте файл в **Cursor** и спросите Claude
+3. Claude имеет полный контекст экосистемы
+
+**Ваш вопрос сохранён** и будет включён в экспорт.`;
     }
 
     function exportTZ() {
@@ -1022,7 +1048,7 @@ ${ECOSYSTEM_CONTEXT}
           edgeAddMode = false;
           edgeSource = null;
           document.getElementById('add-edge-btn').textContent = '+ Связь';
-          document.getElementById('status').textContent = 'Universe Graph v0.3';
+          document.getElementById('status').textContent = 'Universe Graph v0.4';
         }
         return;
       }
@@ -1263,7 +1289,7 @@ ${ECOSYSTEM_CONTEXT}
       dirty = false;
       document.getElementById('status').textContent = 'Draft сохранён';
       setTimeout(() => {
-        document.getElementById('status').textContent = 'Universe Graph v0.3';
+        document.getElementById('status').textContent = 'Universe Graph v0.4';
       }, 2000);
     }
 
