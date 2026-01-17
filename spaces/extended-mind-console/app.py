@@ -935,8 +935,74 @@ with gr.Blocks(title="extended-mind console") as demo:
 
                 universe_graph_html = universe_graph_html_path.read_text(encoding="utf-8")
                 universe_graph_srcdoc = html_module_ug.escape(universe_graph_html, quote=True)
+                
+                # JavaScript bridge for postMessage LLM calls
+                llm_bridge_script = """
+<script>
+(function() {
+  // Wait for iframe to load
+  const checkIframe = setInterval(() => {
+    const iframe = document.getElementById('universe-graph-iframe');
+    if (iframe) {
+      clearInterval(checkIframe);
+      
+      // Listen for LLM requests from iframe
+      window.addEventListener('message', async (event) => {
+        if (event.data && event.data.type === 'llm_request') {
+          const { requestId, model, messages, max_tokens, temperature } = event.data;
+          
+          try {
+            // Call Gradio API
+            const response = await fetch('/api/universe_chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                data: [{
+                  model: model,
+                  messages: messages,
+                  max_tokens: max_tokens,
+                  temperature: temperature
+                }]
+              })
+            });
+            
+            if (response.ok) {
+              const result = await response.json();
+              const content = result.data?.[0]?.content || result.data?.[0] || 'Нет ответа';
+              const error = result.data?.[0]?.error;
+              
+              iframe.contentWindow.postMessage({
+                type: 'llm_response',
+                requestId,
+                content: error ? null : content,
+                error: error
+              }, '*');
+            } else {
+              iframe.contentWindow.postMessage({
+                type: 'llm_response',
+                requestId,
+                error: `HTTP ${response.status}`
+              }, '*');
+            }
+          } catch (e) {
+            console.error('LLM bridge error:', e);
+            iframe.contentWindow.postMessage({
+              type: 'llm_response',
+              requestId,
+              error: e.message
+            }, '*');
+          }
+        }
+      });
+      console.log('Universe Graph LLM bridge initialized');
+    }
+  }, 100);
+})();
+</script>
+"""
+                gr.HTML(llm_bridge_script)
                 gr.HTML(
-                    f'<iframe srcdoc="{universe_graph_srcdoc}" '
+                    f'<iframe id="universe-graph-iframe" srcdoc="{universe_graph_srcdoc}" '
                     'style="width:100%;height:800px;border:0;"></iframe>'
                 )
                 gr.Markdown(

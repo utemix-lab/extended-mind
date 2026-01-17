@@ -762,6 +762,22 @@ ${ECOSYSTEM_CONTEXT}
       }
     }
 
+    // Pending LLM requests (for postMessage callback)
+    const pendingLLMRequests = new Map();
+    let requestIdCounter = 0;
+
+    // Listen for LLM responses from parent window
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'llm_response') {
+        const { requestId, content, error } = event.data;
+        const pending = pendingLLMRequests.get(requestId);
+        if (pending) {
+          pending.resolve(error ? `❌ ${error}` : content);
+          pendingLLMRequests.delete(requestId);
+        }
+      }
+    });
+
     async function callLLM(userMessage, graphData) {
       const systemPrompt = SYSTEM_PROMPTS[llmMode];
       const graphContext = llmMode === 'graph' 
@@ -779,69 +795,49 @@ ${ECOSYSTEM_CONTEXT}
 
       const model = document.getElementById('llm-model').value;
       
-      // Direct call to HuggingFace Inference API
-      // Using public endpoint (works without token, with rate limits)
-      const HF_API_URL = `https://api-inference.huggingface.co/models/${model}/v1/chat/completions`;
-      
-      try {
-        const response = await fetch(HF_API_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            // No Authorization header = public access with rate limits
-          },
-          body: JSON.stringify({
-            model: model,
-            messages: messages,
+      // Try postMessage to parent window (Gradio)
+      if (window.parent && window.parent !== window) {
+        const requestId = ++requestIdCounter;
+        
+        return new Promise((resolve) => {
+          // Set timeout for response
+          const timeout = setTimeout(() => {
+            pendingLLMRequests.delete(requestId);
+            resolve(`⚠️ Таймаут запроса к LLM.
+
+**Что делать:**
+1. Попробуйте ещё раз
+2. Или нажмите **"📤 Экспорт ТЗ"** для работы в Cursor`);
+          }, 60000); // 60 second timeout
+
+          pendingLLMRequests.set(requestId, {
+            resolve: (result) => {
+              clearTimeout(timeout);
+              resolve(result);
+            }
+          });
+
+          // Send request to parent window
+          window.parent.postMessage({
+            type: 'llm_request',
+            requestId,
+            model,
+            messages,
             max_tokens: 512,
             temperature: 0.7,
-            stream: false,
-          })
+          }, '*');
         });
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.choices && data.choices[0] && data.choices[0].message) {
-            return data.choices[0].message.content || 'Нет ответа';
-          }
-          return 'Нет ответа от модели';
-        }
-
-        // Handle specific errors
-        if (response.status === 503) {
-          return `⏳ Модель загружается. Подождите 20-30 секунд и повторите вопрос.
-
-**Совет:** Попробуйте переключить модель на Mistral 7B — она обычно быстрее.`;
-        }
-
-        if (response.status === 429) {
-          return `⚠️ Превышен лимит запросов. Подождите минуту и повторите.
-
-**Альтернатива:** Нажмите "Экспорт ТЗ" для работы в Cursor.`;
-        }
-
-        const errorData = await response.json().catch(() => ({}));
-        console.error('HF API error:', response.status, errorData);
-        
-        return `❌ Ошибка API (${response.status}). 
-
-**Что делать:**
-1. Попробуйте другую модель (Mistral или Qwen)
-2. Или используйте "Экспорт ТЗ" для Cursor`;
-
-      } catch (e) {
-        console.error('LLM call failed:', e);
-        
-        return `⚠️ Не удалось подключиться к LLM.
-
-**Возможные причины:**
-- Нет интернет-соединения
-- HuggingFace API временно недоступен
-
-**Что делать:**
-1. Проверьте соединение
-2. Или нажмите "Экспорт ТЗ" для работы в Cursor`;
       }
+      
+      // Fallback if not in iframe
+      return `⚠️ LLM недоступен в этом режиме.
+
+**Что делать:**
+1. Нажмите **"📤 Экспорт ТЗ"** — получите файл
+2. Откройте файл в **Cursor** и спросите Claude
+3. Claude имеет полный контекст экосистемы
+
+**Ваш вопрос сохранён** и будет включён в экспорт.`;
     }
 
     function exportTZ() {
