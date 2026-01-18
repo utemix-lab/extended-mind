@@ -762,22 +762,6 @@ ${ECOSYSTEM_CONTEXT}
       }
     }
 
-    // Pending LLM requests (for postMessage callback)
-    const pendingLLMRequests = new Map();
-    let requestIdCounter = 0;
-
-    // Listen for LLM responses from parent window
-    window.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'llm_response') {
-        const { requestId, content, error } = event.data;
-        const pending = pendingLLMRequests.get(requestId);
-        if (pending) {
-          pending.resolve(error ? `❌ ${error}` : content);
-          pendingLLMRequests.delete(requestId);
-        }
-      }
-    });
-
     async function callLLM(userMessage, graphData) {
       const systemPrompt = SYSTEM_PROMPTS[llmMode];
       const graphContext = llmMode === 'graph' 
@@ -795,49 +779,97 @@ ${ECOSYSTEM_CONTEXT}
 
       const model = document.getElementById('llm-model').value;
       
-      // Try postMessage to parent window (Gradio)
-      if (window.parent && window.parent !== window) {
-        const requestId = ++requestIdCounter;
-        
-        return new Promise((resolve) => {
-          // Set timeout for response
+      // Call Gradio API directly (Gradio 4.x format)
+      try {
+        // Step 1: Initiate the call
+        const callResponse = await fetch('/call/universe_chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            data: [{
+              model: model,
+              messages: messages,
+              max_tokens: 512,
+              temperature: 0.7
+            }]
+          })
+        });
+
+        if (!callResponse.ok) {
+          const errorText = await callResponse.text();
+          console.error('Gradio call error:', callResponse.status, errorText);
+          return `❌ Ошибка API (${callResponse.status})
+
+**Что делать:**
+1. Обновите страницу
+2. Или нажмите **"📤 Экспорт ТЗ"** для работы в Cursor`;
+        }
+
+        const { event_id } = await callResponse.json();
+
+        // Step 2: Get result via SSE (Server-Sent Events)
+        return new Promise((resolve, reject) => {
+          const eventSource = new EventSource(`/call/universe_chat/${event_id}`);
+          let result = null;
+          
           const timeout = setTimeout(() => {
-            pendingLLMRequests.delete(requestId);
-            resolve(`⚠️ Таймаут запроса к LLM.
+            eventSource.close();
+            resolve(`⚠️ Таймаут ожидания ответа от LLM.
+
+**Что делать:**
+1. Модель может загружаться — попробуйте через 30 сек
+2. Или нажмите **"📤 Экспорт ТЗ"** для работы в Cursor`);
+          }, 120000); // 2 min timeout
+
+          eventSource.onmessage = (event) => {
+            try {
+              const data = JSON.parse(event.data);
+              
+              // Gradio sends multiple messages, we need the final one
+              if (Array.isArray(data) && data[0]) {
+                const response = data[0];
+                if (response.ok && response.content) {
+                  result = response.content;
+                } else if (response.error) {
+                  result = `❌ ${response.error}`;
+                } else if (typeof response === 'string') {
+                  result = response;
+                }
+              }
+            } catch (e) {
+              console.log('SSE parse:', event.data);
+            }
+          };
+
+          eventSource.onerror = (error) => {
+            clearTimeout(timeout);
+            eventSource.close();
+            if (result) {
+              resolve(result);
+            } else {
+              resolve(`⚠️ Соединение с LLM прервано.
 
 **Что делать:**
 1. Попробуйте ещё раз
 2. Или нажмите **"📤 Экспорт ТЗ"** для работы в Cursor`);
-          }, 60000); // 60 second timeout
-
-          pendingLLMRequests.set(requestId, {
-            resolve: (result) => {
-              clearTimeout(timeout);
-              resolve(result);
             }
-          });
+          };
 
-          // Send request to parent window
-          window.parent.postMessage({
-            type: 'llm_request',
-            requestId,
-            model,
-            messages,
-            max_tokens: 512,
-            temperature: 0.7,
-          }, '*');
+          eventSource.addEventListener('complete', () => {
+            clearTimeout(timeout);
+            eventSource.close();
+            resolve(result || 'Нет ответа от модели');
+          });
         });
-      }
-      
-      // Fallback if not in iframe
-      return `⚠️ LLM недоступен в этом режиме.
+
+      } catch (e) {
+        console.error('LLM call failed:', e);
+        return `⚠️ Не удалось подключиться к LLM.
 
 **Что делать:**
-1. Нажмите **"📤 Экспорт ТЗ"** — получите файл
-2. Откройте файл в **Cursor** и спросите Claude
-3. Claude имеет полный контекст экосистемы
-
-**Ваш вопрос сохранён** и будет включён в экспорт.`;
+1. Проверьте соединение
+2. Или нажмите **"📤 Экспорт ТЗ"** для работы в Cursor`;
+      }
     }
 
     function exportTZ() {

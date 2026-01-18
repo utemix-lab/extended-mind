@@ -9,8 +9,6 @@ from typing import Any, Dict, List, Tuple
 import faiss  # type: ignore
 import gradio as gr  # type: ignore
 import numpy as np
-from fastapi import Request
-from fastapi.responses import JSONResponse
 from huggingface_hub import InferenceClient, hf_hub_download
 from jsonschema import Draft202012Validator  # type: ignore
 from sentence_transformers import SentenceTransformer  # type: ignore
@@ -938,68 +936,8 @@ with gr.Blocks(title="extended-mind console") as demo:
                 universe_graph_html = universe_graph_html_path.read_text(encoding="utf-8")
                 universe_graph_srcdoc = html_module_ug.escape(universe_graph_html, quote=True)
                 
-                # JavaScript bridge for postMessage LLM calls
-                llm_bridge_script = """
-<script>
-(function() {
-  // Wait for iframe to load
-  const checkIframe = setInterval(() => {
-    const iframe = document.getElementById('universe-graph-iframe');
-    if (iframe) {
-      clearInterval(checkIframe);
-      
-      // Listen for LLM requests from iframe
-      window.addEventListener('message', async (event) => {
-        if (event.data && event.data.type === 'llm_request') {
-          const { requestId, model, messages, max_tokens, temperature } = event.data;
-          
-          try {
-            // Call direct LLM endpoint (FastAPI, not Gradio API)
-            const response = await fetch('/llm/chat', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                model: model,
-                messages: messages,
-                max_tokens: max_tokens,
-                temperature: temperature
-              })
-            });
-            
-            const result = await response.json();
-            
-            if (result.ok) {
-              iframe.contentWindow.postMessage({
-                type: 'llm_response',
-                requestId,
-                content: result.content
-              }, '*');
-            } else {
-              iframe.contentWindow.postMessage({
-                type: 'llm_response',
-                requestId,
-                error: result.error || 'Unknown error'
-              }, '*');
-            }
-          } catch (e) {
-            console.error('LLM bridge error:', e);
-            iframe.contentWindow.postMessage({
-              type: 'llm_response',
-              requestId,
-              error: e.message
-            }, '*');
-          }
-        }
-      });
-      console.log('Universe Graph LLM bridge initialized');
-    }
-  }, 100);
-})();
-</script>
-"""
-                gr.HTML(llm_bridge_script)
                 gr.HTML(
-                    f'<iframe id="universe-graph-iframe" srcdoc="{universe_graph_srcdoc}" '
+                    f'<iframe srcdoc="{universe_graph_srcdoc}" '
                     'style="width:100%;height:800px;border:0;"></iframe>'
                 )
                 gr.Markdown(
@@ -1105,40 +1043,8 @@ with gr.Blocks(title="extended-mind console") as demo:
             else:
                 gr.Markdown("Universe Graph editor not found.")
 
-# Enable queue to get access to FastAPI app
+# Enable queue for API access
 demo.queue()
-
-
-# Add custom LLM endpoint to Gradio's FastAPI app
-@demo.app.post("/llm/chat")
-async def llm_chat_endpoint(request: Request) -> JSONResponse:
-    """Direct LLM chat endpoint (bypasses Gradio API complexity)."""
-    try:
-        body = await request.json()
-        model = body.get("model", DEFAULT_LLM_MODEL)
-        messages = body.get("messages", [])
-        max_tokens = body.get("max_tokens", 512)
-        temperature = body.get("temperature", 0.7)
-
-        token = os.getenv("HF_TOKEN")
-        if not token:
-            return JSONResponse({"ok": False, "error": "HF_TOKEN not configured"})
-
-        if not messages:
-            return JSONResponse({"ok": False, "error": "No messages provided"})
-
-        client = InferenceClient(token=token)
-        response = client.chat.completions.create(
-            model=model,
-            messages=messages,
-            max_tokens=int(max_tokens),
-            temperature=float(temperature),
-        )
-        content = response.choices[0].message.content or ""
-        return JSONResponse({"ok": True, "content": content})
-
-    except Exception as exc:
-        return JSONResponse({"ok": False, "error": str(exc)})
 
 
 if __name__ == "__main__":
