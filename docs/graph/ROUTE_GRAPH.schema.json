@@ -1,0 +1,161 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://extended-mind.utemix.space/schemas/route-graph.v0.1.json",
+  "title": "RouteGraph",
+  "description": "Конечный маршрут прохождения Universe Graph",
+  "type": "object",
+  "required": ["id", "title", "start_node_id", "nodes", "edges", "limits"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Уникальный ID маршрута"
+    },
+    "title": {
+      "type": "string",
+      "description": "Название маршрута"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "start_node_id": {
+      "type": "string",
+      "description": "ID начального узла"
+    },
+    "nodes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/RouteNode" }
+    },
+    "edges": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/RouteEdge" }
+    },
+    "limits": {
+      "type": "object",
+      "required": ["max_nodes", "max_edges", "max_depth"],
+      "properties": {
+        "max_nodes": { "type": "integer", "minimum": 1, "default": 50 },
+        "max_edges": { "type": "integer", "minimum": 1, "default": 100 },
+        "max_depth": { "type": "integer", "minimum": 1, "default": 10 }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "project_id": { "type": "string" },
+        "notes": { "type": "string" },
+        "version": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "RouteNode": {
+      "type": "object",
+      "required": ["id", "label", "story", "system", "service"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string", "maxLength": 50 },
+        "story": { "$ref": "#/$defs/StoryView" },
+        "system": { "$ref": "#/$defs/SystemView" },
+        "service": { "$ref": "#/$defs/ServiceView" },
+        "refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Reference" }
+        },
+        "position": {
+          "type": "object",
+          "properties": {
+            "x": { "type": "number" },
+            "y": { "type": "number" }
+          }
+        }
+      }
+    },
+    "StoryView": {
+      "type": "object",
+      "required": ["text"],
+      "properties": {
+        "text": { "type": "string", "maxLength": 500 },
+        "refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Reference" }
+        }
+      }
+    },
+    "SystemView": {
+      "type": "object",
+      "required": ["text"],
+      "properties": {
+        "text": { "type": "string", "maxLength": 500 },
+        "refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Reference" }
+        }
+      }
+    },
+    "ServiceView": {
+      "type": "object",
+      "required": ["text"],
+      "properties": {
+        "text": { "type": "string", "maxLength": 500 },
+        "actions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/DemoAction" }
+        },
+        "refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Reference" }
+        }
+      }
+    },
+    "DemoAction": {
+      "type": "object",
+      "required": ["id", "label", "type"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["generate", "export", "compare", "navigate", "custom"]
+        },
+        "target": { "type": "string" }
+      }
+    },
+    "Reference": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["internal", "external"]
+        },
+        "entity_type": {
+          "type": "string",
+          "enum": ["project", "repo", "doc", "term", "decision", "principle"]
+        },
+        "entity_id": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "pointer_tag": { "type": "string" },
+        "label": { "type": "string" }
+      }
+    },
+    "RouteEdge": {
+      "type": "object",
+      "required": ["id", "source", "target", "type"],
+      "properties": {
+        "id": { "type": "string" },
+        "source": { "type": "string" },
+        "target": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["NEXT", "BRANCH", "RELATED"]
+        },
+        "label": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "id": "route-ecosystem-intro",
+  "title": "Знакомство с экосистемой utemix-lab",
+  "created_at": "2026-01-18T12:00:00Z",
+  "updated_at": "2026-01-18T12:00:00Z",
+  "start_node_id": "step-welcome",
+  "nodes": [
+    {
+      "id": "step-welcome",
+      "label": "Добро пожаловать",
+      "story": {
+        "text": "Это карта мира, где архитектура = контент. Каждый проект — не просто код, а часть единого нарратива.",
+        "refs": []
+      },
+      "system": {
+        "text": "Экосистема построена на принципе Graph-first: всё связано явными связями, ничего не скрыто.",
+        "refs": [
+          { "type": "internal", "entity_type": "principle", "entity_id": "graph-first", "label": "Graph-first" }
+        ]
+      },
+      "service": {
+        "text": "Выберите направление: изучить проекты или погрузиться в архитектуру.",
+        "actions": [
+          { "id": "nav-projects", "label": "К проектам", "type": "navigate", "target": "#step-projects" },
+          { "id": "nav-arch", "label": "К архитектуре", "type": "navigate", "target": "#step-architecture" }
+        ]
+      },
+      "refs": [
+        { "type": "internal", "entity_type": "project", "entity_id": "extended-mind", "label": "extended-mind" }
+      ],
+      "position": { "x": 0, "y": 0 }
+    },
+    {
+      "id": "step-projects",
+      "label": "Проекты экосистемы",
+      "story": {
+        "text": "Шесть репозиториев, каждый со своей ролью. extended-mind — координатор, vovaipetrova-core — витрина.",
+        "refs": []
+      },
+      "system": {
+        "text": "Проекты связаны типами: governs, implements, derives_from. Канон един, витрины — проекции.",
+        "refs": [
+          { "type": "internal", "entity_type": "doc", "entity_id": "ecosystem-layer", "label": "ECOSYSTEM_LAYER.md" }
+        ]
+      },
+      "service": {
+        "text": "Посмотрите граф проектов или перейдите к конкретному.",
+        "actions": [
+          { "id": "view-graph", "label": "Открыть Universe Graph", "type": "navigate", "target": "/universe-graph" }
+        ]
+      },
+      "refs": [],
+      "position": { "x": -150, "y": 150 }
+    },
+    {
+      "id": "step-architecture",
+      "label": "Архитектурные решения",
+      "story": {
+        "text": "Каждое решение задокументировано как ADR. Принципы — это законы, которым подчиняется весь код.",
+        "refs": []
+      },
+      "system": {
+        "text": "ADR хранятся в /docs/adr/. Формат: контекст → решение → последствия.",
+        "refs": [
+          { "type": "internal", "entity_type": "decision", "entity_id": "adr-001", "label": "ADR-001" }
+        ]
+      },
+      "service": {
+        "text": "Изучите список ADR или создайте новое решение.",
+        "actions": [
+          { "id": "list-adr", "label": "Список ADR", "type": "navigate", "target": "/docs/adr" },
+          { "id": "new-adr", "label": "Создать ADR", "type": "generate" }
+        ]
+      },
+      "refs": [],
+      "position": { "x": 150, "y": 150 }
+    },
+    {
+      "id": "step-summary",
+      "label": "Итог",
+      "story": {
+        "text": "Теперь вы понимаете структуру. Канон мал, маршруты конечны, витрина не диктует истину.",
+        "refs": []
+      },
+      "system": {
+        "text": "Инварианты зафиксированы в MANIFEST.md. Это закон экосистемы.",
+        "refs": [
+          { "type": "internal", "entity_type": "doc", "entity_id": "manifest", "label": "MANIFEST.md" }
+        ]
+      },
+      "service": {
+        "text": "Экспортируйте этот маршрут или создайте свой.",
+        "actions": [
+          { "id": "export-route", "label": "Экспорт в JSON", "type": "export" }
+        ]
+      },
+      "refs": [],
+      "position": { "x": 0, "y": 300 }
+    }
+  ],
+  "edges": [
+    { "id": "e1", "source": "step-welcome", "target": "step-projects", "type": "BRANCH", "label": "Проекты" },
+    { "id": "e2", "source": "step-welcome", "target": "step-architecture", "type": "BRANCH", "label": "Архитектура" },
+    { "id": "e3", "source": "step-projects", "target": "step-summary", "type": "NEXT" },
+    { "id": "e4", "source": "step-architecture", "target": "step-summary", "type": "NEXT" },
+    { "id": "e5", "source": "step-projects", "target": "step-architecture", "type": "RELATED" }
+  ],
+  "limits": {
+    "max_nodes": 50,
+    "max_edges": 100,
+    "max_depth": 10
+  },
+  "meta": {
+    "project_id": "extended-mind",
+    "notes": "Демонстрационный маршрут для знакомства с экосистемой",
+    "version": "0.1.0"
+  }
+}
