@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Tuple
 import faiss  # type: ignore
 import gradio as gr  # type: ignore
 import numpy as np
-from fastapi import FastAPI, Request
+from fastapi import Request
 from fastapi.responses import JSONResponse
 from huggingface_hub import InferenceClient, hf_hub_download
 from jsonschema import Draft202012Validator  # type: ignore
@@ -1105,11 +1105,12 @@ with gr.Blocks(title="extended-mind console") as demo:
             else:
                 gr.Markdown("Universe Graph editor not found.")
 
-# FastAPI app with custom LLM endpoint
-app = FastAPI()
+# Enable queue to get access to FastAPI app
+demo.queue()
 
 
-@app.post("/llm/chat")
+# Add custom LLM endpoint to Gradio's FastAPI app
+@demo.app.post("/llm/chat")
 async def llm_chat_endpoint(request: Request) -> JSONResponse:
     """Direct LLM chat endpoint (bypasses Gradio API complexity)."""
     try:
@@ -1140,11 +1141,5 @@ async def llm_chat_endpoint(request: Request) -> JSONResponse:
         return JSONResponse({"ok": False, "error": str(exc)})
 
 
-# Mount Gradio app
-app = gr.mount_gradio_app(app, demo, path="/")
-
-
 if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=7860)
+    demo.launch()
