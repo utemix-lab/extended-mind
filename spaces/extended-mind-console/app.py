@@ -7,7 +7,7 @@ extended-mind console — Route Graph Editor v0.1
 import html as html_module
 import os
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 import gradio as gr
 from huggingface_hub import InferenceClient
@@ -18,16 +18,11 @@ UI_VERSION = "route-graph-editor-v0.1"
 DEFAULT_LLM_MODEL = os.getenv(
     "HF_INFERENCE_MODEL", "meta-llama/Meta-Llama-3.1-8B-Instruct"
 )
-MODEL_PRESETS = [
-    DEFAULT_LLM_MODEL,
-    "mistralai/Mistral-7B-Instruct-v0.3",
-    "Qwen/Qwen2.5-7B-Instruct",
-]
 
 
-# === LLM Chat API ===
-def universe_graph_chat(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Chat with LLM about Universe Graph."""
+# === LLM Chat API (для будущего использования) ===
+def route_graph_chat(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Chat with LLM about Route Graph."""
     token = os.getenv("HF_TOKEN")
     if not token:
         return {"ok": False, "error": "HF_TOKEN not configured"}
@@ -55,33 +50,58 @@ def universe_graph_chat(payload: Dict[str, Any]) -> Dict[str, Any]:
 
 
 # === Validation ===
-def validate_universe_graph(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Validate Universe Graph payload."""
-    errors = []
-    warnings = []
+def validate_route_graph(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Validate Route Graph payload against limits and structure."""
+    errors: List[str] = []
+    warnings: List[str] = []
 
     nodes = payload.get("nodes", [])
     edges = payload.get("edges", [])
+    limits = payload.get("limits", {"max_nodes": 50, "max_edges": 100, "max_depth": 10})
+    start_node_id = payload.get("start_node_id")
 
-    # Check for orphan nodes
+    # Check limits
+    if len(nodes) > limits.get("max_nodes", 50):
+        errors.append(f"Превышен лимит шагов: {len(nodes)} > {limits['max_nodes']}")
+    if len(edges) > limits.get("max_edges", 100):
+        errors.append(f"Превышен лимит связей: {len(edges)} > {limits['max_edges']}")
+
+    # Check start node exists
     node_ids = {n.get("id") for n in nodes}
-    connected = set()
-    for e in edges:
-        connected.add(e.get("source"))
-        connected.add(e.get("target"))
-    orphans = node_ids - connected
-    for o in orphans:
-        warnings.append(f"Orphan node: {o}")
+    if start_node_id and start_node_id not in node_ids:
+        errors.append(f"Начальный узел не найден: {start_node_id}")
 
-    # Check layer balance
-    layers = {"story": 0, "system": 0, "service": 0}
+    # Check edge references
+    for e in edges:
+        if e.get("source") not in node_ids:
+            errors.append(f"Связь ссылается на несуществующий узел: {e.get('source')}")
+        if e.get("target") not in node_ids:
+            errors.append(f"Связь ссылается на несуществующий узел: {e.get('target')}")
+
+    # Check for empty Story/System/Service (warnings only)
     for n in nodes:
-        layer = n.get("layer")
-        if layer in layers:
-            layers[layer] += 1
-    for layer, count in layers.items():
-        if count == 0:
-            warnings.append(f"Empty layer: {layer}")
+        if not n.get("story", {}).get("text"):
+            warnings.append(f"Пустой Story: {n.get('label', n.get('id'))}")
+        if not n.get("system", {}).get("text"):
+            warnings.append(f"Пустой System: {n.get('label', n.get('id'))}")
+
+    # Calculate depth
+    depth = 0
+    if start_node_id:
+        visited = set()
+        def dfs(node_id: str, d: int) -> int:
+            if node_id in visited:
+                return d
+            visited.add(node_id)
+            max_d = d
+            for e in edges:
+                if e.get("source") == node_id and e.get("type") == "NEXT":
+                    max_d = max(max_d, dfs(e.get("target"), d + 1))
+            return max_d
+        depth = dfs(start_node_id, 1)
+    
+    if depth > limits.get("max_depth", 10):
+        errors.append(f"Превышена глубина: {depth} > {limits['max_depth']}")
 
     return {
         "ok": len(errors) == 0,
@@ -90,7 +110,7 @@ def validate_universe_graph(payload: Dict[str, Any]) -> Dict[str, Any]:
         "stats": {
             "nodes": len(nodes),
             "edges": len(edges),
-            "rag_ready": len([n for n in nodes if n.get("rag_include")]),
+            "depth": depth,
         },
     }
 
@@ -106,7 +126,7 @@ with gr.Blocks(
 ) as demo:
     gr.Markdown(
         f"""
-# extended-mind — Route Graph Editor
+# 🛤️ extended-mind — Route Graph Editor
 
 **Авторский конструктор маршрутов и карт экосистемы.**
 
@@ -115,17 +135,18 @@ with gr.Blocks(
     )
 
     with gr.Tabs():
-        with gr.TabItem("Universe Graph v0.1"):
+        with gr.TabItem("Route Graph Editor"):
             gr.Markdown(
                 """
-## Universe Graph Editor
+## Редактор маршрутов
 
-Редактор мета-графа экосистемы **utemix-lab**.
+**Route Graph** — конечный граф маршрута (Steps + NEXT/BRANCH/RELATED).
 
 **Ключевые принципы:**
-- **Канон мал** — только Projects, Repos, Concepts, Principles, Decisions, Roles
-- **3S = линзы** — Story / System / Service — режимы просмотра, не сущности
-- **Маршрут ≠ канон** — Route Graph ссылается на канон через refs
+- **Route Graph первичен** — редактируется в центре
+- **Universe Graph = read-only канон** — источник refs
+- **3S = линзы** — Story / System / Service — редактируют содержимое шага
+- **Конечность** — лимиты на nodes, edges, depth
 
 **Спецификации:**
 - [MANIFEST.md](https://github.com/utemix-lab/extended-mind/blob/main/docs/graph/MANIFEST.md)
@@ -133,68 +154,68 @@ with gr.Blocks(
 """
             )
 
-            # Load Universe Graph editor from HTML
-            universe_graph_html_path = (
-                Path(__file__).parent / "universe-graph" / "index.html"
+            # Load Route Graph editor from HTML
+            route_graph_html_path = (
+                Path(__file__).parent / "route-graph" / "index.html"
             )
 
-            if universe_graph_html_path.exists():
-                universe_graph_html = universe_graph_html_path.read_text(
-                    encoding="utf-8"
-                )
-                universe_graph_srcdoc = html_module.escape(
-                    universe_graph_html, quote=True
-                )
+            if route_graph_html_path.exists():
+                route_graph_html = route_graph_html_path.read_text(encoding="utf-8")
+                route_graph_srcdoc = html_module.escape(route_graph_html, quote=True)
 
                 gr.HTML(
-                    f'<iframe srcdoc="{universe_graph_srcdoc}" '
-                    'style="width:100%;height:800px;border:0;"></iframe>'
+                    f'<iframe srcdoc="{route_graph_srcdoc}" '
+                    'style="width:100%;height:850px;border:0;"></iframe>'
                 )
 
                 gr.Markdown(
                     """
 ---
 
-**Типы узлов (Canon):**
-- `Project`, `Repository` — Universe
-- `Decision`, `Principle`, `Pattern` — Architecture
-- `Concept`, `Definition` — Ontology
-- `Role` — Actors
+**Типы узлов:**
+- `RouteNode` (Step) — шаг маршрута с тремя проекциями
 
 **Типы связей:**
-- **SYMBOLIC:** governs, implements, defines, contains, uses, derives_from
-- **VECTOR:** semantic_near, similar_to (для будущего RAG)
+- **NEXT** — основной путь (сплошная линия)
+- **BRANCH** — альтернатива (пунктир)
+- **RELATED** — мягкая связь (тонкая линия)
+
+**Три проекции (3S):**
+- 📖 **Story** — что происходит (нарратив)
+- ⚙️ **System** — как устроено (архитектура)
+- 🎯 **Service** — что делать (действия)
 
 ---
 
-*LLM интеграция временно отключена. Используйте "Экспорт ТЗ" для работы в Cursor.*
+*LLM интеграция будет добавлена позже.*
 """
                 )
 
-                # Hidden API components
-                ug_validate_payload = gr.JSON(visible=False)
-                ug_validate_result = gr.JSON(visible=False)
-                ug_validate_btn = gr.Button(visible=False)
+                # Hidden API components for validation
+                rg_validate_payload = gr.JSON(visible=False)
+                rg_validate_result = gr.JSON(visible=False)
+                rg_validate_btn = gr.Button(visible=False)
 
-                ug_validate_btn.click(
-                    fn=validate_universe_graph,
-                    inputs=[ug_validate_payload],
-                    outputs=[ug_validate_result],
-                    api_name="validate_universe_graph",
+                rg_validate_btn.click(
+                    fn=validate_route_graph,
+                    inputs=[rg_validate_payload],
+                    outputs=[rg_validate_result],
+                    api_name="validate_route_graph",
                 )
 
-                ug_chat_payload = gr.JSON(visible=False)
-                ug_chat_result = gr.JSON(visible=False)
-                ug_chat_btn = gr.Button(visible=False)
+                # LLM API (для будущего)
+                rg_chat_payload = gr.JSON(visible=False)
+                rg_chat_result = gr.JSON(visible=False)
+                rg_chat_btn = gr.Button(visible=False)
 
-                ug_chat_btn.click(
-                    fn=universe_graph_chat,
-                    inputs=[ug_chat_payload],
-                    outputs=[ug_chat_result],
-                    api_name="universe_chat",
+                rg_chat_btn.click(
+                    fn=route_graph_chat,
+                    inputs=[rg_chat_payload],
+                    outputs=[rg_chat_result],
+                    api_name="route_graph_chat",
                 )
             else:
-                gr.Markdown("⚠️ Universe Graph editor not found.")
+                gr.Markdown("⚠️ Route Graph editor not found.")
 
 # Enable queue for API access
 demo.queue()

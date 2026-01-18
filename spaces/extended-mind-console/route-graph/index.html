@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Route Graph Editor</title>
+  <script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0c;
+      --panel: rgba(18, 18, 22, 0.95);
+      --border: #2a2a2e;
+      --text: #e8e6e3;
+      --muted: #888;
+      --accent: #7ee787;
+      --story: #facc15;
+      --system: #58a6ff;
+      --service: #22c55e;
+      --next: #7ee787;
+      --branch: #facc15;
+      --related: #888;
+      --warning: #fb923c;
+      --error: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    /* Layout: 3-column */
+    #app {
+      display: grid;
+      grid-template-columns: 280px 1fr 320px;
+      grid-template-rows: auto 1fr auto;
+      height: 100vh;
+    }
+    
+    /* Header */
+    #header {
+      grid-column: 1 / -1;
+      padding: 12px 20px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #header h1 {
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #header .version { color: var(--muted); font-weight: 400; }
+    
+    /* Left panel: Story */
+    #story-panel {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    /* Center: Graph */
+    #graph-container {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    #graph {
+      flex: 1;
+      background: var(--bg);
+    }
+    #graph-toolbar {
+      padding: 8px 12px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    /* Right panel: System + Service */
+    #right-panel {
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+    #system-panel { flex: 1; border-bottom: 1px solid var(--border); overflow: hidden; }
+    #service-panel { flex: 1; overflow: hidden; }
+    
+    /* Footer */
+    #footer {
+      grid-column: 1 / -1;
+      padding: 8px 20px;
+      background: var(--panel);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    #limits { display: flex; gap: 16px; }
+    #limits .limit { display: flex; gap: 4px; }
+    #limits .limit.warning { color: var(--warning); }
+    #limits .limit.error { color: var(--error); }
+    
+    /* Panel styling */
+    .panel-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .panel-header .icon { font-size: 16px; }
+    .panel-header.story { color: var(--story); }
+    .panel-header.system { color: var(--system); }
+    .panel-header.service { color: var(--service); }
+    
+    .panel-content {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+    }
+    
+    /* Form elements */
+    .field { margin-bottom: 12px; }
+    .field label {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .field input, .field textarea, .field select {
+      width: 100%;
+      padding: 8px 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-size: 13px;
+      font-family: inherit;
+    }
+    .field textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    .field input:focus, .field textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    /* Buttons */
+    .btn {
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn:hover { background: rgba(255,255,255,0.1); }
+    .btn.primary { background: var(--accent); color: #000; border-color: var(--accent); }
+    .btn.primary:hover { background: #9ef3a0; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    /* Refs list */
+    .refs-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 8px;
+    }
+    .ref-tag {
+      padding: 2px 8px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 12px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .ref-tag .remove {
+      cursor: pointer;
+      opacity: 0.6;
+    }
+    .ref-tag .remove:hover { opacity: 1; }
+    
+    /* Actions list */
+    .actions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .action-item {
+      padding: 8px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .action-item .type {
+      font-size: 10px;
+      padding: 2px 6px;
+      background: var(--service);
+      color: #000;
+      border-radius: 8px;
+    }
+    
+    /* Empty state */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--muted);
+      text-align: center;
+      padding: 20px;
+    }
+    .empty-state .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.3; }
+    .empty-state h3 { margin-bottom: 8px; }
+    
+    /* Route info */
+    #route-info {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    #route-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    #route-meta {
+      font-size: 11px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header id="header">
+      <h1>
+        🛤️ Route Graph Editor
+        <span class="version">v0.1</span>
+      </h1>
+      <div id="header-actions">
+        <button class="btn" onclick="newRoute()">+ Новый маршрут</button>
+        <button class="btn" onclick="loadDemo()">📂 Загрузить демо</button>
+        <button class="btn primary" onclick="exportRoute()">💾 Экспорт</button>
+      </div>
+    </header>
+    
+    <!-- Left: Story panel -->
+    <aside id="story-panel">
+      <div class="panel-header story">
+        <span class="icon">📖</span> Story
+      </div>
+      <div id="route-info">
+        <div id="route-title">Новый маршрут</div>
+        <div id="route-meta">0 шагов • 0 связей</div>
+      </div>
+      <div class="panel-content" id="story-content">
+        <div class="empty-state" id="story-empty">
+          <div class="icon">👆</div>
+          <h3>Выберите шаг</h3>
+          <p>Кликните на узел графа, чтобы редактировать его Story</p>
+        </div>
+        <div id="story-editor" style="display:none;">
+          <div class="field">
+            <label>Текст (1-3 строки)</label>
+            <textarea id="story-text" placeholder="Что происходит на этом шаге?"></textarea>
+          </div>
+          <div class="field">
+            <label>Refs (персонажи, контент)</label>
+            <input type="text" id="story-refs-input" placeholder="Добавить ref...">
+            <div class="refs-list" id="story-refs"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+    
+    <!-- Center: Graph -->
+    <main id="graph-container">
+      <div id="graph-toolbar">
+        <button class="btn" id="add-step-btn" onclick="addStep()">+ Шаг</button>
+        <button class="btn" id="add-edge-btn" onclick="startAddEdge()">🔗 Связь</button>
+        <select id="edge-type-select">
+          <option value="NEXT">NEXT (основной путь)</option>
+          <option value="BRANCH">BRANCH (альтернатива)</option>
+          <option value="RELATED">RELATED (связь)</option>
+        </select>
+        <span style="flex:1;"></span>
+        <button class="btn" onclick="deleteSelected()">🗑️ Удалить</button>
+      </div>
+      <div id="graph"></div>
+    </main>
+    
+    <!-- Right: System + Service -->
+    <aside id="right-panel">
+      <div id="system-panel">
+        <div class="panel-header system">
+          <span class="icon">⚙️</span> System
+        </div>
+        <div class="panel-content" id="system-content">
+          <div class="empty-state" id="system-empty">
+            <div class="icon">🔧</div>
+            <h3>Архитектура</h3>
+            <p>Как это устроено</p>
+          </div>
+          <div id="system-editor" style="display:none;">
+            <div class="field">
+              <label>Описание</label>
+              <textarea id="system-text" placeholder="Как это устроено?"></textarea>
+            </div>
+            <div class="field">
+              <label>Refs (repos, ADR, specs)</label>
+              <input type="text" id="system-refs-input" placeholder="Добавить ref...">
+              <div class="refs-list" id="system-refs"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="service-panel">
+        <div class="panel-header service">
+          <span class="icon">🎯</span> Service
+        </div>
+        <div class="panel-content" id="service-content">
+          <div class="empty-state" id="service-empty">
+            <div class="icon">▶️</div>
+            <h3>Действия</h3>
+            <p>Что можно сделать</p>
+          </div>
+          <div id="service-editor" style="display:none;">
+            <div class="field">
+              <label>Описание</label>
+              <textarea id="service-text" placeholder="Какие действия доступны?"></textarea>
+            </div>
+            <div class="field">
+              <label>Демо-действия</label>
+              <div class="actions-list" id="service-actions"></div>
+              <button class="btn" style="margin-top:8px;" onclick="addAction()">+ Добавить действие</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+    
+    <!-- Footer -->
+    <footer id="footer">
+      <div id="limits">
+        <div class="limit" id="limit-nodes">
+          <span>Шаги:</span>
+          <span id="count-nodes">0</span> / <span id="max-nodes">50</span>
+        </div>
+        <div class="limit" id="limit-edges">
+          <span>Связи:</span>
+          <span id="count-edges">0</span> / <span id="max-edges">100</span>
+        </div>
+        <div class="limit" id="limit-depth">
+          <span>Глубина:</span>
+          <span id="count-depth">0</span> / <span id="max-depth">10</span>
+        </div>
+      </div>
+      <div id="status">Route Graph Editor v0.1</div>
+    </footer>
+  </div>
+
+  <script>
+    // === State ===
+    let cy = null;
+    let selectedNode = null;
+    let addingEdge = false;
+    let edgeSource = null;
+    
+    // Route Graph data
+    let routeGraph = {
+      id: 'route-' + Date.now(),
+      title: 'Новый маршрут',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      start_node_id: null,
+      nodes: [],
+      edges: [],
+      limits: { max_nodes: 50, max_edges: 100, max_depth: 10 },
+      meta: { notes: '' }
+    };
+
+    // === Init ===
+    document.addEventListener('DOMContentLoaded', init);
+
+    function init() {
+      cy = cytoscape({
+        container: document.getElementById('graph'),
+        style: [
+          {
+            selector: 'node',
+            style: {
+              'label': 'data(label)',
+              'text-valign': 'center',
+              'text-halign': 'center',
+              'background-color': '#58a6ff',
+              'color': '#fff',
+              'font-size': '12px',
+              'width': 60,
+              'height': 60,
+              'border-width': 2,
+              'border-color': '#3a7bd5'
+            }
+          },
+          {
+            selector: 'node[?isStart]',
+            style: {
+              'border-width': 4,
+              'border-color': '#7ee787'
+            }
+          },
+          {
+            selector: 'node:selected',
+            style: {
+              'border-width': 4,
+              'border-color': '#facc15'
+            }
+          },
+          {
+            selector: 'edge',
+            style: {
+              'width': 2,
+              'line-color': '#7ee787',
+              'target-arrow-color': '#7ee787',
+              'target-arrow-shape': 'triangle',
+              'curve-style': 'bezier',
+              'label': 'data(label)',
+              'font-size': '10px',
+              'color': '#888'
+            }
+          },
+          {
+            selector: 'edge[type="NEXT"]',
+            style: { 'line-color': '#7ee787', 'target-arrow-color': '#7ee787', 'width': 3 }
+          },
+          {
+            selector: 'edge[type="BRANCH"]',
+            style: { 'line-color': '#facc15', 'target-arrow-color': '#facc15', 'line-style': 'dashed' }
+          },
+          {
+            selector: 'edge[type="RELATED"]',
+            style: { 'line-color': '#888', 'target-arrow-color': '#888', 'width': 1, 'target-arrow-shape': 'none' }
+          }
+        ],
+        layout: { name: 'preset' }
+      });
+
+      // Events
+      cy.on('tap', 'node', onNodeTap);
+      cy.on('tap', function(e) {
+        if (e.target === cy) {
+          clearSelection();
+        }
+      });
+
+      // Load from localStorage
+      const saved = localStorage.getItem('route-graph-draft');
+      if (saved) {
+        try {
+          routeGraph = JSON.parse(saved);
+          renderGraph();
+          updateUI();
+        } catch (e) {
+          console.error('Failed to load draft:', e);
+        }
+      }
+    }
+
+    // === Graph rendering ===
+    function renderGraph() {
+      cy.elements().remove();
+      
+      // Add nodes
+      routeGraph.nodes.forEach(node => {
+        cy.add({
+          group: 'nodes',
+          data: {
+            id: node.id,
+            label: node.label,
+            isStart: node.id === routeGraph.start_node_id
+          },
+          position: node.position || { x: Math.random() * 400 + 100, y: Math.random() * 300 + 100 }
+        });
+      });
+
+      // Add edges
+      routeGraph.edges.forEach(edge => {
+        cy.add({
+          group: 'edges',
+          data: {
+            id: edge.id,
+            source: edge.source,
+            target: edge.target,
+            type: edge.type,
+            label: edge.label || ''
+          }
+        });
+      });
+
+      if (routeGraph.nodes.length > 0) {
+        cy.layout({ name: 'cose', animate: false }).run();
+      }
+    }
+
+    // === Node operations ===
+    function addStep() {
+      if (routeGraph.nodes.length >= routeGraph.limits.max_nodes) {
+        alert('Достигнут лимит шагов!');
+        return;
+      }
+
+      const id = 'step-' + Date.now();
+      const newNode = {
+        id,
+        label: 'Шаг ' + (routeGraph.nodes.length + 1),
+        story: { text: '', refs: [] },
+        system: { text: '', refs: [] },
+        service: { text: '', actions: [], refs: [] },
+        refs: [],
+        position: { x: 200 + Math.random() * 200, y: 200 + Math.random() * 200 }
+      };
+
+      routeGraph.nodes.push(newNode);
+      
+      // Set as start if first node
+      if (routeGraph.nodes.length === 1) {
+        routeGraph.start_node_id = id;
+      }
+
+      cy.add({
+        group: 'nodes',
+        data: { id, label: newNode.label, isStart: routeGraph.start_node_id === id },
+        position: newNode.position
+      });
+
+      saveDraft();
+      updateUI();
+      
+      // Select new node
+      cy.$('#' + id).select();
+      onNodeTap({ target: cy.$('#' + id) });
+    }
+
+    function onNodeTap(e) {
+      if (addingEdge) {
+        if (!edgeSource) {
+          edgeSource = e.target.id();
+          document.getElementById('add-edge-btn').textContent = '🔗 Выберите цель...';
+        } else {
+          const targetId = e.target.id();
+          if (targetId !== edgeSource) {
+            addEdge(edgeSource, targetId);
+          }
+          cancelAddEdge();
+        }
+        return;
+      }
+
+      selectedNode = e.target.id();
+      const nodeData = routeGraph.nodes.find(n => n.id === selectedNode);
+      if (nodeData) {
+        showEditors(nodeData);
+      }
+    }
+
+    function clearSelection() {
+      selectedNode = null;
+      hideEditors();
+      cy.$(':selected').unselect();
+    }
+
+    function deleteSelected() {
+      if (!selectedNode) return;
+      
+      // Remove from routeGraph
+      routeGraph.nodes = routeGraph.nodes.filter(n => n.id !== selectedNode);
+      routeGraph.edges = routeGraph.edges.filter(e => e.source !== selectedNode && e.target !== selectedNode);
+      
+      // Update start if needed
+      if (routeGraph.start_node_id === selectedNode) {
+        routeGraph.start_node_id = routeGraph.nodes.length > 0 ? routeGraph.nodes[0].id : null;
+      }
+
+      cy.$('#' + selectedNode).remove();
+      clearSelection();
+      saveDraft();
+      updateUI();
+    }
+
+    // === Edge operations ===
+    function startAddEdge() {
+      addingEdge = true;
+      edgeSource = null;
+      document.getElementById('add-edge-btn').textContent = '🔗 Выберите источник...';
+      document.getElementById('add-edge-btn').classList.add('primary');
+    }
+
+    function cancelAddEdge() {
+      addingEdge = false;
+      edgeSource = null;
+      document.getElementById('add-edge-btn').textContent = '🔗 Связь';
+      document.getElementById('add-edge-btn').classList.remove('primary');
+    }
+
+    function addEdge(source, target) {
+      if (routeGraph.edges.length >= routeGraph.limits.max_edges) {
+        alert('Достигнут лимит связей!');
+        return;
+      }
+
+      const type = document.getElementById('edge-type-select').value;
+      const id = 'edge-' + Date.now();
+      const newEdge = { id, source, target, type, label: '' };
+
+      routeGraph.edges.push(newEdge);
+      
+      cy.add({
+        group: 'edges',
+        data: { id, source, target, type, label: '' }
+      });
+
+      saveDraft();
+      updateUI();
+    }
+
+    // === Editors ===
+    function showEditors(nodeData) {
+      // Show editors
+      document.getElementById('story-empty').style.display = 'none';
+      document.getElementById('story-editor').style.display = 'block';
+      document.getElementById('system-empty').style.display = 'none';
+      document.getElementById('system-editor').style.display = 'block';
+      document.getElementById('service-empty').style.display = 'none';
+      document.getElementById('service-editor').style.display = 'block';
+
+      // Fill data
+      document.getElementById('story-text').value = nodeData.story?.text || '';
+      document.getElementById('system-text').value = nodeData.system?.text || '';
+      document.getElementById('service-text').value = nodeData.service?.text || '';
+
+      // Render refs
+      renderRefs('story-refs', nodeData.story?.refs || []);
+      renderRefs('system-refs', nodeData.system?.refs || []);
+      
+      // Render actions
+      renderActions(nodeData.service?.actions || []);
+    }
+
+    function hideEditors() {
+      document.getElementById('story-empty').style.display = 'flex';
+      document.getElementById('story-editor').style.display = 'none';
+      document.getElementById('system-empty').style.display = 'flex';
+      document.getElementById('system-editor').style.display = 'none';
+      document.getElementById('service-empty').style.display = 'flex';
+      document.getElementById('service-editor').style.display = 'none';
+    }
+
+    function renderRefs(containerId, refs) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = refs.map((ref, i) => `
+        <span class="ref-tag">
+          ${ref.label || ref.entity_id || ref.url}
+          <span class="remove" onclick="removeRef('${containerId}', ${i})">×</span>
+        </span>
+      `).join('');
+    }
+
+    function renderActions(actions) {
+      const container = document.getElementById('service-actions');
+      container.innerHTML = actions.map((action, i) => `
+        <div class="action-item">
+          <span>${action.label}</span>
+          <span class="type">${action.type}</span>
+        </div>
+      `).join('');
+    }
+
+    // === Save data from editors ===
+    document.getElementById('story-text').addEventListener('input', saveCurrentNode);
+    document.getElementById('system-text').addEventListener('input', saveCurrentNode);
+    document.getElementById('service-text').addEventListener('input', saveCurrentNode);
+
+    function saveCurrentNode() {
+      if (!selectedNode) return;
+      
+      const nodeData = routeGraph.nodes.find(n => n.id === selectedNode);
+      if (!nodeData) return;
+
+      nodeData.story.text = document.getElementById('story-text').value;
+      nodeData.system.text = document.getElementById('system-text').value;
+      nodeData.service.text = document.getElementById('service-text').value;
+
+      saveDraft();
+    }
+
+    // === Route operations ===
+    function newRoute() {
+      if (routeGraph.nodes.length > 0 && !confirm('Создать новый маршрут? Текущий будет потерян.')) {
+        return;
+      }
+
+      routeGraph = {
+        id: 'route-' + Date.now(),
+        title: 'Новый маршрут',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        start_node_id: null,
+        nodes: [],
+        edges: [],
+        limits: { max_nodes: 50, max_edges: 100, max_depth: 10 },
+        meta: { notes: '' }
+      };
+
+      cy.elements().remove();
+      clearSelection();
+      saveDraft();
+      updateUI();
+    }
+
+    function loadDemo() {
+      fetch('/examples/route_graph.demo.json')
+        .catch(() => fetch('https://raw.githubusercontent.com/utemix-lab/extended-mind/main/examples/route_graph.demo.json'))
+        .then(r => r.json())
+        .then(data => {
+          routeGraph = data;
+          renderGraph();
+          updateUI();
+          saveDraft();
+        })
+        .catch(e => {
+          alert('Не удалось загрузить демо. Попробуйте создать новый маршрут.');
+          console.error(e);
+        });
+    }
+
+    function exportRoute() {
+      routeGraph.updated_at = new Date().toISOString();
+      
+      // Update positions from cytoscape
+      routeGraph.nodes.forEach(node => {
+        const cyNode = cy.$('#' + node.id);
+        if (cyNode.length) {
+          node.position = cyNode.position();
+        }
+      });
+
+      const json = JSON.stringify(routeGraph, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `route_graph_${routeGraph.id}.json`;
+      a.click();
+      
+      URL.revokeObjectURL(url);
+    }
+
+    // === Persistence ===
+    function saveDraft() {
+      routeGraph.updated_at = new Date().toISOString();
+      localStorage.setItem('route-graph-draft', JSON.stringify(routeGraph));
+    }
+
+    // === UI updates ===
+    function updateUI() {
+      // Route info
+      document.getElementById('route-title').textContent = routeGraph.title;
+      document.getElementById('route-meta').textContent = 
+        `${routeGraph.nodes.length} шагов • ${routeGraph.edges.length} связей`;
+
+      // Limits
+      updateLimit('nodes', routeGraph.nodes.length, routeGraph.limits.max_nodes);
+      updateLimit('edges', routeGraph.edges.length, routeGraph.limits.max_edges);
+      
+      // Calculate depth
+      const depth = calculateDepth();
+      updateLimit('depth', depth, routeGraph.limits.max_depth);
+    }
+
+    function updateLimit(name, current, max) {
+      document.getElementById('count-' + name).textContent = current;
+      document.getElementById('max-' + name).textContent = max;
+      
+      const limitEl = document.getElementById('limit-' + name);
+      limitEl.classList.remove('warning', 'error');
+      
+      if (current >= max) {
+        limitEl.classList.add('error');
+      } else if (current >= max * 0.8) {
+        limitEl.classList.add('warning');
+      }
+    }
+
+    function calculateDepth() {
+      if (!routeGraph.start_node_id || routeGraph.nodes.length === 0) return 0;
+      
+      const visited = new Set();
+      let maxDepth = 0;
+      
+      function dfs(nodeId, depth) {
+        if (visited.has(nodeId)) return;
+        visited.add(nodeId);
+        maxDepth = Math.max(maxDepth, depth);
+        
+        routeGraph.edges
+          .filter(e => e.source === nodeId && e.type === 'NEXT')
+          .forEach(e => dfs(e.target, depth + 1));
+      }
+      
+      dfs(routeGraph.start_node_id, 1);
+      return maxDepth;
+    }
+
+    // === Refs input ===
+    document.getElementById('story-refs-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && e.target.value.trim()) {
+        addRef('story', e.target.value.trim());
+        e.target.value = '';
+      }
+    });
+    document.getElementById('system-refs-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && e.target.value.trim()) {
+        addRef('system', e.target.value.trim());
+        e.target.value = '';
+      }
+    });
+
+    function addRef(section, label) {
+      if (!selectedNode) return;
+      const nodeData = routeGraph.nodes.find(n => n.id === selectedNode);
+      if (!nodeData) return;
+
+      const ref = { type: 'internal', label };
+      nodeData[section].refs = nodeData[section].refs || [];
+      nodeData[section].refs.push(ref);
+      
+      renderRefs(section + '-refs', nodeData[section].refs);
+      saveDraft();
+    }
+
+    function removeRef(containerId, index) {
+      if (!selectedNode) return;
+      const nodeData = routeGraph.nodes.find(n => n.id === selectedNode);
+      if (!nodeData) return;
+
+      const section = containerId.replace('-refs', '');
+      nodeData[section].refs.splice(index, 1);
+      
+      renderRefs(containerId, nodeData[section].refs);
+      saveDraft();
+    }
+
+    function addAction() {
+      if (!selectedNode) return;
+      const nodeData = routeGraph.nodes.find(n => n.id === selectedNode);
+      if (!nodeData) return;
+
+      const label = prompt('Название действия:');
+      if (!label) return;
+
+      const type = prompt('Тип (navigate, export, generate, custom):', 'navigate');
+      
+      nodeData.service.actions = nodeData.service.actions || [];
+      nodeData.service.actions.push({ id: 'action-' + Date.now(), label, type });
+      
+      renderActions(nodeData.service.actions);
+      saveDraft();
+    }
+  </script>
+</body>
+</html>
