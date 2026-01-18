@@ -482,9 +482,25 @@
     ]
   },
   {
+    "path": "docs/graph/MANIFEST.md",
+    "id": "docs__graph__MANIFEST",
+    "title": "MANIFEST.md \u2014 Canon / Route / Session",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
     "path": "docs/graph/META_GRAPH_SPEC.md",
     "id": "docs__graph__META_GRAPH_SPEC",
     "title": "Universe Graph \u2014 \u0421\u043f\u0435\u0446\u0438\u0444\u0438\u043a\u0430\u0446\u0438\u044f \u043c\u0435\u0442\u0430-\u0433\u0440\u0430\u0444\u0430",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/graph/ROUTE_GRAPH_SPEC.md",
+    "id": "docs__graph__ROUTE_GRAPH_SPEC",
+    "title": "ROUTE_GRAPH_SPEC.md \u2014 \u0421\u043f\u0435\u0446\u0438\u0444\u0438\u043a\u0430\u0446\u0438\u044f Route Graph",
     "type": "",
     "tags": [],
     "links": []
