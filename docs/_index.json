@@ -202,6 +202,14 @@
     "updated": "2025-12-23"
   },
   {
+    "path": "docs/architecture/OVERVIEW.md",
+    "id": "docs__architecture__OVERVIEW",
+    "title": "System Overview",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
     "path": "docs/concepts/extended-mind-core-map-v0.1.md",
     "id": "docs__concepts__extended-mind-core-map-v0.1",
     "title": "Concept Map \u2014 Extended-mind Core Ontology",
