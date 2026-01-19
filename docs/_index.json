@@ -250,6 +250,14 @@
     "links": []
   },
   {
+    "path": "docs/architecture/REFLEXIVE_SYSTEM.md",
+    "id": "docs__architecture__REFLEXIVE_SYSTEM",
+    "title": "\u0410\u0440\u0445\u0438\u0442\u0435\u043a\u0442\u0443\u0440\u043d\u0430\u044f \u0440\u0435\u0444\u043b\u0435\u043a\u0441\u0438\u044f \u0441\u0438\u0441\u0442\u0435\u043c\u044b",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
     "path": "docs/architecture/SECURITY_PRIVACY.md",
     "id": "docs__architecture__SECURITY_PRIVACY",
     "title": "\u0411\u0435\u0437\u043e\u043f\u0430\u0441\u043d\u043e\u0441\u0442\u044c \u0438 \u043a\u043e\u043d\u0444\u0438\u0434\u0435\u043d\u0446\u0438\u0430\u043b\u044c\u043d\u043e\u0441\u0442\u044c",
@@ -763,6 +771,22 @@
     "path": "docs/machine-log/kb/2026-01-19T09-50-58Z-kb-update.md",
     "id": "docs__machine-log__kb__2026-01-19T09-50-58Z-kb-update",
     "title": "KB update 2026-01-19T09:50:58Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/machine-log/kb/2026-01-19T09-53-29Z-kb-update.md",
+    "id": "docs__machine-log__kb__2026-01-19T09-53-29Z-kb-update",
+    "title": "KB update 2026-01-19T09:53:29Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/machine-log/kb/2026-01-19T09-56-03Z-kb-update.md",
+    "id": "docs__machine-log__kb__2026-01-19T09-56-03Z-kb-update",
+    "title": "KB update 2026-01-19T09:56:03Z",
     "type": "",
     "tags": [],
     "links": []
