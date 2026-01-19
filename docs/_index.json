@@ -234,6 +234,14 @@
     "links": []
   },
   {
+    "path": "docs/architecture/OPEN_QUESTIONS.md",
+    "id": "docs__architecture__OPEN_QUESTIONS",
+    "title": "\u041e\u0442\u043a\u0440\u044b\u0442\u044b\u0435 \u0432\u043e\u043f\u0440\u043e\u0441\u044b",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
     "path": "docs/architecture/OVERVIEW.md",
     "id": "docs__architecture__OVERVIEW",
     "title": "\u041e\u0431\u0437\u043e\u0440 \u0441\u0438\u0441\u0442\u0435\u043c\u044b",
@@ -747,6 +755,14 @@
     "path": "docs/machine-log/kb/2026-01-19T09-47-03Z-kb-update.md",
     "id": "docs__machine-log__kb__2026-01-19T09-47-03Z-kb-update",
     "title": "KB update 2026-01-19T09:47:03Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/machine-log/kb/2026-01-19T09-50-58Z-kb-update.md",
+    "id": "docs__machine-log__kb__2026-01-19T09-50-58Z-kb-update",
+    "title": "KB update 2026-01-19T09:50:58Z",
     "type": "",
     "tags": [],
     "links": []
