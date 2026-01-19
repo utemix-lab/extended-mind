@@ -202,6 +202,22 @@
     "updated": "2025-12-23"
   },
   {
+    "path": "docs/architecture/DIRECTIONS.md",
+    "id": "docs__architecture__DIRECTIONS",
+    "title": "\u041d\u0430\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u044f \u0438 \u043f\u0440\u043e\u0438\u0437\u0432\u043e\u0434\u043d\u044b\u0435",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/architecture/EXECUTION_MODEL.md",
+    "id": "docs__architecture__EXECUTION_MODEL",
+    "title": "\u041c\u043e\u0434\u0435\u043b\u044c \u0438\u0441\u043f\u043e\u043b\u043d\u0435\u043d\u0438\u044f",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
     "path": "docs/architecture/OVERVIEW.md",
     "id": "docs__architecture__OVERVIEW",
     "title": "\u041e\u0431\u0437\u043e\u0440 \u0441\u0438\u0441\u0442\u0435\u043c\u044b",
@@ -699,6 +715,14 @@
     "path": "docs/machine-log/kb/2026-01-18T10-16-28Z-kb-update.md",
     "id": "docs__machine-log__kb__2026-01-18T10-16-28Z-kb-update",
     "title": "KB update 2026-01-18T10:16:28Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/machine-log/kb/2026-01-19T09-47-03Z-kb-update.md",
+    "id": "docs__machine-log__kb__2026-01-19T09-47-03Z-kb-update",
+    "title": "KB update 2026-01-19T09:47:03Z",
     "type": "",
     "tags": [],
     "links": []
