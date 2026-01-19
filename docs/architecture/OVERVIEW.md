@@ -1,90 +1,79 @@
-# System Overview
+# Обзор системы
 
-This repository describes a graph-first system for composing, executing, and experiencing thinking processes.
+Данный репозиторий описывает графо-ориентированную систему для
+композиции, исполнения и переживания процессов мышления.
 
-The system is built around a simple but strict separation of concerns:
+Система построена вокруг строгого, но простого разделения ответственности:
 
-- **Composition** — how meaning, knowledge, and intent are structured.
-- **Execution** — how this structure is transformed into concrete output.
-- **Experience** — how a human encounters and navigates the system.
+- **Композиция** — как структурируются смысл, знания и намерение.
+- **Исполнение** — как эта структура превращается в конкретный результат.
+- **Переживание** — как человек взаимодействует с системой и проходит её.
 
-Architecture, content, and interface are treated not as separate layers, but as different projections of the same underlying structure.
-
----
-
-## Core Abstractions
-
-### Graph as the Primary Form
-
-All knowledge, projects, and processes are represented as graphs:
-
-- **Universe Graph** — the global semantic space.
-- **Subgraphs** — bounded projections of the universe (projects, domains).
-- **Route Graphs** — finite, intentional paths through a subgraph.
-
-Graphs are not encyclopedic. They are designed to be *traversable*.
+Архитектура, контент и интерфейс рассматриваются не как отдельные слои,
+а как разные проекции одной и той же структуры.
 
 ---
 
-### Route over Totality
+## Базовые абстракции
 
-The system does not aim to represent “everything”.
+### Граф как первичная форма
 
-Instead, it emphasizes:
-- finite routes,
-- bounded sessions,
-- intentional traversal.
+Все знания, проекты и процессы представлены в виде графов:
 
-A user never sees “the whole graph” — only a meaningful slice.
+- **Universe Graph** — глобальное смысловое пространство.
+- **Подграфы** — ограниченные проекции вселенной (проекты, домены).
+- **Route Graph** — конечные, намеренные маршруты через подграф.
 
----
-
-### Three Projections (3S)
-
-Every route and session can be viewed through three complementary projections:
-
-- **Story** — what this is, what happens, who is involved.
-- **System** — how this is implemented and structured.
-- **Service** — what actions can be performed.
-
-These are not modes, but simultaneous perspectives on the same structure.
+Графы не энциклопедичны.
+Они предназначены для прохождения.
 
 ---
 
-## Editor vs Runtime
+### Маршрут вместо тотальности
 
-The system distinguishes between:
+Система не стремится представить «всё».
+
+Вместо этого она делает акцент на:
+- конечных маршрутах,
+- ограниченных сессиях,
+- осмысленном движении.
+
+Пользователь никогда не видит «весь граф» —
+только значимый срез.
+
+---
+
+### Три проекции (3S)
+
+Каждый маршрут и каждая сессия могут быть рассмотрены
+в трёх взаимодополняющих проекциях:
+
+- **Story** — что это, что происходит, кто участвует.
+- **System** — как это устроено и реализовано.
+- **Service** — какие действия можно совершить.
+
+Это не режимы, а одновременные взгляды на одну структуру.
+
+---
+
+## Editor и Runtime
+
+Система принципиально различает:
 
 - **Editor / Compiler**
-  - where graphs and routes are designed,
-  - where meaning is composed,
-  - where sessions are assembled.
+  - проектирование графов и маршрутов,
+  - композицию смысла,
+  - сборку сессий.
 
 - **Runtime**
-  - where sessions are executed,
-  - where external engines (LLMs) operate,
-  - where results are produced.
+  - исполнение сессий,
+  - работу внешних движков (LLM),
+  - получение результатов.
 
-This separation is fundamental and intentional.
-
----
-
-## Role of LLMs
-
-Language models are treated as **external execution engines**.
-
-They do not own knowledge, truth, or structure.
-They execute compiled sessions under explicit constraints.
+Это разделение является фундаментальным.
 
 ---
 
-## Purpose
+## Роль LLM
 
-This system is a universal scaffold from which multiple products, formats, and practices can emerge:
-- authorial performances,
-- personal thinking environments,
-- research tools,
-- educational experiences.
-
-The core remains the same.
-Only the projection changes.
+Языковые модели
