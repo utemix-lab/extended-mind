@@ -58,6 +58,12 @@ spaces/extended-mind-console/
 
 ---
 
+## Возможные производные
+
+See docs/architecture/OVERVIEW.md for system-level architecture and intentions.
+
+---
+
 ## Быстрый старт
 
 ```bash
