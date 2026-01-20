@@ -15,6 +15,7 @@ graph TD
   docs__adr__adr_0014_definition_archive["ADR-0014 — Definition Archive as Non-Canonical Layer"]
   docs__adr__adr_0015_extended_mind_as_normative_system["ADR-0015 — Extended-mind as Normative System"]
   docs__architecture__BILLING_MODELS["Модели биллинга"]
+  docs__architecture__COHERENCE_LAYERS["Слои согласованности экосистемы"]
   docs__architecture__COMPARISON_AND_UTILITY["Прикладная ценность и сравнение с существующими инструментариями"]
   docs__architecture__DIRECTIONS["Направления и производные"]
   docs__architecture__EXECUTION_MODEL["Модель исполнения"]
@@ -80,6 +81,7 @@ graph TD
   docs__machine_log__kb__2026_01_19T13_09_09Z_kb_update["KB update 2026-01-19T13:09:09Z"]
   docs__machine_log__kb__2026_01_19T13_24_31Z_kb_update["KB update 2026-01-19T13:24:31Z"]
   docs__machine_log__kb__2026_01_20T12_12_52Z_kb_update["KB update 2026-01-20T12:12:52Z"]
+  docs__machine_log__kb__2026_01_20T12_43_26Z_kb_update["KB update 2026-01-20T12:43:26Z"]
   docs__manifest__author_and_machine["Author and Machine — Roles and Distance"]
   docs__manifest__how_extended_mind_thinks["How Extended-mind Thinks"]
   docs__manifest__post_digital_position["Post-Digital Position"]
@@ -165,6 +167,9 @@ graph TD
   docs__adr__adr_0013_graph_rag_readiness -.-> type__adr
   docs__adr__adr_0014_definition_archive -.-> type__adr
   docs__adr__adr_0015_extended_mind_as_normative_system -.-> type__adr
+  docs__architecture__COHERENCE_LAYERS --> docs__graph__MANIFEST
+  docs__architecture__COHERENCE_LAYERS --> docs__graph__META_GRAPH_SPEC
+  docs__architecture__COHERENCE_LAYERS --> docs__graph__ROUTE_GRAPH_SPEC
   docs__concepts__extended_mind_core_map_v0.1 -.-> type__concept_map
   docs__concepts__vova_and_petrova_concept_map_v0.1 -.-> type__concept_map
   docs__core__index_v0.1 -.-> type__core
