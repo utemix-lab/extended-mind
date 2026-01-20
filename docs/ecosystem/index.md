@@ -171,6 +171,8 @@ vovaipetrova-site (классические UI-элементы)
 
 ## Связанные документы
 
+- [All Ecosystem Layers](./all-layers.md) — индекс всех ecosystem/ слоёв
 - [Core Taxonomy Editor](./think-tank-editor.md)
 - [dream-graph](./dream-graph-overview.md)
 - [ECOSYSTEM_LAYER.md](../../ecosystem/ECOSYSTEM_LAYER.md)
+- [LLM Playbook](https://github.com/utemix-lab/utemix-lab/blob/main/LLM_PLAYBOOK.md) — быстрый старт для LLM
