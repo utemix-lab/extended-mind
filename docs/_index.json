@@ -808,6 +808,14 @@
     "links": []
   },
   {
+    "path": "docs/machine-log/kb/2026-01-19T13-24-31Z-kb-update.md",
+    "id": "docs__machine-log__kb__2026-01-19T13-24-31Z-kb-update",
+    "title": "KB update 2026-01-19T13:24:31Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
     "path": "docs/manifest/author-and-machine.md",
     "id": "docs__manifest__author-and-machine",
     "title": "Author and Machine \u2014 Roles and Distance",
@@ -875,6 +883,14 @@
     ],
     "links": [],
     "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/meta/00_prearchitectural_layers.md",
+    "id": "docs__meta__00_prearchitectural_layers",
+    "title": "Pre-Architectural Layers",
+    "type": "",
+    "tags": [],
+    "links": []
   },
   {
     "path": "docs/ops/kb-pipeline.md",
