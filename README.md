@@ -1,97 +1,168 @@
 # extended-mind
 
-**Авторский конструктор маршрутов и карт экосистемы.**
+**Канонический граф знаний и источник истины для всей системы.**
 
 ---
 
 ## Что это
 
-extended-mind — это внутренний инструмент для:
-- **Понимания системы как графа** (Universe Graph)
-- **Проектирования маршрутов** (Route Graph)
-- **Экспорта для витрины** (vovaipetrova-core)
+extended-mind — это **ядро системы**, задающее канон:
+- **Universe Graph** — граф понятий и связей (онтология)
+- **3S контент** — Story/System/Service для каждого узла
+- **Спецификация формата** — правила структуры и валидации
 
-Это не пользовательский UI, а **author cockpit** — кабина пилота для сборки экосистемы.
-
----
-
-## Ключевые принципы
-
-> См. полный [MANIFEST.md](./docs/graph/MANIFEST.md)
-
-1. **Канон мал** — Universe Graph содержит только Projects, Repos, Concepts, Principles, Decisions, Roles
-2. **Маршрут ≠ канон** — Route Graph ссылается на канон через refs
-3. **3S = линзы** — Story / System / Service — режимы просмотра, не сущности
-4. **Конечность обязательна** — каждый маршрут имеет проверяемые лимиты
-5. **Витрина не диктует канон** — vovaipetrova-core читает, не пишет
+> Всё, что существует в системе, существует как узел или связь в Universe Graph.
 
 ---
 
-## Структура
+## Архитектура
 
 ```
-docs/graph/
-  MANIFEST.md           # Инварианты экосистемы
-  ROUTE_GRAPH_SPEC.md   # Спецификация маршрутов
-  ROUTE_GRAPH.schema.json
-
-examples/
-  route_graph.demo.json # Пример маршрута
-
-spaces/extended-mind-console/
-  app.py                # Gradio UI
-  universe-graph/       # Редактор графа
+┌─────────────────────────────────────────────────────────────────┐
+│                    extended-mind (здесь)                        │
+│                         Онтология + Сценография                 │
+│                                                                 │
+│   editor.html  →  universe.json  →  dream-graph (рендер)       │
+│                         ↓                                       │
+│                   Godot (опционально, для режиссуры)            │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
----
-
-## Глобальная цель
-
-> **Архитектура = контент**
-
-- **Universe Graph** — карта мира (канон)
-- **Route Graph** — конечный маршрут прохождения
-- **extended-mind** — инструмент сборки маршрутов
-- **vovaipetrova-core** — витрина для внешнего мира
-
-**Ключевая метрика:** мгновенное интуитивное понимание системы через маршрут.
-
----
-
-## Возможные производные
-
-See docs/architecture/OVERVIEW.md for system-level architecture and intentions.
+**Подробнее:** [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)
 
 ---
 
 ## Быстрый старт
 
-```bash
-# Локальный запуск
-cd spaces/extended-mind-console
-pip install -r requirements.txt
-python app.py
+### 1. Редактор графа
+
+Открыть в браузере:
+```
+R:\contracts\contracts\public\graph\editor.html
 ```
 
-Или используйте HuggingFace Space:  
-https://huggingface.co/spaces/utemix/extended-mind-console
+Или через dream-graph dev server:
+```
+http://localhost:5173/dream-graph/contracts/public/graph/editor.html
+```
+
+### 2. Редактирование
+
+- **+ Node** — добавить узел
+- **+ Edge** — соединить узлы
+- **Клик на узел** — редактировать Story/System/Service
+- **Save JSON** — сохранить граф
+
+### 3. Результат
+
+Файл `universe.json` кладётся в:
+```
+contracts/public/graph/universe.json
+```
+
+dream-graph автоматически подхватывает изменения (кнопка Reload).
 
 ---
 
-## Спецификации
+## Структура данных
 
-- [MANIFEST.md](./docs/graph/MANIFEST.md) — инварианты
-- [ROUTE_GRAPH_SPEC.md](./docs/graph/ROUTE_GRAPH_SPEC.md) — спецификация маршрутов
-- [ROUTE_GRAPH.schema.json](./docs/graph/ROUTE_GRAPH.schema.json) — JSON Schema
+### universe.json
+
+```json
+{
+  "meta": { "version": "1.0" },
+  "nodes": [
+    {
+      "id": "universe",
+      "label": "Universe",
+      "story": "Нарративный контент",
+      "system": "Техническое описание",
+      "service": "Действия и возможности",
+      "position": { "x": 400, "y": 300 },
+      "type": "concept",
+      "visibility": "public",
+      "status": "expandable"
+    }
+  ],
+  "edges": [
+    { "id": "e1", "source": "universe", "target": "concept-a" }
+  ]
+}
+```
 
 ---
 
-## Версия
+## Принципы
 
-`route-graph-editor-v0.1`
+### 1. Единый источник истины
+
+`universe.json` — единственное место, где определяются:
+- Узлы (понятия, объекты)
+- Связи (отношения)
+- Контент (3S)
+
+### 2. Независимость рендеров
+
+dream-graph, Godot и любые будущие интерфейсы читают `universe.json` напрямую, без промежуточных этапов.
+
+### 3. Эволюционность
+
+**Сейчас:** ручное редактирование  
+**Потом:** RAG + LLM автоматизация
+
+Godot — это "строительные леса". Когда паттерны UI-сценографии найдены, он убирается из цепочки.
+
+---
+
+## Перспективы
+
+- [ ] RAG-индексация графа для семантического поиска
+- [ ] LLM-генерация 3S контента
+- [ ] Автоматическая валидация связности
+- [ ] Система понимает и структуру, и сценографию
+
+---
+
+## Структура репозитория
+
+```
+extended-mind/
+├── docs/
+│   ├── ARCHITECTURE.md         # Архитектура системы
+│   ├── UNIVERSE_GRAPH_SPEC.md  # Спецификация universe.json
+│   ├── ROADMAP.md              # План развития
+│   ├── index.md                # Оглавление
+│   └── _archive/               # Архив прежних попыток
+├── spaces/
+│   └── extended-mind-console/  # Редактор (будет переписан)
+└── README.md                   # Этот файл
+```
+
+**Актуальный редактор:** `contracts/public/graph/editor.html`
+
+## Документация
+
+Главные входы:
+- `docs/ARCHITECTURE.md`
+- `docs/UNIVERSE_GRAPH_SPEC.md`
+- `docs/ROADMAP.md`
+- `docs/index.md`
+
+Старая документация сохранена в `docs/_archive/`.
+
+---
+
+## Связанные репозитории
+
+| Репозиторий | Роль |
+|-------------|------|
+| **contracts** | Хранилище universe.json и ассетов |
+| **dream-graph** | Финальный рендер для пользователя |
+| **godot-sandbox** | Режиссура (опционально) |
+| **utemix-lab** | Координация экосистемы |
 
 ---
 
 ## Лицензия
 
-Open Source (лицензия будет определена дополнительно).
+MIT License
