@@ -20,6 +20,8 @@
 | [UNIVERSE_GRAPH_SPEC.md](./UNIVERSE_GRAPH_SPEC.md) | Спецификация формата universe.json |
 | [ROADMAP.md](./ROADMAP.md) | План развития от ручного редактирования к автономности |
 | [checkpoints/](./checkpoints/) | 📍 Периодические фиксации состояния системы |
+| [adr/](./adr/) | 🏛️ Architecture Decision Records |
+| [narrative/story-nodes/](./narrative/story-nodes/) | 📝 Story-nodes — следы движения системы |
 
 ---
 
@@ -47,7 +49,6 @@ http://localhost:5173/dream-graph/visitor.html
 Старая документация перемещена в [_archive/](./_archive/).
 
 Включает:
-- ADR (Architecture Decision Records)
 - Старые спецификации
 - Машинные логи
 - Паттерны и принципы
