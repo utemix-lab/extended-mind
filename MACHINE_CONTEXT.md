@@ -2,10 +2,10 @@
 
 > Каноническая точка входа контекста для LLM / IDE-агентов
 
-**version:** 1.0  
+**version:** 1.1  
 **last_updated:** 2026-01-26  
-**canon_nodes:** 20  
-**canon_edges:** 31
+**canon_nodes:** 23  
+**canon_edges:** 38
 
 ---
 
@@ -100,11 +100,14 @@ universe (root)
 │   ├── character-vova
 │   └── character-petrova
 └── domains (hub)
-    ├── domain-ai
-    ├── domain-music
-    ├── domain-visual
-    ├── domain-knowledge
-    └── domain-dev
+    ├── domain-ai (AI & Computational Models)
+    ├── domain-music (Music & Sound Culture)
+    ├── domain-visual (Visual & Media Arts)
+    ├── domain-knowledge (Knowledge & Cognitive Systems)
+    ├── domain-dev (Software & Digital Tools)
+    ├── domain-design (Design & Aesthetic Systems)
+    ├── domain-physical (Physical & Fabrication)
+    └── domain-interactive (Interactive & Game Culture)
 ```
 
 ---
