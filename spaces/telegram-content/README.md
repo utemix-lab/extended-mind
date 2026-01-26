@@ -1,3 +1,15 @@
+---
+title: Telegram Content Generator
+emoji: 📝
+colorFrom: blue
+colorTo: purple
+sdk: gradio
+sdk_version: 4.44.0
+app_file: app.py
+pinned: false
+license: mit
+---
+
 # Telegram Content Generator
 
 Генератор постов для Telegram из story-nodes системы extended-mind.

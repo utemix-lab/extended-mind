@@ -4,14 +4,14 @@ Reads story-nodes and generates formatted posts for Telegram.
 """
 
 import gradio as gr
-import os
+import requests
 import re
-from pathlib import Path
 from datetime import datetime
 
 # Configuration
 PAGES_URL = "https://utemix-lab.github.io/dream-graph/visitor.html"
-STORY_NODES_PATH = Path(__file__).parent.parent.parent / "docs" / "narrative" / "story-nodes"
+GITHUB_RAW_BASE = "https://raw.githubusercontent.com/utemix-lab/extended-mind/main/docs/narrative/story-nodes"
+GITHUB_API_BASE = "https://api.github.com/repos/utemix-lab/extended-mind/contents/docs/narrative/story-nodes"
 
 def parse_story_node(content: str) -> dict:
     """Parse story-node markdown into structured data."""
@@ -57,25 +57,39 @@ def generate_tg_post(story_node: dict, include_link: bool = True) -> str:
     return post
 
 def get_story_nodes() -> list:
-    """Get list of all story-nodes."""
-    if not STORY_NODES_PATH.exists():
-        return []
-    
-    nodes = []
-    for file in sorted(STORY_NODES_PATH.glob("story-node-*.md")):
-        nodes.append(file.name)
-    return nodes
+    """Get list of all story-nodes from GitHub."""
+    try:
+        response = requests.get(GITHUB_API_BASE, timeout=10)
+        if response.status_code == 200:
+            files = response.json()
+            nodes = [f['name'] for f in files if f['name'].startswith('story-node-') and f['name'].endswith('.md')]
+            return sorted(nodes)
+    except Exception as e:
+        print(f"Error fetching story-nodes list: {e}")
+    return []
+
+def load_story_node(node_name: str) -> str:
+    """Load story-node content from GitHub."""
+    if not node_name:
+        return ""
+    try:
+        url = f"{GITHUB_RAW_BASE}/{node_name}"
+        response = requests.get(url, timeout=10)
+        if response.status_code == 200:
+            return response.text
+    except Exception as e:
+        print(f"Error loading story-node: {e}")
+    return ""
 
 def load_and_generate(node_name: str) -> tuple:
     """Load story-node and generate TG post."""
     if not node_name:
-        return "", "", 0
+        return "Выберите story-node из списка", "", 0
     
-    file_path = STORY_NODES_PATH / node_name
-    if not file_path.exists():
-        return "Файл не найден", "", 0
+    content = load_story_node(node_name)
+    if not content:
+        return "Не удалось загрузить файл", "", 0
     
-    content = file_path.read_text(encoding='utf-8')
     parsed = parse_story_node(content)
     post = generate_tg_post(parsed)
     char_count = len(post)
@@ -92,14 +106,16 @@ with gr.Blocks(title="Telegram Content Generator") as app:
     gr.Markdown("""
     # 📝 Telegram Content Generator
     
-    Генератор постов для Telegram из story-nodes системы.
+    Генератор постов для Telegram из story-nodes системы **extended-mind**.
+    
+    ---
     
     **Критерии зрелости story-node:**
-    1. Реальное изменение в системе
-    2. Снятое напряжение/тупик
-    3. Одно решение (без ветвлений)
-    4. Явное следствие
-    5. Открытый вопрос
+    1. ✅ Реальное изменение в системе
+    2. ✅ Снятое напряжение/тупик
+    3. ✅ Одно решение (без ветвлений)
+    4. ✅ Явное следствие
+    5. ✅ Открытый вопрос
     """)
     
     with gr.Row():
@@ -107,17 +123,25 @@ with gr.Blocks(title="Telegram Content Generator") as app:
             node_dropdown = gr.Dropdown(
                 choices=get_story_nodes(),
                 label="Story-node",
-                value=get_story_nodes()[0] if get_story_nodes() else None
+                value=None
             )
-            refresh_btn = gr.Button("🔄 Обновить список")
+            refresh_btn = gr.Button("🔄 Обновить список из GitHub")
             
             gr.Markdown("---")
-            gr.Markdown(f"**Ссылка на систему:**\n\n[{PAGES_URL}]({PAGES_URL})")
+            gr.Markdown(f"""
+**Ссылка на систему:**
+
+[{PAGES_URL}]({PAGES_URL})
+
+---
+
+**Источник:** [GitHub](https://github.com/utemix-lab/extended-mind/tree/main/docs/narrative/story-nodes)
+            """)
         
         with gr.Column(scale=2):
             with gr.Tab("📱 Telegram пост"):
                 tg_output = gr.Textbox(
-                    label="Готовый пост (скопируйте вручную)",
+                    label="Готовый пост (скопируйте)",
                     lines=15
                 )
                 char_count = gr.Number(label="Символов", precision=0)
@@ -139,13 +163,6 @@ with gr.Blocks(title="Telegram Content Generator") as app:
     refresh_btn.click(
         fn=refresh_nodes,
         outputs=[node_dropdown]
-    )
-    
-    # Initial load
-    app.load(
-        fn=load_and_generate,
-        inputs=[node_dropdown],
-        outputs=[source_output, tg_output, char_count]
     )
 
 if __name__ == "__main__":
