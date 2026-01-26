@@ -79,8 +79,10 @@ Universe Graph — это JSON-файл, содержащий полное оп�
 ### Node Contract v1 (enum + дефолты)
 
 **type**:
-`root | hub | domain | concept | character | module | spec | process | policy | artifact`  
+`root | hub | domain | concept | character | module | spec | process | policy | artifact | practice`  
 **default:** `concept`
+
+> **practice** — поперечный медиатор, связывающий несколько доменов. Описывает способ действия/мышления/подачи, работающий cross-domain (например: Режиссура, Брендинг).
 
 **visibility**:
 `public | internal | hidden`  

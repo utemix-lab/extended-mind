@@ -2,10 +2,10 @@
 
 > Каноническая точка входа контекста для LLM / IDE-агентов
 
-**version:** 1.1  
+**version:** 1.2  
 **last_updated:** 2026-01-26  
-**canon_nodes:** 23  
-**canon_edges:** 38
+**canon_nodes:** 26  
+**canon_edges:** 46
 
 ---
 
@@ -73,7 +73,7 @@ contracts/public/graph/universe.json
 | Поле | Примеры | Дефолт |
 |------|---------|--------|
 | id | глобальный, неизменяемый | — |
-| type | root, hub, domain, concept, character, module, spec, process, policy | concept |
+| type | root, hub, domain, concept, character, module, spec, process, policy, practice | concept |
 | visibility | public, internal, hidden | public |
 | status | core, expandable, frozen, deprecated | expandable |
 | semantics.role | container, mediator, content, description | content |
@@ -99,15 +99,18 @@ universe (root)
 ├── characters (hub)
 │   ├── character-vova
 │   └── character-petrova
-└── domains (hub)
-    ├── domain-ai (AI & Computational Models)
-    ├── domain-music (Music & Sound Culture)
-    ├── domain-visual (Visual & Media Arts)
-    ├── domain-knowledge (Knowledge & Cognitive Systems)
-    ├── domain-dev (Software & Digital Tools)
-    ├── domain-design (Design & Aesthetic Systems)
-    ├── domain-physical (Physical & Fabrication)
-    └── domain-interactive (Interactive & Game Culture)
+├── domains (hub)
+│   ├── domain-ai (AI & Computational Models)
+│   ├── domain-music (Music & Sound Culture)
+│   ├── domain-visual (Visual & Media Arts)
+│   ├── domain-knowledge (Knowledge & Cognitive Systems)
+│   ├── domain-dev (Software & Digital Tools)
+│   ├── domain-design (Design & Aesthetic Systems)
+│   ├── domain-physical (Physical & Fabrication)
+│   └── domain-interactive (Interactive & Game Culture)
+└── practices (hub)
+    ├── practice-direction (Режиссура)
+    └── practice-branding (Брендинг)
 ```
 
 ---
