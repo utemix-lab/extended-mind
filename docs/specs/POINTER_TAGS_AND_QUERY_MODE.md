@@ -26,6 +26,7 @@ Prefixes (minimal):
 Trigger: click a tag pill.
 Behavior:
 - Enables Query Mode (no route change).
+- Query Mode is a global perception mode, currently rendered in Service panel.
 - Service panel shows grouped results from catalog:
   Services / Models / Methods (+ Other if needed).
 - Shows active tag and a reset button.
@@ -58,3 +59,22 @@ Future:
 ```
 
 No schema inside the manifest — only presence and version.
+
+## Composed Capability Tags
+
+Композиционный тег — это capability‑tag, который разворачивается в набор базовых
+capability‑тегов. Он не является категорией, Practice или Opportunity.
+
+Пример (документально, не код):
+`cap:storytelling` → `cap:text_generation` + `cap:image_generation` + `cap:voice_generation` + `cap:lipsync`
+
+Правила:
+- Для пользователя выглядит как один тег.
+- Для системы разворачивается в OR/AND‑запрос.
+- Для UI не отличается от обычного тега.
+- Для канона не отражается.
+
+Запреты:
+- Не создавать узлы под композиционные теги.
+- Не делать отдельный hub.
+- Не путать с Practices.
