@@ -2,10 +2,10 @@
 
 > Каноническая точка входа контекста для LLM / IDE-агентов
 
-**version:** 1.2  
-**last_updated:** 2026-01-26  
-**canon_nodes:** 26  
-**canon_edges:** 46
+**version:** 1.3  
+**last_updated:** 2026-01-28  
+**canon_nodes:** 37  
+**canon_edges:** 57
 
 ---
 
@@ -98,7 +98,17 @@ universe (root)
 │       └── spec-contracts-public
 ├── characters (hub)
 │   ├── character-vova
-│   └── character-petrova
+│   ├── character-petrova
+│   ├── character-ai
+│   ├── character-runa
+│   ├── character-hinto
+│   ├── character-ancy
+│   ├── character-ney
+│   ├── character-dizi
+│   ├── character-cadrik
+│   ├── character-geymych
+│   ├── character-author
+│   └── character-vasya
 ├── domains (hub)
 │   ├── domain-ai (AI & Computational Models)
 │   ├── domain-music (Music & Sound Culture)
@@ -161,7 +171,29 @@ universe (root)
 
 ---
 
-## 11. Главная директива
+## 11. Модель совместной работы (рекомендации)
+
+- Есть внешний нарративный партнёр (без репо), с которым обсуждаются общие вопросы.
+- IDE-агент переводит эти идеи в реалии системы, а не исполняет их буквально.
+- Человек корректирует курс, агент объясняет решения по запросу.
+- Существенные сдвиги фиксируются в story-node и предлагаются к публикации.
+- Публикация — по команде автора; рекомендация агента допустима.
+
+---
+
+## 12. Быстрый старт для нового кодера
+
+1. `MACHINE_CONTEXT.md` (этот файл)
+2. `docs/SINGLE-SOURCE-PLAYBOOK.md`
+3. Последний checkpoint в `docs/checkpoints/`
+4. Канон: `contracts/public/graph/universe.json`
+5. Narrative: `docs/narrative/NARRATIVE_LAYER.md`
+6. Шаблон story-node: `docs/narrative/templates/story-node.md`
+7. UI правила: `contracts/public/ui/INTERACTION_RULES.md`, `SCENOGRAPHY_RULES.md`
+
+---
+
+## 13. Главная директива
 
 > Не оптимизировать на полноту.  
 > Оптимизировать на **понятность системы самой себе**.
@@ -170,8 +202,8 @@ universe (root)
 
 ---
 
-## 12. Checkpoints
+## 14. Checkpoints
 
-Последний checkpoint: `2026-01-26-machine-view-shift.md`
+Последний checkpoint: `2026-01-28.md`
 
 Ключевое: система вошла в фазу саморазворачивания, человек — корректор траектории.

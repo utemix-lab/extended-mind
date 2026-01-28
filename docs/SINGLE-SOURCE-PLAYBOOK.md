@@ -26,6 +26,16 @@
 
 ---
 
+## 0.1. Playbook для IDE-агентов
+
+Если кодер меняется или нет полного контекста, начни здесь:
+
+- `../MACHINE_CONTEXT.md`
+- `AGENT_PLAYBOOK.md`
+- последний checkpoint в `docs/checkpoints/`
+
+---
+
 ## 1. Канон: Universe Graph (SSoT)
 
 ### 1.1. Что является истиной
