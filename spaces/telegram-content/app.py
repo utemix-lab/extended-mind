@@ -40,16 +40,19 @@ def generate_tg_post(story_node: dict, include_link: bool = True) -> str:
     what_happened = story_node.get('Что произошло', '')
     why_needed = story_node.get('Почему это было необходимо', '')
     open_question = story_node.get('Открытый вопрос', '')
+    perspective = story_node.get('Что это закладывает', '')
     
     post = f"""🔮 {title}
 
 {what_happened}
 
 💡 Почему это важно:
-{why_needed}
-
-❓ Открытый вопрос:
-{open_question}"""
+{why_needed}"""
+    
+    if perspective:
+        post += f"\n\n🚀 Перспектива:\n{perspective}"
+    
+    post += f"\n\n❓ Открытый вопрос:\n{open_question}"
     
     if include_link:
         post += f"\n\n→ Смотреть систему: {PAGES_URL}"
@@ -116,6 +119,7 @@ with gr.Blocks(title="Telegram Content Generator") as app:
     3. ✅ Одно решение (без ветвлений)
     4. ✅ Явное следствие
     5. ✅ Открытый вопрос
+    6. ✅ Что это закладывает (перспектива)
     """)
     
     with gr.Row():
