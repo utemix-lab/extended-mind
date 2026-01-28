@@ -156,7 +156,12 @@ contracts/public/graph/editor.html
 contracts/public/graph/universe.json
 ```
 
-dream-graph автоматически подхватывает изменения.
+Далее нужно синхронизировать снапшот для рендера:
+```
+dream-graph\scripts\sync-contracts.ps1
+```
+
+И закоммитить изменения в `dream-graph` (для Pages).
 
 ---
 

@@ -129,6 +129,30 @@ dream-graph:
 
 ---
 
+## 2.5. Operational Sync (обязательные правила)
+
+### Контракты → рендер
+
+- Канон и ассеты живут в `contracts/contracts/public` (SSoT).
+- Рендер и Pages используют **снапшот**: `dream-graph/public/contracts/public`.
+- Синхронизация выполняется вручную:
+```
+dream-graph\scripts\sync-contracts.ps1
+```
+- Симлинки запрещены — только явный sync.
+
+### HF Space (генератор TG)
+
+- Исходник: `extended-mind/spaces/telegram-content`
+- Деплой: `temp-hf-space` (локальный клон Space)
+- Синхронизация:
+```
+extended-mind\scripts\sync-hf-space.ps1
+```
+- После синка: `git commit && git push` в `temp-hf-space`
+
+---
+
 ## 3. Views (проекции), а не "несколько графов"
 
 **Граф один.** Разные — режимы просмотра.
