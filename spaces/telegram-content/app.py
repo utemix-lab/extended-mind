@@ -100,9 +100,8 @@ def load_and_generate(node_name: str) -> tuple:
     
     return content, post, char_count
 
-def extract_checkpoint_refs(story_node: dict) -> list:
-    refs = story_node.get('Refs', '')
-    matches = re.findall(r'checkpoint:\s*([0-9]{4}-[0-9]{2}-[0-9]{2})', refs)
+def extract_checkpoint_refs(raw_content: str) -> list:
+    matches = re.findall(r'checkpoint:\s*`?([0-9]{4}-[0-9]{2}-[0-9]{2})`?', raw_content)
     return matches
 
 def load_and_generate_batch(checkpoint_date: str, max_posts: int) -> tuple:
@@ -117,7 +116,7 @@ def load_and_generate_batch(checkpoint_date: str, max_posts: int) -> tuple:
         if not content:
             continue
         parsed = parse_story_node(content)
-        checkpoints = extract_checkpoint_refs(parsed)
+        checkpoints = extract_checkpoint_refs(content)
         if checkpoint_date in checkpoints:
             matched.append((node_name, parsed))
 
