@@ -31,6 +31,14 @@ python app.py
 3. Генерирует форматированный пост для Telegram
 4. Добавляет ссылку на Pages (dream-graph)
 
+## System Fix batch
+
+Можно генерировать несколько постов из одного System Fix:
+
+1. В story-node указывать `checkpoint: YYYY-MM-DD` в секции **Refs**
+2. Вкладка **System Fix batch** формирует 1–N постов по дате checkpoint
+3. Посты разделяются `---` для удобного копирования
+
 ## Критерии публикации
 
 Story-node готов к публикации, если:

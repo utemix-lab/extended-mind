@@ -54,6 +54,11 @@
   - [VISITOR] получать понятные объяснения “что это”
   - [LAB] фиксировать смысл изменений в одном месте
   - [MEDIA] быстро формировать материалы для разных аудиторий
+  - Output formats (baseline):
+    - One‑paragraph overview (consumer)
+    - 5‑bullet brief (partner)
+    - 3‑slide summary (investor)
+    - Tutorial outline (user)
 
 ## Assets
 - Виджеты, флаги, бренды

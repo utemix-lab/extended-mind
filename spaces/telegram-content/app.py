@@ -12,6 +12,7 @@ from datetime import datetime
 PAGES_URL = "https://utemix-lab.github.io/dream-graph/visitor.html"
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com/utemix-lab/extended-mind/main/docs/narrative/story-nodes"
 GITHUB_API_BASE = "https://api.github.com/repos/utemix-lab/extended-mind/contents/docs/narrative/story-nodes"
+DEFAULT_MAX_POSTS = 3
 
 def parse_story_node(content: str) -> dict:
     """Parse story-node markdown into structured data."""
@@ -99,6 +100,37 @@ def load_and_generate(node_name: str) -> tuple:
     
     return content, post, char_count
 
+def extract_checkpoint_refs(story_node: dict) -> list:
+    refs = story_node.get('Refs', '')
+    matches = re.findall(r'checkpoint:\s*([0-9]{4}-[0-9]{2}-[0-9]{2})', refs)
+    return matches
+
+def load_and_generate_batch(checkpoint_date: str, max_posts: int) -> tuple:
+    if not checkpoint_date:
+        return "Введите дату checkpoint (YYYY-MM-DD).", "", 0
+
+    nodes = get_story_nodes()
+    matched = []
+
+    for node_name in nodes:
+        content = load_story_node(node_name)
+        if not content:
+            continue
+        parsed = parse_story_node(content)
+        checkpoints = extract_checkpoint_refs(parsed)
+        if checkpoint_date in checkpoints:
+            matched.append((node_name, parsed))
+
+    if not matched:
+        return "Не найдены story-nodes для этого checkpoint.", "", 0
+
+    max_posts = max_posts or DEFAULT_MAX_POSTS
+    selected = matched[:max_posts]
+    posts = [generate_tg_post(parsed) for _, parsed in selected]
+    combined = "\n\n---\n\n".join(posts)
+    node_list = ", ".join([name for name, _ in selected])
+    return combined, node_list, len(combined)
+
 def refresh_nodes():
     """Refresh the list of story-nodes."""
     nodes = get_story_nodes()
@@ -150,6 +182,27 @@ with gr.Blocks(title="Telegram Content Generator") as app:
                 )
                 char_count = gr.Number(label="Символов", precision=0)
                 gr.Markdown("*Рекомендуемый размер: 1200-1500 символов*")
+
+            with gr.Tab("📦 System Fix batch"):
+                checkpoint_date = gr.Textbox(
+                    label="Checkpoint date (YYYY-MM-DD)",
+                    placeholder="2026-01-30"
+                )
+                max_posts = gr.Number(
+                    label="Max posts",
+                    value=DEFAULT_MAX_POSTS,
+                    precision=0
+                )
+                batch_btn = gr.Button("⚡ Сгенерировать")
+                batch_output = gr.Textbox(
+                    label="Пакет постов (разделены ---)",
+                    lines=18
+                )
+                batch_nodes = gr.Textbox(
+                    label="Story-nodes",
+                    lines=2
+                )
+                batch_count = gr.Number(label="Символов", precision=0)
             
             with gr.Tab("📄 Исходный story-node"):
                 source_output = gr.Textbox(
@@ -162,6 +215,12 @@ with gr.Blocks(title="Telegram Content Generator") as app:
         fn=load_and_generate,
         inputs=[node_dropdown],
         outputs=[source_output, tg_output, char_count]
+    )
+
+    batch_btn.click(
+        fn=load_and_generate_batch,
+        inputs=[checkpoint_date, max_posts],
+        outputs=[batch_output, batch_nodes, batch_count]
     )
     
     refresh_btn.click(
