@@ -9,6 +9,7 @@
 - [ ] Новое ограничение добавлено в `SYSTEM_GUARDRAILS.md`?
 - [ ] Новая большая идея добавлена в `IDEAS_LOG.md` (Goal link с `[UG-*]` или `[LG-*]`)?
 - [ ] Новый механизм добавлен в `MECHANISMS_TO_GOALS.md` с Goal links?
+- [ ] Архитектурное изменение имеет narrative trace (story‑node)?
 - [ ] Если решение меняет курс — есть ADR + запись в `DECISION_BACKBONE.md`?
 - [ ] Архитектурный текст не ссылается на нарратив.
 
@@ -16,6 +17,7 @@
 - [ ] Обновить `SYSTEM_OVERVIEW.md` (состояние)
 - [ ] При необходимости обновить `PROJECT_OVERVIEW.md` (концепт)
 - [ ] Прогнать checklist из этого документа
+- [ ] Убедиться, что есть narrative trace на архитектурные изменения
 - [ ] Создать `checkpoints/YYYY-MM-DD-system-fix.md`
 - [ ] Commit + push
 

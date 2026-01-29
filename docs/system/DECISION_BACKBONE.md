@@ -11,6 +11,7 @@
 | SD‑003 | Projections are visual contexts, not nodes | `docs/adr/003-visual-projections.md` | — | Query Mode without canon drift |
 | SD‑004 | Signatures exist as separate layer | `docs/adr/005-signature-decisions.md` | — | Stable narrative of decisions |
 | SD‑005 | Architecture is law; narrative is life within law | — | — | Prevents canon drift |
+| SD‑006 | Architecture changes must leave narrative trace | `docs/adr/011-self-description-and-practices-v1.md` | `docs/narrative/story-nodes/story-node-014-self-description-and-practices.md` | Self‑description continuity |
 
 ## How to update
 - New strategic decision → ADR + add a row here

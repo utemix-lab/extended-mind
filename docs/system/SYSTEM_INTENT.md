@@ -29,3 +29,4 @@ Law does not justify itself; life does not have to be consistent.
 ## See also
 - `SYSTEM_GOALS.md`
 - `SYSTEM_GUARDRAILS.md`
+- `MECHANISMS_TO_GOALS.md`

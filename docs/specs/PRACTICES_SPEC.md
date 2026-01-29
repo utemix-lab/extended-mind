@@ -103,7 +103,7 @@ Practices могут относиться к разным слоям систе�
 
 | Слой | Примеры | Владелец |
 |------|---------|----------|
-| **Архитектурный** | direction, branding | Система |
+| **Архитектурный** | system-thinking, anti-taxonomy, direction, branding | Система |
 | **Художественный** | Киберантика (будущее) | Персонаж (Дизи) |
 | **Инструментальный** | ComfyUI workflow (будущее) | Персонаж |
 
@@ -113,8 +113,20 @@ Practices могут относиться к разным слоям систе�
 
 | ID | Название | Связанные домены |
 |----|----------|------------------|
+| `practice-system-thinking` | Системное мышление | knowledge-systems, ai, architecture |
+| `practice-anti-taxonomy` | Антитаксономическая навигация | knowledge-systems, software, ai |
+| `practice-research-thinking` | Исследовательское мышление | ai, interactive-systems, knowledge |
 | `practice-direction` | Режиссура | visual, design, interactive |
-| `practice-branding` | Брендинг | design, visual |
+| `practice-systems-design` | Дизайн систем | design, software, architecture |
+| `practice-architectural-design` | Архитектурное проектирование | architecture, software, ai |
+| `practice-visual-thinking` | Визуальное мышление | visual, design, interactive |
+| `practice-sound-thinking` | Звуковое мышление | music-sound, interactive |
+| `practice-interactive-thinking` | Интерактивное мышление | interactive-systems, games, ui |
+| `practice-branding` | Брендинг | design, visual, software |
+| `practice-ecosystem-thinking` | Экосистемное мышление | ai, software, knowledge |
+| `practice-curation` | Кураторство и отбор | all |
+| `practice-reflection-fixation` | Рефлексия и фиксация | knowledge-systems |
+| `practice-possibility-navigation` | Навигация по возможностям | all |
 
 ---
 
