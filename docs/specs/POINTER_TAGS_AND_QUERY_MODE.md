@@ -13,10 +13,19 @@ They are not canon nodes and should not expand the graph.
 - Tag = anchor for query, not a navigation route.
 - Tags appear as text pills; no icons or widgets.
 - Capabilities are tags, not practices.
+- Projection prefixes are labels for context, not nodes or ontology.
 
 ### Tag format
-Prefixes (minimal):
-`cap:`, `method:`, `model:`, `arch:`, `provider:`, `domain:`
+Prefixes (minimal v0):
+`cap:`, `provider:`, `domain:`, `country:`
+
+Reserved prefix: `tag:` (not used yet)
+
+Rules:
+- Projection prefixes are reserved; do not create nodes for them.
+- Entity prefixes are also reserved: `service:`, `model:`, `method:` (no nodes with these ids).
+- Do not use `prefix:` strings in `universe.json` node ids (avoid collisions).
+- Avoid double forms like `tag:cap:*` unless explicitly needed later.
 
 ### Normalization helpers
 - `normalizeTag("cap:lipsync") -> { prefix: "cap", key: "lipsync" }`
@@ -50,10 +59,13 @@ Future:
 ```
 "exports": {
   "version": "1.0",
-  "files": [
-    "exports/pointer_tags_registry.json",
+  "catalogs": [
     "exports/ai_catalog.jsonl",
     "exports/practice_participation.jsonl"
+  ],
+  "registries": [
+    "exports/pointer_tags_registry.json",
+    "exports/country_registry.json"
   ]
 }
 ```
@@ -78,3 +90,8 @@ capability‑тегов. Он не является категорией, Practi
 - Не создавать узлы под композиционные теги.
 - Не делать отдельный hub.
 - Не путать с Practices.
+
+## See also
+- `PROJECTIONS_VOCABULARY.md`
+- `CATALOG_ITEM_CONTRACT.md`
+- `COUNTRY_CONTEXT.md`
