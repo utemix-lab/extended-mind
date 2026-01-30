@@ -39,6 +39,23 @@ Examples:
 - Array may be empty, but production rows should have ≥1 tag.
 - `country:*` is a projection context, not a canonical entity.
 
+## Kind-specific optional fields
+### `signal`
+- `character_id` — string (e.g., `character-vova`)
+- `workbench_id` — string (e.g., `wb-vova-vstablishment`)
+- `source` — object with `platform`, `url`, `title`
+- `timestamp` — ISO date/time
+- `mentions` — array of objects `{type, label, url}`
+- `note_short` — short note (1–2 sentences)
+
+### `curated_set`
+- `owner_character_id` — string (e.g., `character-vova`)
+- `workbench_id` — string (e.g., `wb-vova-music-general`)
+- `set_type` — string (`playlist`, `watchlist`, `shortlist`)
+- `description` — short description (1–2 sentences)
+- `items` — array of objects `{label, url}`
+- `note_short` — short note (1–2 sentences)
+
 ### `external_refs`
 - Values are URLs only.
 - No long text, no markdown, no embedded descriptions.

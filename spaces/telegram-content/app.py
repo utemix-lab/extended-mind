@@ -10,6 +10,7 @@ from datetime import datetime
 
 # Configuration
 PAGES_URL = "https://utemix-lab.github.io/dream-graph/visitor.html"
+GRAPH_DATA_URL = "https://raw.githubusercontent.com/utemix-lab/contracts/main/contracts/public/graph/universe.json"
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com/utemix-lab/extended-mind/main/docs/narrative/story-nodes"
 GITHUB_API_BASE = "https://api.github.com/repos/utemix-lab/extended-mind/contents/docs/narrative/story-nodes"
 DEFAULT_MAX_POSTS = 3
@@ -34,6 +35,100 @@ def parse_story_node(content: str) -> dict:
         sections[current_section] = '\n'.join(current_content).strip()
     
     return sections
+
+GRAPH_HTML = f"""
+<div id="graph-root" style="width: 100%; height: 720px; background: #0b0f14; border: 1px solid #1b2a32; border-radius: 12px; position: relative;">
+  <div style="position: absolute; top: 12px; left: 16px; color: #7aa7b2; font: 12px/1.4 system-ui, -apple-system, Segoe UI, sans-serif;">
+    2D Graph (read-only) · source: universe.json
+  </div>
+  <svg id="graph-svg" width="100%" height="100%" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet"></svg>
+</div>
+<script>
+(() => {{
+  const svg = document.getElementById("graph-svg");
+  const width = 800;
+  const height = 600;
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const radius = 220;
+
+  function clearSvg() {{
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+  }}
+
+  function drawLine(x1, y1, x2, y2) {{
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("x1", x1);
+    line.setAttribute("y1", y1);
+    line.setAttribute("x2", x2);
+    line.setAttribute("y2", y2);
+    line.setAttribute("stroke", "#2a3a43");
+    line.setAttribute("stroke-width", "1");
+    svg.appendChild(line);
+  }}
+
+  function drawNode(x, y, isHub) {{
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("cx", x);
+    circle.setAttribute("cy", y);
+    circle.setAttribute("r", isHub ? 6 : 4);
+    circle.setAttribute("fill", isHub ? "#f5b33d" : "#6aa9b5");
+    svg.appendChild(circle);
+  }}
+
+  function layout(nodes, edges) {{
+    const positions = {{}};
+    const count = nodes.length || 1;
+    nodes.forEach((node, index) => {{
+      const angle = (index / count) * Math.PI * 2;
+      positions[node.id] = {{
+        x: centerX + Math.cos(angle) * radius,
+        y: centerY + Math.sin(angle) * radius
+      }};
+    }});
+
+    edges.forEach((edge) => {{
+      const a = positions[edge.source];
+      const b = positions[edge.target];
+      if (!a || !b) return;
+      drawLine(a.x, a.y, b.x, b.y);
+    }});
+
+    nodes.forEach((node) => {{
+      const pos = positions[node.id];
+      if (!pos) return;
+      drawNode(pos.x, pos.y, node.type === "hub");
+    }});
+  }}
+
+  fetch("{GRAPH_DATA_URL}")
+    .then((res) => res.json())
+    .then((data) => {{
+      clearSvg();
+      const nodes = (data.nodes || []).map((node) => ({{
+        id: node.id,
+        type: node.type || "node"
+      }}));
+      const edges = (data.edges || []).map((edge) => ({{
+        source: edge.source || edge.from,
+        target: edge.target || edge.to
+      }}));
+      layout(nodes, edges);
+    }})
+    .catch((err) => {{
+      clearSvg();
+      const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      text.setAttribute("x", 24);
+      text.setAttribute("y", 40);
+      text.setAttribute("fill", "#b05c5c");
+      text.setAttribute("font-size", "14");
+      text.textContent = "Failed to load universe.json";
+      svg.appendChild(text);
+      console.error(err);
+    }});
+}})();
+</script>
+"""
 
 def generate_tg_post(story_node: dict, include_link: bool = True) -> str:
     """Generate Telegram post from story-node data."""
@@ -174,34 +269,38 @@ def refresh_lists():
     )
 
 # UI
-with gr.Blocks(title="Telegram Content Generator") as app:
+with gr.Blocks(title="extended-mind control room") as app:
     gr.Markdown("""
-    # 📝 Telegram Content Generator
-    
-    Генератор постов для Telegram из story-nodes системы **extended-mind**.
-    
-    ---
-    
-    **Критерии зрелости story-node:**
-    1. ✅ Реальное изменение в системе
-    2. ✅ Снятое напряжение/тупик
-    3. ✅ Одно решение (без ветвлений)
-    4. ✅ Явное следствие
-    5. ✅ Открытый вопрос
-    6. ✅ Что это закладывает (перспектива)
+    # extended-mind control room
+    Операционный слой: граф (2D) + генератор постов.
     """)
-    
-    with gr.Row():
-        with gr.Column(scale=1):
-            node_dropdown = gr.Dropdown(
-                choices=get_story_nodes(),
-                label="Story-node",
-                value=None
-            )
-            refresh_btn = gr.Button("🔄 Обновить список из GitHub")
-            
-            gr.Markdown("---")
-            gr.Markdown(f"""
+
+    with gr.Tabs():
+        with gr.Tab("🧭 Graph"):
+            gr.HTML(GRAPH_HTML)
+
+        with gr.Tab("📱 Telegram Content"):
+            gr.Markdown("""
+            **Критерии зрелости story-node:**
+            1. ✅ Реальное изменение в системе
+            2. ✅ Снятое напряжение/тупик
+            3. ✅ Одно решение (без ветвлений)
+            4. ✅ Явное следствие
+            5. ✅ Открытый вопрос
+            6. ✅ Что это закладывает (перспектива)
+            """)
+
+            with gr.Row():
+                with gr.Column(scale=1):
+                    node_dropdown = gr.Dropdown(
+                        choices=get_story_nodes(),
+                        label="Story-node",
+                        value=None
+                    )
+                    refresh_btn = gr.Button("🔄 Обновить список из GitHub")
+
+                    gr.Markdown("---")
+                    gr.Markdown(f"""
 **Ссылка на систему:**
 
 [{PAGES_URL}]({PAGES_URL})
@@ -209,52 +308,52 @@ with gr.Blocks(title="Telegram Content Generator") as app:
 ---
 
 **Источник:** [GitHub](https://github.com/utemix-lab/extended-mind/tree/main/docs/narrative/story-nodes)
-            """)
-        
-        with gr.Column(scale=2):
-            with gr.Tab("📱 Telegram пост"):
-                tg_output = gr.Textbox(
-                    label="Готовый пост (скопируйте)",
-                    lines=15
-                )
-                char_count = gr.Number(label="Символов", precision=0)
-                gr.Markdown("*Рекомендуемый размер: 1200-1500 символов*")
+                    """)
 
-            with gr.Tab("📦 System Fix batch"):
-                checkpoint_date = gr.Dropdown(
-                    label="Checkpoint date (YYYY-MM-DD)",
-                    choices=get_checkpoint_dates(),
-                    value=None,
-                    allow_custom_value=True
-                )
-                max_posts = gr.Number(
-                    label="Max posts",
-                    value=DEFAULT_MAX_POSTS,
-                    precision=0
-                )
-                batch_btn = gr.Button("⚡ Сгенерировать")
-                batch_output = gr.Textbox(
-                    label="Пакет постов (разделены ---)",
-                    lines=18
-                )
-                batch_nodes = gr.Textbox(
-                    label="Story-nodes",
-                    lines=2
-                )
-                batch_count = gr.Number(label="Символов", precision=0)
-                gr.Markdown("---")
-                validator_btn = gr.Button("🧭 Валидатор story-nodes")
-                validator_output = gr.Textbox(
-                    label="Story-nodes без checkpoint",
-                    lines=6
-                )
-                validator_count = gr.Number(label="Найдено", precision=0)
-            
-            with gr.Tab("📄 Исходный story-node"):
-                source_output = gr.Textbox(
-                    label="Markdown",
-                    lines=20
-                )
+                with gr.Column(scale=2):
+                    with gr.Tab("📱 Telegram пост"):
+                        tg_output = gr.Textbox(
+                            label="Готовый пост (скопируйте)",
+                            lines=15
+                        )
+                        char_count = gr.Number(label="Символов", precision=0)
+                        gr.Markdown("*Рекомендуемый размер: 1200-1500 символов*")
+
+                    with gr.Tab("📦 System Fix batch"):
+                        checkpoint_date = gr.Dropdown(
+                            label="Checkpoint date (YYYY-MM-DD)",
+                            choices=get_checkpoint_dates(),
+                            value=None,
+                            allow_custom_value=True
+                        )
+                        max_posts = gr.Number(
+                            label="Max posts",
+                            value=DEFAULT_MAX_POSTS,
+                            precision=0
+                        )
+                        batch_btn = gr.Button("⚡ Сгенерировать")
+                        batch_output = gr.Textbox(
+                            label="Пакет постов (разделены ---)",
+                            lines=18
+                        )
+                        batch_nodes = gr.Textbox(
+                            label="Story-nodes",
+                            lines=2
+                        )
+                        batch_count = gr.Number(label="Символов", precision=0)
+                        gr.Markdown("---")
+                        validator_btn = gr.Button("🧭 Валидатор story-nodes")
+                        validator_output = gr.Textbox(
+                            label="Story-nodes без checkpoint",
+                            lines=6
+                        )
+                        validator_count = gr.Number(label="Найдено", precision=0)
+
+                    with gr.Tab("📄 Исходный story-node"):
+                        source_output = gr.Textbox(
+                            label="Markdown",
+                            lines=20
+                        )
     
     # Events
     node_dropdown.change(

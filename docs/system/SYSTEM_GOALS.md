@@ -10,6 +10,7 @@
 - **LG (Lab Goals)** — что система и агенты способны производить/проверять/эволюционировать
 - **MG (Media Goals)** — как система генерирует доверяемый пред‑контент
 - **SG (System Goals)** — свойства, которые архитектура должна сохранять
+- **Meta Goals** — цели над целями (чем система имеет право быть)
 
 **Rule:** no idea exists without at least one **UG** or **LG**.  
 MG/SG can amplify, but not justify alone.
@@ -86,3 +87,4 @@ MG/SG can amplify, but not justify alone.
 - `SYSTEM_INTENT.md`
 - `SYSTEM_FUNCTIONS.md`
 - `SYSTEM_CHECKS.md`
+- `META_GOALS_AND_RISKS.md`
