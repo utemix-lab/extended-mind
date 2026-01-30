@@ -56,6 +56,14 @@
 **Minimal experiment:** заморожено, только реестр идеи  
 **Status:** archived
 
+### IDEA‑006 — Saved Paths v0
+**Описание:** сохранение траекторий и результатов (не коллекций мира).  
+**Goal link:** [UG-2], [UG-3]  
+**Functions:** Saved Contexts / Saved Paths  
+**Risks:** превращение в “второй интернет”  
+**Minimal experiment:** 1 приватный сохранённый путь без соц‑слоя  
+**Status:** draft
+
 ---
 
 ## См. также

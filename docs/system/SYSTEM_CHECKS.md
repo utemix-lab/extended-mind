@@ -2,6 +2,10 @@
 
 Сверка текущих шагов с целями + интеграция с System Fix.
 
+## 0) Before/After meaningful change (ритуал)
+- [ ] Создан или обновлён Step Record в `docs/steps/`
+- [ ] Шаг связан с 1–3 целями (UG/LG/MG/SG)
+
 ## 1) PR review checklist (машины / агенты)
 - [ ] Есть ли связь с целями из `SYSTEM_GOALS.md`?
 - [ ] Нарушает ли guardrails из `SYSTEM_GUARDRAILS.md`?
@@ -18,6 +22,7 @@
 - [ ] При необходимости обновить `PROJECT_OVERVIEW.md` (концепт)
 - [ ] Прогнать checklist из этого документа
 - [ ] Убедиться, что есть narrative trace на архитектурные изменения
+- [ ] Step Record создан/обновлён для ключевых изменений
 - [ ] Создать `checkpoints/YYYY-MM-DD-system-fix.md`
 - [ ] Commit + push
 

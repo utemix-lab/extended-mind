@@ -13,6 +13,11 @@
 | SD‑005 | Architecture is law; narrative is life within law | — | — | Prevents canon drift |
 | SD‑006 | Architecture changes must leave narrative trace | `docs/adr/011-self-description-and-practices-v1.md` | `docs/narrative/story-nodes/story-node-014-self-description-and-practices.md` | Self‑description continuity |
 
+## Records mapping
+- Step → что сделали и зачем
+- Story‑node → что это значит
+- ADR → почему так, а не иначе
+
 ## How to update
 - New strategic decision → ADR + add a row here
 - Decision changed → update row + add reason in ADR

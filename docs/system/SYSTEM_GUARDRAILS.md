@@ -45,3 +45,4 @@
 ## See also
 - `SYSTEM_INTENT.md`
 - `SYSTEM_CHECKS.md`
+- `VISUAL_GUARDRAILS.md`
