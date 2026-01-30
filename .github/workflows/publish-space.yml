@@ -1,17 +1,18 @@
-name: Publish HF Space (extended-mind-console)
+name: Publish HF Spaces
 
 on:
   push:
     branches: ["main"]
     paths:
       - "spaces/extended-mind-console/**"
+      - "spaces/telegram-content/**"
       - ".github/workflows/publish-space.yml"
 
 permissions:
   contents: read
 
 jobs:
-  publish-space:
+  publish-extended-mind-console:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -42,6 +43,43 @@ jobs:
               repo_id="utemix/extended-mind-console",
               repo_type="space",
               folder_path="spaces/extended-mind-console",
+              path_in_repo=".",
+              commit_message="Publish Space from GitHub"
+          )
+          print("OK: Space published")
+          PY
+
+  publish-telegram-content:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install huggingface_hub
+
+      - name: Upload Space folder to HF
+        env:
+          HF_TOKEN: ${{ secrets.HF }}
+        run: |
+          python - <<'PY'
+          import os
+          from huggingface_hub import HfApi
+
+          token = os.environ["HF_TOKEN"]
+          api = HfApi(token=token)
+
+          api.upload_folder(
+              repo_id="utemix/telegram-content",
+              repo_type="space",
+              folder_path="spaces/telegram-content",
               path_in_repo=".",
               commit_message="Publish Space from GitHub"
           )
