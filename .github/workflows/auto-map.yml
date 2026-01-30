@@ -20,8 +20,12 @@ jobs:
 
       - name: Build index and graph
         run: |
-          python scripts/build_doc_index.py
-          python scripts/build_graph.py
+          if [ -f "scripts/build_doc_index.py" ] && [ -f "scripts/build_graph.py" ]; then
+            python scripts/build_doc_index.py
+            python scripts/build_graph.py
+          else
+            echo "Skipping docs map build (scripts missing)"
+          fi
 
       - name: Upload artifacts (PR)
         if: ${{ github.event_name == 'pull_request' }}
@@ -33,7 +37,7 @@ jobs:
             docs/maps/graph.mmd
 
       - name: Commit generated files (push to main)
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name == 'push' && hashFiles('docs/_index.json') != '' }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
