@@ -1,4 +1,4 @@
-# Workbench: AI Music Signals
+# Workbench: Zucken-drücken
 
 **ID:** wb-vova-ai-music-signals  
 **Character:** Vova  

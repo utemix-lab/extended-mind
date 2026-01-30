@@ -1,4 +1,4 @@
-# Workbench: Music in General
+# Workbench: Музыка в целом
 
 **ID:** wb-vova-music-general  
 **Character:** Vova  
@@ -39,7 +39,7 @@ domain:music
 
 workbench_id: wb-vova-music-general
 owner_character_id: character-vova
-title: Music in General
+title: Музыка в целом
 one_liner: Отслеживает музыку как культуру и карту вкуса, а не как каталог объектов.
 
 ## Focus & boundaries
@@ -86,7 +86,7 @@ outputs.content: digest script; short post
 ## UI reflection
 ui.story: “золотой фонд” (2–3 curated sets) + короткий манифест
 ui.system: домен Music + контекстные теги
-ui.service: preset Query Mode “Music in General”
+ui.service: preset Query Mode “Музыка в целом”
 
 ## Risks & guardrails
 risks: каталогизация; медийный захват
