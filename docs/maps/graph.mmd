@@ -1,6 +1,8 @@
 graph TD
+  docs__AGENT_PLAYBOOK["AGENT PLAYBOOK (LLM / IDE)"]
   docs__ARCHITECTURE["Архитектура системы"]
   docs__ROADMAP["Roadmap"]
+  docs__SINGLE_SOURCE_PLAYBOOK["SINGLE SOURCE PLAYBOOK"]
   docs__UNIVERSE_GRAPH_SPEC["Universe Graph Specification"]
   docs___archive__adr__adr_0001_story_nodes_and_worlds_2_3["ADR-0001 — Story-nodes and Worlds 2/3 Boundary"]
   docs___archive__adr__adr_0002_role_of_extended_mind["ADR-0002 — Role of Extended-mind as a Single Architectural Entity"]
@@ -129,13 +131,71 @@ graph TD
   docs___archive__rag__rag_ingestion_plan_v0.1["RAG Ingestion Plan — Extended-mind v0.1"]
   docs___archive__rag__retrieval_modes_v0.1["Retrieval Modes Specification v0.1"]
   docs___archive__reasoning__multi_perspective_reasoning_v0.1["Multi-perspective Reasoning v0.1"]
+  docs___archive__repository_structure["Repository Structure — v0.1"]
   docs___archive__story_layer__index["Story-layer Index"]
   docs___archive__story_layer__story_layer_spec_v0.1["Story-layer Specification v0.1"]
   docs___archive__templates__character_template["<Character Name>"]
   docs___archive__templates__project_template["<project-name>"]
   docs___archive__templates__story_node_template["<story-node-title>"]
+  docs__adr__001_avoid_taxonomy_trap["ADR-001: Избежать ловушки таксономий"]
+  docs__adr__002_read_only_consumer_pattern["ADR-002: Паттерн read-only consumer"]
+  docs__adr__003_visual_projections["ADR-003: Визуальные проекции (виджеты)"]
+  docs__adr__004_projection_coherence["ADR-004: Согласованность визуальных проекций"]
+  docs__adr__005_signature_decisions["ADR-005: Механизм Signature Decisions"]
+  docs__adr__006_perceptual_scenography["ADR-006: Сценография восприятия (Perceptual Scenography)"]
+  docs__adr__007_practice_dual_mode["ADR-007: Двойной режим Practices (структурный + нарративный)"]
+  docs__adr__008_graph_native_design["ADR-008: Graph-native system design и разведение слоёв"]
+  docs__adr__009_tags_query_mode["ADR-009: Tags & Query Mode"]
+  docs__adr__010_emergent_modes["ADR-010: Emergent Modes (Practices & Opportunities)"]
+  docs__adr__011_self_description_and_practices_v1["ADR-011: Self-description goal and Practices v1"]
+  docs__adr__TEMPLATE["ADR-XXX: Название решения"]
+  docs__capability_maps__capmap_2026_01_emergent_modes["Capability Map — Emergent Modes"]
+  docs__capability_maps__capmap_2026_01_tags["Capability Map — Tags & Query Mode"]
+  docs__checkpoints__2026_01_25["Checkpoint 2026-01-25"]
+  docs__checkpoints__2026_01_26_machine_view_shift["Checkpoint 2026-01-26 — Machine View Shift"]
+  docs__checkpoints__2026_01_28["Checkpoint 2026-01-28"]
+  docs__checkpoints__2026_01_emergent_modes["Checkpoint 2026-01-emergent-modes"]
+  docs__checkpoints__2026_01_tags_query_mode["Checkpoint 2026-01-tags-query-mode"]
+  docs__checkpoints__CHECKPOINT_GUIDE["Checkpoint Guide"]
+  docs__ideas__IDEAS_LOG["ЖУРНАЛ ИДЕЙ"]
   docs__index["Документация extended-mind"]
-  docs__repository_structure["Repository Structure — v0.1"]
+  docs__machine_log__kb__2026_01_25T18_45_37Z_kb_update["KB update 2026-01-25T18:45:37Z"]
+  docs__narrative__NARRATIVE_LAYER["Narrative Layer"]
+  docs__narrative__story_nodes__story_node_001_practices["story-node-001"]
+  docs__narrative__story_nodes__story_node_002_consumer_pattern["story-node-002"]
+  docs__narrative__story_nodes__story_node_003_widgets["story-node-003-widgets"]
+  docs__narrative__story_nodes__story_node_004_symmetric_highlight["story-node-004-symmetric-highlight"]
+  docs__narrative__story_nodes__story_node_005_signature_mechanism["story-node-005-signature-mechanism"]
+  docs__narrative__story_nodes__story_node_006_single_trigger["story-node-006-single-trigger"]
+  docs__narrative__story_nodes__story_node_007_sixth_criterion["story-node-007-sixth-criterion"]
+  docs__narrative__story_nodes__story_node_008_perception_ontology_split["story-node-008-perception-ontology-split"]
+  docs__narrative__story_nodes__story_node_009_perceptual_scenography["story-node-009-perceptual-scenography"]
+  docs__narrative__story_nodes__story_node_010_practice_dual_mode["story-node-010-practice-dual-mode"]
+  docs__narrative__story_nodes__story_node_011_graph_native_layers["story-node-011-graph-native-layers"]
+  docs__narrative__story_nodes__story_node_012_tags_query_mode["story-node-012"]
+  docs__narrative__story_nodes__story_node_013_emergent_modes["story-node-013"]
+  docs__narrative__story_nodes__story_node_014_self_description_and_practices["story-node-014"]
+  docs__narrative__story_nodes__story_node_015_exports_flags_loader["story-node-015"]
+  docs__narrative__story_nodes__story_node_016_goals_system_fix["story-node-016"]
+  docs__narrative__story_nodes__story_node_017_media_pipeline_tg_batch["story-node-017"]
+  docs__narrative__templates__story_node["story-node-XXX"]
+  docs__specs__CATALOG_ITEM_CONTRACT["CATALOG ITEM CONTRACT (v0)"]
+  docs__specs__CHARACTER_SPEC["Character Specification"]
+  docs__specs__COUNTRY_CONTEXT["COUNTRY CONTEXT"]
+  docs__specs__EMERGENT_MODES["EMERGENT MODES (Practices & Opportunities)"]
+  docs__specs__PERCEPTUAL_SCENOGRAPHY["Perceptual Scenography"]
+  docs__specs__POINTER_TAGS_AND_QUERY_MODE["POINTER TAGS AND QUERY MODE"]
+  docs__specs__PRACTICES_SPEC["Practices Specification"]
+  docs__specs__PROJECTIONS_VOCABULARY["PROJECTIONS VOCABULARY (v0)"]
+  docs__specs__SIGNATURE_DECISIONS["Signature Decisions"]
+  docs__system__DECISION_BACKBONE["DECISION BACKBONE"]
+  docs__system__MECHANISMS_TO_GOALS["MECHANISMS → GOALS (v1)"]
+  docs__system__MEDIA_PIPELINE["MEDIA PIPELINE (TG generator rules)"]
+  docs__system__SYSTEM_CHECKS["SYSTEM CHECKS"]
+  docs__system__SYSTEM_FUNCTIONS["SYSTEM FUNCTIONS"]
+  docs__system__SYSTEM_GOALS["SYSTEM GOALS"]
+  docs__system__SYSTEM_GUARDRAILS["SYSTEM GUARDRAILS"]
+  docs__system__SYSTEM_INTENT["SYSTEM INTENT"]
   type__adr(["adr"])
   type__architecture(["architecture"])
   type__character(["character"])
@@ -240,6 +300,7 @@ graph TD
   docs___archive__rag__rag_ingestion_plan_v0.1 -.-> type__process
   docs___archive__rag__retrieval_modes_v0.1 -.-> type__spec
   docs___archive__reasoning__multi_perspective_reasoning_v0.1 -.-> type__spec
+  docs___archive__repository_structure -.-> type__documentation
   docs___archive__story_layer__index -.-> type__index
   docs___archive__story_layer__story_layer_spec_v0.1 -.-> type__spec
   docs___archive__templates__character_template -.-> type__character
@@ -247,5 +308,5 @@ graph TD
   docs___archive__templates__story_node_template -.-> type__story_node
   docs__index --> docs__ARCHITECTURE
   docs__index --> docs__ROADMAP
+  docs__index --> docs__SINGLE_SOURCE_PLAYBOOK
   docs__index --> docs__UNIVERSE_GRAPH_SPEC
-  docs__repository_structure -.-> type__documentation

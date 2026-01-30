@@ -1,0 +1,2026 @@
+[
+  {
+    "path": "docs/AGENT_PLAYBOOK.md",
+    "id": "docs__AGENT_PLAYBOOK",
+    "title": "AGENT PLAYBOOK (LLM / IDE)",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/ARCHITECTURE.md",
+    "id": "docs__ARCHITECTURE",
+    "title": "\u0410\u0440\u0445\u0438\u0442\u0435\u043a\u0442\u0443\u0440\u0430 \u0441\u0438\u0441\u0442\u0435\u043c\u044b",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/ROADMAP.md",
+    "id": "docs__ROADMAP",
+    "title": "Roadmap",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/SINGLE-SOURCE-PLAYBOOK.md",
+    "id": "docs__SINGLE-SOURCE-PLAYBOOK",
+    "title": "SINGLE SOURCE PLAYBOOK",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/UNIVERSE_GRAPH_SPEC.md",
+    "id": "docs__UNIVERSE_GRAPH_SPEC",
+    "title": "Universe Graph Specification",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/adr/adr-0001-story-nodes-and-worlds-2-3.md",
+    "id": "docs___archive__adr__adr-0001-story-nodes-and-worlds-2-3",
+    "title": "ADR-0001 \u2014 Story-nodes and Worlds 2/3 Boundary",
+    "type": "adr",
+    "tags": [
+      "adr",
+      "story-node",
+      "ontology",
+      "world2",
+      "world3"
+    ],
+    "links": [],
+    "created": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/adr/adr-0002-role-of-extended-mind.md",
+    "id": "docs___archive__adr__adr-0002-role-of-extended-mind",
+    "title": "ADR-0002 \u2014 Role of Extended-mind as a Single Architectural Entity",
+    "type": "adr",
+    "tags": [
+      "adr",
+      "extended-mind",
+      "architecture",
+      "ontology"
+    ],
+    "links": [],
+    "created": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/adr/adr-0003-rag-first-graph-later.md",
+    "id": "docs___archive__adr__adr-0003-rag-first-graph-later",
+    "title": "ADR-0003 \u2014 RAG First, Graph Later",
+    "type": "adr",
+    "tags": [
+      "adr",
+      "rag",
+      "graph",
+      "architecture"
+    ],
+    "links": [],
+    "created": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/adr/adr-0004-post-digital-honesty.md",
+    "id": "docs___archive__adr__adr-0004-post-digital-honesty",
+    "title": "ADR-0004 \u2014 Post-Digital Honesty Principle",
+    "type": "adr",
+    "tags": [
+      "adr",
+      "post-digital",
+      "honesty"
+    ],
+    "links": [],
+    "created": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/adr/adr-0005-characters-as-actors-mir3.md",
+    "id": "docs___archive__adr__adr-0005-characters-as-actors-mir3",
+    "title": "ADR-0005 \u2014 Characters as Actors of World 3",
+    "type": "adr",
+    "tags": [
+      "adr",
+      "characters",
+      "ontology"
+    ],
+    "links": [],
+    "created": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/adr/adr-0006-single-agent-architecture.md",
+    "id": "docs___archive__adr__adr-0006-single-agent-architecture",
+    "title": "ADR-0006 \u2014 Single-Agent Architecture for Extended-mind",
+    "type": "adr",
+    "tags": [
+      "adr",
+      "architecture",
+      "agent"
+    ],
+    "links": [],
+    "created": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/adr/adr-0007-story-layer-separation.md",
+    "id": "docs___archive__adr__adr-0007-story-layer-separation",
+    "title": "ADR-0007 \u2014 Strict Separation of Story Layer",
+    "type": "adr",
+    "tags": [
+      "adr",
+      "story-layer",
+      "architecture"
+    ],
+    "links": [],
+    "created": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/adr/adr-0008-role-of-definition-pack.md",
+    "id": "docs___archive__adr__adr-0008-role-of-definition-pack",
+    "title": "ADR-0008 \u2014 Role of Definition Pack",
+    "type": "adr",
+    "tags": [
+      "adr",
+      "definitions",
+      "ontology"
+    ],
+    "links": [],
+    "created": "2025-12-10"
+  },
+  {
+    "path": "docs/_archive/adr/adr-0009-why-extended-mind-must-speak-in-first-person.md",
+    "id": "docs___archive__adr__adr-0009-why-extended-mind-must-speak-in-first-person",
+    "title": "ADR-0009 \u2014 Why Extended-mind Must Speak in First Person",
+    "type": "adr",
+    "tags": [
+      "adr",
+      "voice",
+      "first-person"
+    ],
+    "links": [],
+    "created": "2025-12-10"
+  },
+  {
+    "path": "docs/_archive/adr/adr-0010-why-projects-must-be-modular.md",
+    "id": "docs___archive__adr__adr-0010-why-projects-must-be-modular",
+    "title": "ADR-0010 \u2014 Why Projects Must Be Modular",
+    "type": "adr",
+    "tags": [
+      "adr",
+      "architecture",
+      "modularity"
+    ],
+    "links": [],
+    "created": "2025-12-10"
+  },
+  {
+    "path": "docs/_archive/adr/adr-0011-separation-of-author-line-and-machine-log.md",
+    "id": "docs___archive__adr__adr-0011-separation-of-author-line-and-machine-log",
+    "title": "ADR-0011 \u2014 Separation of Author-line and Machine-log",
+    "type": "adr",
+    "tags": [
+      "adr",
+      "layers",
+      "story-layer"
+    ],
+    "links": [],
+    "created": "2025-12-10"
+  },
+  {
+    "path": "docs/_archive/adr/adr-0012-what-cannot-be-automated.md",
+    "id": "docs___archive__adr__adr-0012-what-cannot-be-automated",
+    "title": "ADR-0012 \u2014 What Cannot Be Automated",
+    "type": "adr",
+    "tags": [
+      "adr",
+      "automation",
+      "limits"
+    ],
+    "links": [],
+    "created": "2025-12-10"
+  },
+  {
+    "path": "docs/_archive/adr/adr-0013-graph-rag-readiness.md",
+    "id": "docs___archive__adr__adr-0013-graph-rag-readiness",
+    "title": "ADR-0013 \u2014 Criteria for GraphRAG Readiness",
+    "type": "adr",
+    "tags": [
+      "rag",
+      "graph",
+      "architecture",
+      "scalability"
+    ],
+    "links": [],
+    "updated": "2025-12-20"
+  },
+  {
+    "path": "docs/_archive/adr/adr-0014-definition-archive.md",
+    "id": "docs___archive__adr__adr-0014-definition-archive",
+    "title": "ADR-0014 \u2014 Definition Archive as Non-Canonical Layer",
+    "type": "adr",
+    "tags": [
+      "definitions",
+      "rag",
+      "architecture",
+      "content"
+    ],
+    "links": [],
+    "updated": "2025-12-20"
+  },
+  {
+    "path": "docs/_archive/adr/adr-0015-extended-mind-as-normative-system.md",
+    "id": "docs___archive__adr__adr-0015-extended-mind-as-normative-system",
+    "title": "ADR-0015 \u2014 Extended-mind as Normative System",
+    "type": "adr",
+    "tags": [
+      "norms",
+      "culture",
+      "architecture",
+      "governance"
+    ],
+    "links": [],
+    "updated": "2025-12-23"
+  },
+  {
+    "path": "docs/_archive/architecture/BILLING_MODELS.md",
+    "id": "docs___archive__architecture__BILLING_MODELS",
+    "title": "\u041c\u043e\u0434\u0435\u043b\u0438 \u0431\u0438\u043b\u043b\u0438\u043d\u0433\u0430",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/architecture/COHERENCE_LAYERS.md",
+    "id": "docs___archive__architecture__COHERENCE_LAYERS",
+    "title": "\u0421\u043b\u043e\u0438 \u0441\u043e\u0433\u043b\u0430\u0441\u043e\u0432\u0430\u043d\u043d\u043e\u0441\u0442\u0438 \u044d\u043a\u043e\u0441\u0438\u0441\u0442\u0435\u043c\u044b",
+    "type": "",
+    "tags": [],
+    "links": [
+      "docs/VISION.md",
+      "docs/_archive/graph/MANIFEST.md",
+      "docs/_archive/graph/META_GRAPH_SPEC.md",
+      "docs/_archive/graph/ROUTE_GRAPH_SPEC.md"
+    ]
+  },
+  {
+    "path": "docs/_archive/architecture/COMPARISON_AND_UTILITY.md",
+    "id": "docs___archive__architecture__COMPARISON_AND_UTILITY",
+    "title": "\u041f\u0440\u0438\u043a\u043b\u0430\u0434\u043d\u0430\u044f \u0446\u0435\u043d\u043d\u043e\u0441\u0442\u044c \u0438 \u0441\u0440\u0430\u0432\u043d\u0435\u043d\u0438\u0435 \u0441 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044e\u0449\u0438\u043c\u0438 \u0438\u043d\u0441\u0442\u0440\u0443\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u044f\u043c\u0438",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/architecture/DIRECTIONS.md",
+    "id": "docs___archive__architecture__DIRECTIONS",
+    "title": "\u041d\u0430\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u044f \u0438 \u043f\u0440\u043e\u0438\u0437\u0432\u043e\u0434\u043d\u044b\u0435",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/architecture/EXECUTION_MODEL.md",
+    "id": "docs___archive__architecture__EXECUTION_MODEL",
+    "title": "\u041c\u043e\u0434\u0435\u043b\u044c \u0438\u0441\u043f\u043e\u043b\u043d\u0435\u043d\u0438\u044f",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/architecture/LLM_INTEGRATION.md",
+    "id": "docs___archive__architecture__LLM_INTEGRATION",
+    "title": "\u0418\u043d\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u044f LLM",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/architecture/OPEN_QUESTIONS.md",
+    "id": "docs___archive__architecture__OPEN_QUESTIONS",
+    "title": "\u041e\u0442\u043a\u0440\u044b\u0442\u044b\u0435 \u0432\u043e\u043f\u0440\u043e\u0441\u044b",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/architecture/OVERVIEW.md",
+    "id": "docs___archive__architecture__OVERVIEW",
+    "title": "\u041e\u0431\u0437\u043e\u0440 \u0441\u0438\u0441\u0442\u0435\u043c\u044b",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/architecture/REFLEXIVE_SYSTEM.md",
+    "id": "docs___archive__architecture__REFLEXIVE_SYSTEM",
+    "title": "\u0410\u0440\u0445\u0438\u0442\u0435\u043a\u0442\u0443\u0440\u043d\u0430\u044f \u0440\u0435\u0444\u043b\u0435\u043a\u0441\u0438\u044f \u0441\u0438\u0441\u0442\u0435\u043c\u044b",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/architecture/SECURITY_PRIVACY.md",
+    "id": "docs___archive__architecture__SECURITY_PRIVACY",
+    "title": "\u0411\u0435\u0437\u043e\u043f\u0430\u0441\u043d\u043e\u0441\u0442\u044c \u0438 \u043a\u043e\u043d\u0444\u0438\u0434\u0435\u043d\u0446\u0438\u0430\u043b\u044c\u043d\u043e\u0441\u0442\u044c",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/concepts/extended-mind-core-map-v0.1.md",
+    "id": "docs___archive__concepts__extended-mind-core-map-v0.1",
+    "title": "Concept Map \u2014 Extended-mind Core Ontology",
+    "type": "concept-map",
+    "tags": [
+      "concept-map",
+      "ontology",
+      "structure"
+    ],
+    "links": [],
+    "updated": "2025-12-10"
+  },
+  {
+    "path": "docs/_archive/concepts/vova-and-petrova-concept-map-v0.1.md",
+    "id": "docs___archive__concepts__vova-and-petrova-concept-map-v0.1",
+    "title": "Concept Map \u2014 Vova & Petrova",
+    "type": "concept-map",
+    "tags": [
+      "concept-map",
+      "vova-and-petrova",
+      "media-architecture"
+    ],
+    "links": [],
+    "updated": "2025-12-11"
+  },
+  {
+    "path": "docs/_archive/console/how-to-use-console.md",
+    "id": "docs___archive__console__how-to-use-console",
+    "title": "How to use extended-mind console",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/core/index-v0.1.md",
+    "id": "docs___archive__core__index-v0.1",
+    "title": "Extended-mind Core Index v0.1",
+    "type": "core",
+    "tags": [
+      "extended-mind",
+      "core",
+      "index",
+      "architecture"
+    ],
+    "links": [],
+    "updated": "2025-12-17"
+  },
+  {
+    "path": "docs/_archive/core/navigation.md",
+    "id": "docs___archive__core__navigation",
+    "title": "\u041d\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044f \u043f\u043e \u0440\u0435\u043f\u043e",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/core/object-types-v0.1.md",
+    "id": "docs___archive__core__object-types-v0.1",
+    "title": "Extended-mind Object Types v0.1",
+    "type": "core",
+    "tags": [
+      "extended-mind",
+      "ontology",
+      "object-types"
+    ],
+    "links": [],
+    "updated": "2025-12-17"
+  },
+  {
+    "path": "docs/_archive/core/system-prompt.md",
+    "id": "docs___archive__core__system-prompt",
+    "title": "Extended-mind System Prompt",
+    "type": "core",
+    "tags": [
+      "system-prompt",
+      "behaviour",
+      "identity"
+    ],
+    "links": [],
+    "updated": "2025-12-10"
+  },
+  {
+    "path": "docs/_archive/cosmos/contract-v0.1.md",
+    "id": "docs___archive__cosmos__contract-v0.1",
+    "title": "Cosmos Map \u2014 Data Contract v0.1",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/cosmos/index.md",
+    "id": "docs___archive__cosmos__index",
+    "title": "Cosmos Map",
+    "type": "index",
+    "tags": [
+      "cosmos",
+      "graph",
+      "navigation"
+    ],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/cosmos/usage.md",
+    "id": "docs___archive__cosmos__usage",
+    "title": "Cosmos Map Usage",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/definition-archive/extended-mind/extended-mind-variants.md",
+    "id": "docs___archive__definition-archive__extended-mind__extended-mind-variants",
+    "title": "Definition Variants \u2014 Extended-mind",
+    "type": "definition-variant",
+    "tags": [
+      "definitions",
+      "variants",
+      "language",
+      "archive"
+    ],
+    "links": [],
+    "updated": "2025-12-20"
+  },
+  {
+    "path": "docs/_archive/definitions/definition-pack-v0.1.md",
+    "id": "docs___archive__definitions__definition-pack-v0.1",
+    "title": "Definition Pack",
+    "type": "definitions",
+    "tags": [
+      "core",
+      "ontology",
+      "foundation"
+    ],
+    "links": [],
+    "updated": "2025-01-01"
+  },
+  {
+    "path": "docs/_archive/definitions/extended-mind.md",
+    "id": "docs___archive__definitions__extended-mind",
+    "title": "Definition \u2014 Extended-mind",
+    "type": "definition",
+    "tags": [
+      "definition",
+      "core",
+      "mind",
+      "architecture"
+    ],
+    "links": [],
+    "updated": "2025-12-21"
+  },
+  {
+    "path": "docs/_archive/definitions/glossary-core-terms.md",
+    "id": "docs___archive__definitions__glossary-core-terms",
+    "title": "Glossary \u2014 Core Terms",
+    "type": "definitions",
+    "tags": [
+      "glossary",
+      "core",
+      "ontology",
+      "extended-mind"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/definitions/object-types.md",
+    "id": "docs___archive__definitions__object-types",
+    "title": "Object Types \u2014 Ontology Core",
+    "type": "definitions",
+    "tags": [
+      "ontology",
+      "object-types",
+      "extended-mind"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/definitions/process-layers.md",
+    "id": "docs___archive__definitions__process-layers",
+    "title": "Process Layers \u2014 Thinking Structure",
+    "type": "definitions",
+    "tags": [
+      "definitions",
+      "layers",
+      "thinking"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/definitions/story-layer.md",
+    "id": "docs___archive__definitions__story-layer",
+    "title": "Story Layer \u2014 Definition",
+    "type": "definitions",
+    "tags": [
+      "story-layer",
+      "definitions",
+      "ontology"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/definitions/system-extended-mind.md",
+    "id": "docs___archive__definitions__system-extended-mind",
+    "title": "System Prompt \u2014 Extended-mind",
+    "type": "system-definition",
+    "tags": [
+      "system",
+      "behaviour",
+      "core"
+    ],
+    "links": [],
+    "updated": "2025-01-01"
+  },
+  {
+    "path": "docs/_archive/definitions/value-of-story-node.md",
+    "id": "docs___archive__definitions__value-of-story-node",
+    "title": "Value of Story-node",
+    "type": "definitions",
+    "tags": [
+      "definitions",
+      "story-node",
+      "value"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/definitions/vova-i-petrova.md",
+    "id": "docs___archive__definitions__vova-i-petrova",
+    "title": "Definition \u2014 Vova i Petrova",
+    "type": "definition",
+    "tags": [
+      "definition",
+      "media",
+      "ai",
+      "performance"
+    ],
+    "links": [],
+    "updated": "2025-12-21"
+  },
+  {
+    "path": "docs/_archive/ecosystem/all-layers.md",
+    "id": "docs___archive__ecosystem__all-layers",
+    "title": "Ecosystem Layers \u2014 \u0418\u043d\u0434\u0435\u043a\u0441 \u0432\u0441\u0435\u0445 \u0441\u043b\u043e\u0451\u0432",
+    "type": "",
+    "tags": [],
+    "links": [
+      "docs/_archive/ecosystem/index.md",
+      "docs/_archive/graph/MANIFEST.md",
+      "docs/_archive/graph/META_GRAPH_SPEC.md",
+      "docs/ecosystem/ECOSYSTEM_LAYER.md"
+    ]
+  },
+  {
+    "path": "docs/_archive/ecosystem/dream-graph-overview.md",
+    "id": "docs___archive__ecosystem__dream-graph-overview",
+    "title": "dream-graph \u2014 \u0432\u0438\u0437\u0443\u0430\u043b\u044c\u043d\u044b\u0439 \u0440\u0435\u043d\u0434\u0435\u0440 \u044d\u043a\u043e\u0441\u0438\u0441\u0442\u0435\u043c\u044b",
+    "type": "",
+    "tags": [],
+    "links": [
+      "docs/_archive/ecosystem/index.md",
+      "docs/_archive/ecosystem/think-tank-editor.md"
+    ]
+  },
+  {
+    "path": "docs/_archive/ecosystem/index.md",
+    "id": "docs___archive__ecosystem__index",
+    "title": "\u042d\u043a\u043e\u0441\u0438\u0441\u0442\u0435\u043c\u0430 utemix-lab",
+    "type": "",
+    "tags": [],
+    "links": [
+      "docs/VISION.md",
+      "docs/_archive/ecosystem/all-layers.md",
+      "docs/_archive/ecosystem/dream-graph-overview.md",
+      "docs/_archive/ecosystem/think-tank-editor.md",
+      "docs/_archive/graph/META_GRAPH_SPEC.md",
+      "docs/ecosystem/ECOSYSTEM_LAYER.md"
+    ]
+  },
+  {
+    "path": "docs/_archive/ecosystem/think-tank-editor.md",
+    "id": "docs___archive__ecosystem__think-tank-editor",
+    "title": "Core Taxonomy Editor (\u0432\u043a\u043b\u0430\u0434\u043a\u0430 vovaipetrova-core)",
+    "type": "",
+    "tags": [],
+    "links": [
+      "docs/_archive/ecosystem/index.md",
+      "docs/ecosystem/ECOSYSTEM_LAYER.md"
+    ]
+  },
+  {
+    "path": "docs/_archive/graph/MANIFEST.md",
+    "id": "docs___archive__graph__MANIFEST",
+    "title": "MANIFEST.md \u2014 Canon / Route / Session",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/graph/META_GRAPH_SPEC.md",
+    "id": "docs___archive__graph__META_GRAPH_SPEC",
+    "title": "Universe Graph \u2014 \u0421\u043f\u0435\u0446\u0438\u0444\u0438\u043a\u0430\u0446\u0438\u044f \u043c\u0435\u0442\u0430-\u0433\u0440\u0430\u0444\u0430",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/graph/ROUTE_GRAPH_SPEC.md",
+    "id": "docs___archive__graph__ROUTE_GRAPH_SPEC",
+    "title": "ROUTE_GRAPH_SPEC.md \u2014 \u0421\u043f\u0435\u0446\u0438\u0444\u0438\u043a\u0430\u0446\u0438\u044f Route Graph",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/README.md",
+    "id": "docs___archive__machine-log__README",
+    "title": "Machine Log",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/dev/2026-01-08T23-09-59Z-console-docs.md",
+    "id": "docs___archive__machine-log__dev__2026-01-08T23-09-59Z-console-docs",
+    "title": "Dev log: console docs + links",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/dev/2026-01-09T13-53-08Z-repo-architecture-v0.md",
+    "id": "docs___archive__machine-log__dev__2026-01-09T13-53-08Z-repo-architecture-v0",
+    "title": "",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-08T06-50-47Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-08T06-50-47Z-kb-update",
+    "title": "KB update \u2014 2026-01-08T06:50:47Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-08T15-29-57Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-08T15-29-57Z-kb-update",
+    "title": "KB update 2026-01-08T15:29:57Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-08T19-34-20Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-08T19-34-20Z-kb-update",
+    "title": "KB update 2026-01-08T19:34:20Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-08T20-21-51Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-08T20-21-51Z-kb-update",
+    "title": "KB update 2026-01-08T20:21:51Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-09T10-52-20Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-09T10-52-20Z-kb-update",
+    "title": "KB update 2026-01-09T10:52:20Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-09T11-01-45Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-09T11-01-45Z-kb-update",
+    "title": "KB update 2026-01-09T11:01:45Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-10T20-50-07Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-10T20-50-07Z-kb-update",
+    "title": "KB update 2026-01-10T20:50:07Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-11T07-05-59Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-11T07-05-59Z-kb-update",
+    "title": "KB update 2026-01-11T07:05:59Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-11T14-18-51Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-11T14-18-51Z-kb-update",
+    "title": "KB update 2026-01-11T14:18:51Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-11T14-23-42Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-11T14-23-42Z-kb-update",
+    "title": "KB update 2026-01-11T14:23:42Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-11T14-26-01Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-11T14-26-01Z-kb-update",
+    "title": "KB update 2026-01-11T14:26:01Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-11T14-28-26Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-11T14-28-26Z-kb-update",
+    "title": "KB update 2026-01-11T14:28:26Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-13T18-00-53Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-13T18-00-53Z-kb-update",
+    "title": "KB update 2026-01-13T18:00:53Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-16T21-01-52Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-16T21-01-52Z-kb-update",
+    "title": "KB update 2026-01-16T21:01:52Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-17T10-58-59Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-17T10-58-59Z-kb-update",
+    "title": "KB update 2026-01-17T10:58:59Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-17T11-35-35Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-17T11-35-35Z-kb-update",
+    "title": "KB update 2026-01-17T11:35:35Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-17T19-03-43Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-17T19-03-43Z-kb-update",
+    "title": "KB update 2026-01-17T19:03:43Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-17T21-40-18Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-17T21-40-18Z-kb-update",
+    "title": "KB update 2026-01-17T21:40:18Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-18T10-16-28Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-18T10-16-28Z-kb-update",
+    "title": "KB update 2026-01-18T10:16:28Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-19T09-47-03Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-19T09-47-03Z-kb-update",
+    "title": "KB update 2026-01-19T09:47:03Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-19T09-50-58Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-19T09-50-58Z-kb-update",
+    "title": "KB update 2026-01-19T09:50:58Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-19T09-53-29Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-19T09-53-29Z-kb-update",
+    "title": "KB update 2026-01-19T09:53:29Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-19T09-56-03Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-19T09-56-03Z-kb-update",
+    "title": "KB update 2026-01-19T09:56:03Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-19T13-09-09Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-19T13-09-09Z-kb-update",
+    "title": "KB update 2026-01-19T13:09:09Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-19T13-24-31Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-19T13-24-31Z-kb-update",
+    "title": "KB update 2026-01-19T13:24:31Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-20T12-12-52Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-20T12-12-52Z-kb-update",
+    "title": "KB update 2026-01-20T12:12:52Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-20T12-43-26Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-20T12-43-26Z-kb-update",
+    "title": "KB update 2026-01-20T12:43:26Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/machine-log/kb/2026-01-20T12-52-58Z-kb-update.md",
+    "id": "docs___archive__machine-log__kb__2026-01-20T12-52-58Z-kb-update",
+    "title": "KB update 2026-01-20T12:52:58Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/manifest/author-and-machine.md",
+    "id": "docs___archive__manifest__author-and-machine",
+    "title": "Author and Machine \u2014 Roles and Distance",
+    "type": "manifest",
+    "tags": [
+      "manifest",
+      "author",
+      "machine",
+      "roles"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/manifest/how-extended-mind-thinks.md",
+    "id": "docs___archive__manifest__how-extended-mind-thinks",
+    "title": "How Extended-mind Thinks",
+    "type": "manifest",
+    "tags": [
+      "manifest",
+      "behaviour",
+      "thinking"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/manifest/post-digital-position.md",
+    "id": "docs___archive__manifest__post-digital-position",
+    "title": "Post-Digital Position",
+    "type": "manifest",
+    "tags": [
+      "manifest",
+      "philosophy",
+      "post-digital",
+      "anti-marketing"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/manifest/quiet-manifest.md",
+    "id": "docs___archive__manifest__quiet-manifest",
+    "title": "\u0422\u0438\u0445\u0438\u0439 \u043c\u0430\u043d\u0438\u0444\u0435\u0441\u0442 extended-mind",
+    "type": "manifest",
+    "tags": [
+      "extended-mind",
+      "manifesto",
+      "culture",
+      "form",
+      "content"
+    ],
+    "links": [],
+    "created": "2026-01-09"
+  },
+  {
+    "path": "docs/_archive/manifest/why-extended-mind.md",
+    "id": "docs___archive__manifest__why-extended-mind",
+    "title": "Why Extended-mind",
+    "type": "manifest",
+    "tags": [
+      "manifest",
+      "philosophy",
+      "purpose"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/meta/00_prearchitectural_layers.md",
+    "id": "docs___archive__meta__00_prearchitectural_layers",
+    "title": "Pre-Architectural Layers",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/ops/kb-pipeline.md",
+    "id": "docs___archive__ops__kb-pipeline",
+    "title": "KB Pipeline (GitHub \u2192 Hugging Face)",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/patterns/bias-detection.md",
+    "id": "docs___archive__patterns__bias-detection",
+    "title": "Pattern \u2014 Bias Detection",
+    "type": "pattern",
+    "tags": [
+      "pattern",
+      "bias",
+      "analysis"
+    ],
+    "links": [],
+    "updated": "2025-12-10"
+  },
+  {
+    "path": "docs/_archive/patterns/discussion-to-adr.md",
+    "id": "docs___archive__patterns__discussion-to-adr",
+    "title": "Pattern \u2014 Discussion to ADR",
+    "type": "pattern",
+    "tags": [
+      "pattern",
+      "adr",
+      "decision-making"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/patterns/line-consolidation.md",
+    "id": "docs___archive__patterns__line-consolidation",
+    "title": "Pattern \u2014 Line Consolidation",
+    "type": "pattern",
+    "tags": [
+      "pattern",
+      "line",
+      "consolidation"
+    ],
+    "links": [],
+    "updated": "2025-12-10"
+  },
+  {
+    "path": "docs/_archive/patterns/line-to-concept-map.md",
+    "id": "docs___archive__patterns__line-to-concept-map",
+    "title": "Pattern \u2014 Line to Concept Map",
+    "type": "pattern",
+    "tags": [
+      "pattern",
+      "concept-map",
+      "line"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/patterns/project-framing.md",
+    "id": "docs___archive__patterns__project-framing",
+    "title": "Pattern \u2014 Project Framing",
+    "type": "pattern",
+    "tags": [
+      "pattern",
+      "project",
+      "framing"
+    ],
+    "links": [],
+    "updated": "2025-12-10"
+  },
+  {
+    "path": "docs/_archive/patterns/stability-check.md",
+    "id": "docs___archive__patterns__stability-check",
+    "title": "Pattern \u2014 Stability Check",
+    "type": "pattern",
+    "tags": [
+      "pattern",
+      "stability",
+      "review"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/patterns/storynode-to-thesis-2.md",
+    "id": "docs___archive__patterns__storynode-to-thesis-2",
+    "title": "Pattern \u2014 Story-node to Thesis",
+    "type": "pattern",
+    "tags": [
+      "pattern",
+      "story-node",
+      "thesis"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/patterns/storynode-to-thesis.md",
+    "id": "docs___archive__patterns__storynode-to-thesis",
+    "title": "Pattern \u2014 Story-node to Thesis",
+    "type": "pattern",
+    "tags": [
+      "pattern",
+      "story-node",
+      "thesis",
+      "transformation"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/patterns/thesis-decomposition.md",
+    "id": "docs___archive__patterns__thesis-decomposition",
+    "title": "Pattern \u2014 Thesis Decomposition",
+    "type": "pattern",
+    "tags": [
+      "pattern",
+      "thesis",
+      "decomposition"
+    ],
+    "links": [],
+    "updated": "2025-12-10"
+  },
+  {
+    "path": "docs/_archive/patterns/thesis-to-adr.md",
+    "id": "docs___archive__patterns__thesis-to-adr",
+    "title": "Pattern \u2014 Thesis to ADR",
+    "type": "pattern",
+    "tags": [
+      "pattern",
+      "thesis",
+      "adr",
+      "decision"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/patterns/thesis-to-line.md",
+    "id": "docs___archive__patterns__thesis-to-line",
+    "title": "Pattern \u2014 Thesis to Line",
+    "type": "pattern",
+    "tags": [
+      "pattern",
+      "thesis",
+      "line",
+      "ontology"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/principles/content-vs-form.md",
+    "id": "docs___archive__principles__content-vs-form",
+    "title": "Content vs Form",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/principles/core-principles.md",
+    "id": "docs___archive__principles__core-principles",
+    "title": "Core Principles \u2014 Culture of Thinking",
+    "type": "principles",
+    "tags": [
+      "principles",
+      "culture",
+      "thinking",
+      "extended-mind"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/principles/honesty-and-anti-speculation.md",
+    "id": "docs___archive__principles__honesty-and-anti-speculation",
+    "title": "Honesty and Anti-Speculation Principle",
+    "type": "principles",
+    "tags": [
+      "principles",
+      "honesty",
+      "anti-speculation"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/principles/structure-vs-chaos.md",
+    "id": "docs___archive__principles__structure-vs-chaos",
+    "title": "Principle \u2014 Structure vs Chaos",
+    "type": "principles",
+    "tags": [
+      "principles",
+      "structure",
+      "chaos",
+      "thinking"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/projects/extended-mind-overview.md",
+    "id": "docs___archive__projects__extended-mind-overview",
+    "title": "Project Overview \u2014 Extended-mind",
+    "type": "project",
+    "tags": [
+      "project",
+      "extended-mind",
+      "overview"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/projects/vova-and-petrova/characters/character-map-v0.1.md",
+    "id": "docs___archive__projects__vova-and-petrova__characters__character-map-v0.1",
+    "title": "Character Map \u2014 Vova & Petrova",
+    "type": "characters",
+    "tags": [
+      "characters",
+      "vova-and-petrova",
+      "ontology"
+    ],
+    "links": [],
+    "updated": "2025-12-11"
+  },
+  {
+    "path": "docs/_archive/projects/vova-and-petrova/characters/character-profile-template.md",
+    "id": "docs___archive__projects__vova-and-petrova__characters__character-profile-template",
+    "title": "Character Profile Template \u2014 V&P",
+    "type": "template",
+    "tags": [
+      "template",
+      "character",
+      "vova-and-petrova"
+    ],
+    "links": [],
+    "updated": "2025-12-11"
+  },
+  {
+    "path": "docs/_archive/projects/vova-and-petrova/characters/petrova-profile-v0.1.md",
+    "id": "docs___archive__projects__vova-and-petrova__characters__petrova-profile-v0.1",
+    "title": "Character Profile \u2014 \u041f\u0435\u0442\u0440\u043e\u0432\u0430",
+    "type": "character",
+    "tags": [
+      "character",
+      "petrova",
+      "art",
+      "vova-and-petrova"
+    ],
+    "links": [],
+    "updated": "2025-12-11"
+  },
+  {
+    "path": "docs/_archive/projects/vova-and-petrova/characters/vova-profile-v0.1.md",
+    "id": "docs___archive__projects__vova-and-petrova__characters__vova-profile-v0.1",
+    "title": "Character Profile \u2014 \u0412\u043e\u0432\u0430",
+    "type": "character",
+    "tags": [
+      "character",
+      "vova",
+      "music",
+      "vova-and-petrova"
+    ],
+    "links": [],
+    "updated": "2025-12-11"
+  },
+  {
+    "path": "docs/_archive/projects/vova-and-petrova/innovation-note-v0.1.md",
+    "id": "docs___archive__projects__vova-and-petrova__innovation-note-v0.1",
+    "title": "Innovation Note \u2014 Vova i Petrova",
+    "type": "project",
+    "tags": [
+      "innovation",
+      "media",
+      "knowledge",
+      "automation"
+    ],
+    "links": [],
+    "updated": "2025-12-20"
+  },
+  {
+    "path": "docs/_archive/projects/vova-and-petrova/project-frame-v0.1.md",
+    "id": "docs___archive__projects__vova-and-petrova__project-frame-v0.1",
+    "title": "Project Frame \u2014 Vova & Petrova",
+    "type": "project",
+    "tags": [
+      "project",
+      "vova-and-petrova",
+      "media-ecosystem",
+      "ai",
+      "performance"
+    ],
+    "links": [],
+    "updated": "2025-12-11"
+  },
+  {
+    "path": "docs/_archive/projects/vova-and-petrova/project-frame-v0.2.md",
+    "id": "docs___archive__projects__vova-and-petrova__project-frame-v0.2",
+    "title": "Project Frame \u2014 Vova i Petrova",
+    "type": "project",
+    "tags": [
+      "media-ecosystem",
+      "ai",
+      "performance",
+      "knowledge",
+      "automation"
+    ],
+    "links": [],
+    "updated": "2025-12-20"
+  },
+  {
+    "path": "docs/_archive/projects/vova-and-petrova/project-roles-v0.1.md",
+    "id": "docs___archive__projects__vova-and-petrova__project-roles-v0.1",
+    "title": "Project Roles \u2014 Vova i Petrova",
+    "type": "project",
+    "tags": [
+      "roles",
+      "media",
+      "ai",
+      "knowledge"
+    ],
+    "links": [],
+    "updated": "2025-12-20"
+  },
+  {
+    "path": "docs/_archive/projects/vova-and-petrova/thin-tank-overview-v0.1.md",
+    "id": "docs___archive__projects__vova-and-petrova__thin-tank-overview-v0.1",
+    "title": "Thin-tank Overview \u2014 Vova & Petrova",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/_archive/projects/vova-and-petrova/thin-tank-overview-v0.2.md",
+    "id": "docs___archive__projects__vova-and-petrova__thin-tank-overview-v0.2",
+    "title": "Thin-Tank Overview \u2014 Vova i Petrova",
+    "type": "project",
+    "tags": [
+      "thin-tank",
+      "automation",
+      "knowledge",
+      "media"
+    ],
+    "links": [],
+    "updated": "2025-12-20"
+  },
+  {
+    "path": "docs/_archive/rag/index-schema-v0.1.md",
+    "id": "docs___archive__rag__index-schema-v0.1",
+    "title": "RAG Index Schema v0.1",
+    "type": "spec",
+    "tags": [
+      "rag",
+      "index",
+      "schema",
+      "retrieval"
+    ],
+    "links": [],
+    "updated": "2025-12-17"
+  },
+  {
+    "path": "docs/_archive/rag/index-structure-v0.1.md",
+    "id": "docs___archive__rag__index-structure-v0.1",
+    "title": "RAG Index Structure v0.1",
+    "type": "architecture",
+    "tags": [
+      "rag",
+      "index",
+      "architecture"
+    ],
+    "links": [],
+    "updated": "2025-12-13"
+  },
+  {
+    "path": "docs/_archive/rag/ingest-spec-v0.1.md",
+    "id": "docs___archive__rag__ingest-spec-v0.1",
+    "title": "RAG Ingestion Specification v0.1",
+    "type": "spec",
+    "tags": [
+      "rag",
+      "ingestion",
+      "specification"
+    ],
+    "links": [],
+    "updated": "2025-12-13"
+  },
+  {
+    "path": "docs/_archive/rag/prompt-routing-v0.1.md",
+    "id": "docs___archive__rag__prompt-routing-v0.1",
+    "title": "Prompt Routing Specification v0.1",
+    "type": "spec",
+    "tags": [
+      "rag",
+      "routing",
+      "reasoning",
+      "architecture"
+    ],
+    "links": [],
+    "updated": "2025-12-13"
+  },
+  {
+    "path": "docs/_archive/rag/rag-architecture-v0.1.md",
+    "id": "docs___archive__rag__rag-architecture-v0.1",
+    "title": "RAG Architecture \u2014 Extended-mind v0.1",
+    "type": "architecture",
+    "tags": [
+      "rag",
+      "retrieval",
+      "architecture",
+      "extended-mind"
+    ],
+    "links": [],
+    "updated": "2025-12-11"
+  },
+  {
+    "path": "docs/_archive/rag/rag-error-handling-v0.1.md",
+    "id": "docs___archive__rag__rag-error-handling-v0.1",
+    "title": "RAG Error Handling v0.1",
+    "type": "spec",
+    "tags": [
+      "rag",
+      "retrieval",
+      "error-handling",
+      "reasoning"
+    ],
+    "links": [],
+    "updated": "2025-12-13"
+  },
+  {
+    "path": "docs/_archive/rag/rag-evaluation-v0.1.md",
+    "id": "docs___archive__rag__rag-evaluation-v0.1",
+    "title": "RAG Evaluation \u2014 Extended-mind v0.1",
+    "type": "process",
+    "tags": [
+      "rag",
+      "evaluation",
+      "quality"
+    ],
+    "links": [],
+    "updated": "2025-12-13"
+  },
+  {
+    "path": "docs/_archive/rag/rag-indexing-v0.1.md",
+    "id": "docs___archive__rag__rag-indexing-v0.1",
+    "title": "RAG Indexing Specification v0.1",
+    "type": "spec",
+    "tags": [
+      "rag",
+      "indexing",
+      "chunking",
+      "taxonomy"
+    ],
+    "links": [],
+    "updated": "2025-12-16"
+  },
+  {
+    "path": "docs/_archive/rag/rag-ingestion-plan-v0.1.md",
+    "id": "docs___archive__rag__rag-ingestion-plan-v0.1",
+    "title": "RAG Ingestion Plan \u2014 Extended-mind v0.1",
+    "type": "process",
+    "tags": [
+      "rag",
+      "ingestion",
+      "pipeline"
+    ],
+    "links": [],
+    "updated": "2025-12-13"
+  },
+  {
+    "path": "docs/_archive/rag/retrieval-modes-v0.1.md",
+    "id": "docs___archive__rag__retrieval-modes-v0.1",
+    "title": "Retrieval Modes Specification v0.1",
+    "type": "spec",
+    "tags": [
+      "rag",
+      "retrieval",
+      "modes",
+      "specification"
+    ],
+    "links": [],
+    "updated": "2025-12-13"
+  },
+  {
+    "path": "docs/_archive/reasoning/multi-perspective-reasoning-v0.1.md",
+    "id": "docs___archive__reasoning__multi-perspective-reasoning-v0.1",
+    "title": "Multi-perspective Reasoning v0.1",
+    "type": "spec",
+    "tags": [
+      "reasoning",
+      "perspectives",
+      "architecture"
+    ],
+    "links": [],
+    "updated": "2025-12-16"
+  },
+  {
+    "path": "docs/_archive/repository-structure.md",
+    "id": "docs___archive__repository-structure",
+    "title": "Repository Structure \u2014 v0.1",
+    "type": "documentation",
+    "tags": [
+      "structure",
+      "repository",
+      "onboarding"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/story-layer/index.md",
+    "id": "docs___archive__story-layer__index",
+    "title": "Story-layer Index",
+    "type": "index",
+    "tags": [
+      "story-layer",
+      "index",
+      "documentation"
+    ],
+    "links": [],
+    "updated": "2025-12-10"
+  },
+  {
+    "path": "docs/_archive/story-layer/story-layer-spec-v0.1.md",
+    "id": "docs___archive__story-layer__story-layer-spec-v0.1",
+    "title": "Story-layer Specification v0.1",
+    "type": "spec",
+    "tags": [
+      "story-layer",
+      "stories",
+      "narrative",
+      "meaning"
+    ],
+    "links": [],
+    "updated": "2025-12-16"
+  },
+  {
+    "path": "docs/_archive/templates/character-template.md",
+    "id": "docs___archive__templates__character-template",
+    "title": "<Character Name>",
+    "type": "character",
+    "tags": [
+      "character",
+      "utemix-lab",
+      "actor"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/templates/project-template.md",
+    "id": "docs___archive__templates__project-template",
+    "title": "<project-name>",
+    "type": "project",
+    "tags": [
+      "project",
+      "utemix-lab"
+    ],
+    "links": [],
+    "updated": "2025-12-09"
+  },
+  {
+    "path": "docs/_archive/templates/story-node-template.md",
+    "id": "docs___archive__templates__story-node-template",
+    "title": "<story-node-title>",
+    "type": "story-node",
+    "tags": [
+      "story-node",
+      "narrative",
+      "thinking-process"
+    ],
+    "links": [],
+    "updated": "YYYY-MM-DD"
+  },
+  {
+    "path": "docs/adr/001-avoid-taxonomy-trap.md",
+    "id": "docs__adr__001-avoid-taxonomy-trap",
+    "title": "ADR-001: \u0418\u0437\u0431\u0435\u0436\u0430\u0442\u044c \u043b\u043e\u0432\u0443\u0448\u043a\u0438 \u0442\u0430\u043a\u0441\u043e\u043d\u043e\u043c\u0438\u0439",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/adr/002-read-only-consumer-pattern.md",
+    "id": "docs__adr__002-read-only-consumer-pattern",
+    "title": "ADR-002: \u041f\u0430\u0442\u0442\u0435\u0440\u043d read-only consumer",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/adr/003-visual-projections.md",
+    "id": "docs__adr__003-visual-projections",
+    "title": "ADR-003: \u0412\u0438\u0437\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043f\u0440\u043e\u0435\u043a\u0446\u0438\u0438 (\u0432\u0438\u0434\u0436\u0435\u0442\u044b)",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/adr/004-projection-coherence.md",
+    "id": "docs__adr__004-projection-coherence",
+    "title": "ADR-004: \u0421\u043e\u0433\u043b\u0430\u0441\u043e\u0432\u0430\u043d\u043d\u043e\u0441\u0442\u044c \u0432\u0438\u0437\u0443\u0430\u043b\u044c\u043d\u044b\u0445 \u043f\u0440\u043e\u0435\u043a\u0446\u0438\u0439",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/adr/005-signature-decisions.md",
+    "id": "docs__adr__005-signature-decisions",
+    "title": "ADR-005: \u041c\u0435\u0445\u0430\u043d\u0438\u0437\u043c Signature Decisions",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/adr/006-perceptual-scenography.md",
+    "id": "docs__adr__006-perceptual-scenography",
+    "title": "ADR-006: \u0421\u0446\u0435\u043d\u043e\u0433\u0440\u0430\u0444\u0438\u044f \u0432\u043e\u0441\u043f\u0440\u0438\u044f\u0442\u0438\u044f (Perceptual Scenography)",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/adr/007-practice-dual-mode.md",
+    "id": "docs__adr__007-practice-dual-mode",
+    "title": "ADR-007: \u0414\u0432\u043e\u0439\u043d\u043e\u0439 \u0440\u0435\u0436\u0438\u043c Practices (\u0441\u0442\u0440\u0443\u043a\u0442\u0443\u0440\u043d\u044b\u0439 + \u043d\u0430\u0440\u0440\u0430\u0442\u0438\u0432\u043d\u044b\u0439)",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/adr/008-graph-native-design.md",
+    "id": "docs__adr__008-graph-native-design",
+    "title": "ADR-008: Graph-native system design \u0438 \u0440\u0430\u0437\u0432\u0435\u0434\u0435\u043d\u0438\u0435 \u0441\u043b\u043e\u0451\u0432",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/adr/009-tags-query-mode.md",
+    "id": "docs__adr__009-tags-query-mode",
+    "title": "ADR-009: Tags & Query Mode",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/adr/010-emergent-modes.md",
+    "id": "docs__adr__010-emergent-modes",
+    "title": "ADR-010: Emergent Modes (Practices & Opportunities)",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/adr/011-self-description-and-practices-v1.md",
+    "id": "docs__adr__011-self-description-and-practices-v1",
+    "title": "ADR-011: Self-description goal and Practices v1",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/adr/TEMPLATE.md",
+    "id": "docs__adr__TEMPLATE",
+    "title": "ADR-XXX: \u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u0440\u0435\u0448\u0435\u043d\u0438\u044f",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/capability-maps/capmap-2026-01-emergent-modes.md",
+    "id": "docs__capability-maps__capmap-2026-01-emergent-modes",
+    "title": "Capability Map \u2014 Emergent Modes",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/capability-maps/capmap-2026-01-tags.md",
+    "id": "docs__capability-maps__capmap-2026-01-tags",
+    "title": "Capability Map \u2014 Tags & Query Mode",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/checkpoints/2026-01-25.md",
+    "id": "docs__checkpoints__2026-01-25",
+    "title": "Checkpoint 2026-01-25",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/checkpoints/2026-01-26-machine-view-shift.md",
+    "id": "docs__checkpoints__2026-01-26-machine-view-shift",
+    "title": "Checkpoint 2026-01-26 \u2014 Machine View Shift",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/checkpoints/2026-01-28.md",
+    "id": "docs__checkpoints__2026-01-28",
+    "title": "Checkpoint 2026-01-28",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/checkpoints/2026-01-emergent-modes.md",
+    "id": "docs__checkpoints__2026-01-emergent-modes",
+    "title": "Checkpoint 2026-01-emergent-modes",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/checkpoints/2026-01-tags-query-mode.md",
+    "id": "docs__checkpoints__2026-01-tags-query-mode",
+    "title": "Checkpoint 2026-01-tags-query-mode",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/checkpoints/CHECKPOINT_GUIDE.md",
+    "id": "docs__checkpoints__CHECKPOINT_GUIDE",
+    "title": "Checkpoint Guide",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/ideas/IDEAS_LOG.md",
+    "id": "docs__ideas__IDEAS_LOG",
+    "title": "\u0416\u0423\u0420\u041d\u0410\u041b \u0418\u0414\u0415\u0419",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/index.md",
+    "id": "docs__index",
+    "title": "\u0414\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430\u0446\u0438\u044f extended-mind",
+    "type": "",
+    "tags": [],
+    "links": [
+      "docs/ARCHITECTURE.md",
+      "docs/ROADMAP.md",
+      "docs/SINGLE-SOURCE-PLAYBOOK.md",
+      "docs/UNIVERSE_GRAPH_SPEC.md"
+    ]
+  },
+  {
+    "path": "docs/machine-log/kb/2026-01-25T18-45-37Z-kb-update.md",
+    "id": "docs__machine-log__kb__2026-01-25T18-45-37Z-kb-update",
+    "title": "KB update 2026-01-25T18:45:37Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/NARRATIVE_LAYER.md",
+    "id": "docs__narrative__NARRATIVE_LAYER",
+    "title": "Narrative Layer",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-001-practices.md",
+    "id": "docs__narrative__story-nodes__story-node-001-practices",
+    "title": "story-node-001",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-002-consumer-pattern.md",
+    "id": "docs__narrative__story-nodes__story-node-002-consumer-pattern",
+    "title": "story-node-002",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-003-widgets.md",
+    "id": "docs__narrative__story-nodes__story-node-003-widgets",
+    "title": "story-node-003-widgets",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-004-symmetric-highlight.md",
+    "id": "docs__narrative__story-nodes__story-node-004-symmetric-highlight",
+    "title": "story-node-004-symmetric-highlight",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-005-signature-mechanism.md",
+    "id": "docs__narrative__story-nodes__story-node-005-signature-mechanism",
+    "title": "story-node-005-signature-mechanism",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-006-single-trigger.md",
+    "id": "docs__narrative__story-nodes__story-node-006-single-trigger",
+    "title": "story-node-006-single-trigger",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-007-sixth-criterion.md",
+    "id": "docs__narrative__story-nodes__story-node-007-sixth-criterion",
+    "title": "story-node-007-sixth-criterion",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-008-perception-ontology-split.md",
+    "id": "docs__narrative__story-nodes__story-node-008-perception-ontology-split",
+    "title": "story-node-008-perception-ontology-split",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-009-perceptual-scenography.md",
+    "id": "docs__narrative__story-nodes__story-node-009-perceptual-scenography",
+    "title": "story-node-009-perceptual-scenography",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-010-practice-dual-mode.md",
+    "id": "docs__narrative__story-nodes__story-node-010-practice-dual-mode",
+    "title": "story-node-010-practice-dual-mode",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-011-graph-native-layers.md",
+    "id": "docs__narrative__story-nodes__story-node-011-graph-native-layers",
+    "title": "story-node-011-graph-native-layers",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-012-tags-query-mode.md",
+    "id": "docs__narrative__story-nodes__story-node-012-tags-query-mode",
+    "title": "story-node-012",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-013-emergent-modes.md",
+    "id": "docs__narrative__story-nodes__story-node-013-emergent-modes",
+    "title": "story-node-013",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-014-self-description-and-practices.md",
+    "id": "docs__narrative__story-nodes__story-node-014-self-description-and-practices",
+    "title": "story-node-014",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-015-exports-flags-loader.md",
+    "id": "docs__narrative__story-nodes__story-node-015-exports-flags-loader",
+    "title": "story-node-015",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-016-goals-system-fix.md",
+    "id": "docs__narrative__story-nodes__story-node-016-goals-system-fix",
+    "title": "story-node-016",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-017-media-pipeline-tg-batch.md",
+    "id": "docs__narrative__story-nodes__story-node-017-media-pipeline-tg-batch",
+    "title": "story-node-017",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/templates/story-node.md",
+    "id": "docs__narrative__templates__story-node",
+    "title": "story-node-XXX",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/specs/CATALOG_ITEM_CONTRACT.md",
+    "id": "docs__specs__CATALOG_ITEM_CONTRACT",
+    "title": "CATALOG ITEM CONTRACT (v0)",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/specs/CHARACTER_SPEC.md",
+    "id": "docs__specs__CHARACTER_SPEC",
+    "title": "Character Specification",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/specs/COUNTRY_CONTEXT.md",
+    "id": "docs__specs__COUNTRY_CONTEXT",
+    "title": "COUNTRY CONTEXT",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/specs/EMERGENT_MODES.md",
+    "id": "docs__specs__EMERGENT_MODES",
+    "title": "EMERGENT MODES (Practices & Opportunities)",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/specs/PERCEPTUAL_SCENOGRAPHY.md",
+    "id": "docs__specs__PERCEPTUAL_SCENOGRAPHY",
+    "title": "Perceptual Scenography",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/specs/POINTER_TAGS_AND_QUERY_MODE.md",
+    "id": "docs__specs__POINTER_TAGS_AND_QUERY_MODE",
+    "title": "POINTER TAGS AND QUERY MODE",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/specs/PRACTICES_SPEC.md",
+    "id": "docs__specs__PRACTICES_SPEC",
+    "title": "Practices Specification",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/specs/PROJECTIONS_VOCABULARY.md",
+    "id": "docs__specs__PROJECTIONS_VOCABULARY",
+    "title": "PROJECTIONS VOCABULARY (v0)",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/specs/SIGNATURE_DECISIONS.md",
+    "id": "docs__specs__SIGNATURE_DECISIONS",
+    "title": "Signature Decisions",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/system/DECISION_BACKBONE.md",
+    "id": "docs__system__DECISION_BACKBONE",
+    "title": "DECISION BACKBONE",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/system/MECHANISMS_TO_GOALS.md",
+    "id": "docs__system__MECHANISMS_TO_GOALS",
+    "title": "MECHANISMS \u2192 GOALS (v1)",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/system/MEDIA_PIPELINE.md",
+    "id": "docs__system__MEDIA_PIPELINE",
+    "title": "MEDIA PIPELINE (TG generator rules)",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/system/SYSTEM_CHECKS.md",
+    "id": "docs__system__SYSTEM_CHECKS",
+    "title": "SYSTEM CHECKS",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/system/SYSTEM_FUNCTIONS.md",
+    "id": "docs__system__SYSTEM_FUNCTIONS",
+    "title": "SYSTEM FUNCTIONS",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/system/SYSTEM_GOALS.md",
+    "id": "docs__system__SYSTEM_GOALS",
+    "title": "SYSTEM GOALS",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/system/SYSTEM_GUARDRAILS.md",
+    "id": "docs__system__SYSTEM_GUARDRAILS",
+    "title": "SYSTEM GUARDRAILS",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/system/SYSTEM_INTENT.md",
+    "id": "docs__system__SYSTEM_INTENT",
+    "title": "SYSTEM INTENT",
+    "type": "",
+    "tags": [],
+    "links": []
+  }
+]
