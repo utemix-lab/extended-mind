@@ -7,3 +7,6 @@
 | wb-vova-music-general | character-vova | Music & Sound Culture | music as culture |
 | wb-vova-vstablishment | character-vova | Software & Digital Tools; Music | VST discovery |
 | wb-vova-ai-music-signals | character-vova | Artificial Intelligence; Music | AI music signals |
+| wb-petrova-animation-plus | character-petrova | Visual & Media Arts | animation as thinking |
+| wb-petrova-brand-direction | character-petrova | Design & Aesthetic Systems | system brand direction |
+| wb-petrova-value-assembly | character-petrova | System-level | value assembly |
