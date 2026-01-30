@@ -1760,6 +1760,14 @@
     "links": []
   },
   {
+    "path": "docs/machine-log/kb/2026-01-30T17-47-13Z-kb-update.md",
+    "id": "docs__machine-log__kb__2026-01-30T17-47-13Z-kb-update",
+    "title": "KB update 2026-01-30T17:47:13Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
     "path": "docs/narrative/NARRATIVE_LAYER.md",
     "id": "docs__narrative__NARRATIVE_LAYER",
     "title": "Narrative Layer",
@@ -2122,7 +2130,7 @@
   {
     "path": "docs/workbenches/wb-vova-ai-music-signals.md",
     "id": "docs__workbenches__wb-vova-ai-music-signals",
-    "title": "Workbench: AI Music Signals",
+    "title": "Workbench: Zucken-dr\u00fccken",
     "type": "",
     "tags": [],
     "links": []
@@ -2130,7 +2138,7 @@
   {
     "path": "docs/workbenches/wb-vova-music-general.md",
     "id": "docs__workbenches__wb-vova-music-general",
-    "title": "Workbench: Music in General",
+    "title": "Workbench: \u041c\u0443\u0437\u044b\u043a\u0430 \u0432 \u0446\u0435\u043b\u043e\u043c",
     "type": "",
     "tags": [],
     "links": []
