@@ -1,0 +1,4 @@
+Add checkpoint validator to Space UI
+
+Surface story-nodes missing checkpoint refs and
+show checkpoint dates in the System Fix batch tab.

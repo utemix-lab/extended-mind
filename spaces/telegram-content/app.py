@@ -104,6 +104,34 @@ def extract_checkpoint_refs(raw_content: str) -> list:
     matches = re.findall(r'checkpoint:\s*`?([0-9]{4}-[0-9]{2}-[0-9]{2})`?', raw_content)
     return matches
 
+def get_checkpoint_dates() -> list:
+    """Get list of checkpoint dates referenced in story-nodes."""
+    nodes = get_story_nodes()
+    dates = set()
+
+    for node_name in nodes:
+        content = load_story_node(node_name)
+        if not content:
+            continue
+        for date in extract_checkpoint_refs(content):
+            dates.add(date)
+
+    return sorted(dates, reverse=True)
+
+def get_story_nodes_without_checkpoint() -> list:
+    """List story-nodes that do not reference a checkpoint."""
+    nodes = get_story_nodes()
+    missing = []
+
+    for node_name in nodes:
+        content = load_story_node(node_name)
+        if not content:
+            continue
+        if not extract_checkpoint_refs(content):
+            missing.append(node_name)
+
+    return missing
+
 def load_and_generate_batch(checkpoint_date: str, max_posts: int) -> tuple:
     if not checkpoint_date:
         return "Введите дату checkpoint (YYYY-MM-DD).", "", 0
@@ -130,10 +158,20 @@ def load_and_generate_batch(checkpoint_date: str, max_posts: int) -> tuple:
     node_list = ", ".join([name for name, _ in selected])
     return combined, node_list, len(combined)
 
-def refresh_nodes():
-    """Refresh the list of story-nodes."""
+def run_validator() -> tuple:
+    missing = get_story_nodes_without_checkpoint()
+    if not missing:
+        return "Все story-nodes имеют checkpoint.", 0
+    return "\n".join(missing), len(missing)
+
+def refresh_lists():
+    """Refresh the list of story-nodes and checkpoints."""
     nodes = get_story_nodes()
-    return gr.update(choices=nodes, value=nodes[0] if nodes else None)
+    checkpoints = get_checkpoint_dates()
+    return (
+        gr.update(choices=nodes, value=nodes[0] if nodes else None),
+        gr.update(choices=checkpoints, value=checkpoints[0] if checkpoints else None)
+    )
 
 # UI
 with gr.Blocks(title="Telegram Content Generator") as app:
@@ -183,9 +221,11 @@ with gr.Blocks(title="Telegram Content Generator") as app:
                 gr.Markdown("*Рекомендуемый размер: 1200-1500 символов*")
 
             with gr.Tab("📦 System Fix batch"):
-                checkpoint_date = gr.Textbox(
+                checkpoint_date = gr.Dropdown(
                     label="Checkpoint date (YYYY-MM-DD)",
-                    placeholder="2026-01-30"
+                    choices=get_checkpoint_dates(),
+                    value=None,
+                    allow_custom_value=True
                 )
                 max_posts = gr.Number(
                     label="Max posts",
@@ -202,6 +242,13 @@ with gr.Blocks(title="Telegram Content Generator") as app:
                     lines=2
                 )
                 batch_count = gr.Number(label="Символов", precision=0)
+                gr.Markdown("---")
+                validator_btn = gr.Button("🧭 Валидатор story-nodes")
+                validator_output = gr.Textbox(
+                    label="Story-nodes без checkpoint",
+                    lines=6
+                )
+                validator_count = gr.Number(label="Найдено", precision=0)
             
             with gr.Tab("📄 Исходный story-node"):
                 source_output = gr.Textbox(
@@ -221,10 +268,15 @@ with gr.Blocks(title="Telegram Content Generator") as app:
         inputs=[checkpoint_date, max_posts],
         outputs=[batch_output, batch_nodes, batch_count]
     )
+
+    validator_btn.click(
+        fn=run_validator,
+        outputs=[validator_output, validator_count]
+    )
     
     refresh_btn.click(
-        fn=refresh_nodes,
-        outputs=[node_dropdown]
+        fn=refresh_lists,
+        outputs=[node_dropdown, checkpoint_date]
     )
 
 if __name__ == "__main__":
