@@ -1776,9 +1776,41 @@
     "links": []
   },
   {
+    "path": "docs/machine-log/kb/2026-01-30T20-00-37Z-kb-update.md",
+    "id": "docs__machine-log__kb__2026-01-30T20-00-37Z-kb-update",
+    "title": "KB update 2026-01-30T20:00:37Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
     "path": "docs/narrative/NARRATIVE_LAYER.md",
     "id": "docs__narrative__NARRATIVE_LAYER",
     "title": "Narrative Layer",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/character-mirrors.md",
+    "id": "docs__narrative__character-mirrors",
+    "title": "Character Mirrors (Narrative)",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/coverage-map-full.md",
+    "id": "docs__narrative__coverage-map-full",
+    "title": "Coverage Map v1 \u2014 Full Narrative",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/coverage-map.md",
+    "id": "docs__narrative__coverage-map",
+    "title": "Coverage Map v1 (Narrative)",
     "type": "",
     "tags": [],
     "links": []
@@ -1872,14 +1904,6 @@
     "links": []
   },
   {
-    "path": "docs/narrative/system-language-layer.md",
-    "id": "docs__narrative__system-language-layer",
-    "title": "System Language Layer — narrative anchor",
-    "type": "",
-    "tags": [],
-    "links": []
-  },
-  {
     "path": "docs/narrative/story-nodes/story-node-012-tags-query-mode.md",
     "id": "docs__narrative__story-nodes__story-node-012-tags-query-mode",
     "title": "story-node-012",
@@ -1944,6 +1968,30 @@
     "links": []
   },
   {
+    "path": "docs/narrative/story-nodes/story-node-020-character-portraits-and-naming.md",
+    "id": "docs__narrative__story-nodes__story-node-020-character-portraits-and-naming",
+    "title": "story-node-020-character-portraits-and-naming",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-021-domain-coverage-check.md",
+    "id": "docs__narrative__story-nodes__story-node-021-domain-coverage-check",
+    "title": "story-node-021-domain-coverage-check",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-022-system-language-constitution.md",
+    "id": "docs__narrative__story-nodes__story-node-022-system-language-constitution",
+    "title": "story-node-022-system-language-constitution",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
     "path": "docs/narrative/story-nodes/story-node-023-living-book-interface-goal.md",
     "id": "docs__narrative__story-nodes__story-node-023-living-book-interface-goal",
     "title": "story-node-023-living-book-interface-goal",
@@ -1960,9 +2008,9 @@
     "links": []
   },
   {
-    "path": "docs/narrative/story-nodes/story-node-022-system-language-constitution.md",
-    "id": "docs__narrative__story-nodes__story-node-022-system-language-constitution",
-    "title": "story-node-022-system-language-constitution",
+    "path": "docs/narrative/system-language-layer.md",
+    "id": "docs__narrative__system-language-layer",
+    "title": "System Language Layer \u2014 narrative anchor",
     "type": "",
     "tags": [],
     "links": []
@@ -1971,6 +2019,14 @@
     "path": "docs/narrative/templates/story-node.md",
     "id": "docs__narrative__templates__story-node",
     "title": "story-node-XXX",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/workbench-mirrors.md",
+    "id": "docs__narrative__workbench-mirrors",
+    "title": "Workbench Mirrors (Narrative)",
     "type": "",
     "tags": [],
     "links": []
@@ -2064,9 +2120,25 @@
     "links": []
   },
   {
+    "path": "docs/steps/S-2026-01-28-01.step.md",
+    "id": "docs__steps__S-2026-01-28-01.step",
+    "title": "Step Record v1",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
     "path": "docs/steps/_template.step.md",
     "id": "docs__steps___template.step",
     "title": "Step Record v1",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/system/COVERAGE_MAP.md",
+    "id": "docs__system__COVERAGE_MAP",
+    "title": "Coverage Map v1 (System)",
     "type": "",
     "tags": [],
     "links": []
@@ -2099,6 +2171,14 @@
     "path": "docs/system/META_GOALS_AND_RISKS.md",
     "id": "docs__system__META_GOALS_AND_RISKS",
     "title": "META GOALS AND RISKS",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/system/NAMING_CANON.md",
+    "id": "docs__system__NAMING_CANON",
+    "title": "Naming Canon v1",
     "type": "",
     "tags": [],
     "links": []
@@ -2176,6 +2256,110 @@
     "links": []
   },
   {
+    "path": "docs/workbenches/wb-ai-iron-fairy-tales.md",
+    "id": "docs__workbenches__wb-ai-iron-fairy-tales",
+    "title": "Workbench: Iron Fairy Tales",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/workbenches/wb-ancy-darwins-blind-spot.md",
+    "id": "docs__workbenches__wb-ancy-darwins-blind-spot",
+    "title": "Workbench: Darwin\u2019s Blind Spot",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/workbenches/wb-ancy-evoquant.md",
+    "id": "docs__workbenches__wb-ancy-evoquant",
+    "title": "Workbench: Evoquant",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/workbenches/wb-ancy-runa-minds-lorgnette.md",
+    "id": "docs__workbenches__wb-ancy-runa-minds-lorgnette",
+    "title": "Workbench: minds-lorgnette",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/workbenches/wb-as-if.md",
+    "id": "docs__workbenches__wb-as-if",
+    "title": "Workbench: As if",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/workbenches/wb-author-extended-mind.md",
+    "id": "docs__workbenches__wb-author-extended-mind",
+    "title": "Workbench: Extended Mind",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/workbenches/wb-cadrik-solidol.md",
+    "id": "docs__workbenches__wb-cadrik-solidol",
+    "title": "Workbench: Solidol",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/workbenches/wb-dizy-cyberantique.md",
+    "id": "docs__workbenches__wb-dizy-cyberantique",
+    "title": "Workbench: cyberantique",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/workbenches/wb-dizy-homo-perceptivus.md",
+    "id": "docs__workbenches__wb-dizy-homo-perceptivus",
+    "title": "Workbench: Homo Perceptivus",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/workbenches/wb-gamych-playfield.md",
+    "id": "docs__workbenches__wb-gamych-playfield",
+    "title": "Workbench: Playfield",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/workbenches/wb-gamych-word-machine.md",
+    "id": "docs__workbenches__wb-gamych-word-machine",
+    "title": "Workbench: Word Machine",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/workbenches/wb-hinto-ji.md",
+    "id": "docs__workbenches__wb-hinto-ji",
+    "title": "Workbench: Ji (\u30b8)",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/workbenches/wb-ney-appearance-atelier.md",
+    "id": "docs__workbenches__wb-ney-appearance-atelier",
+    "title": "Workbench: Appearance Atelier",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
     "path": "docs/workbenches/wb-petrova-animation-plus.md",
     "id": "docs__workbenches__wb-petrova-animation-plus",
     "title": "Workbench: \u0410\u043d\u0438\u043c\u0430\u0446\u0438\u044f +",
@@ -2200,9 +2384,17 @@
     "links": []
   },
   {
-    "path": "docs/workbenches/wb-vova-zucken-drukcken.md",
-    "id": "docs__workbenches__wb-vova-zucken-drukcken",
-    "title": "Workbench: Zucken-Dr\u00fccken",
+    "path": "docs/workbenches/wb-runa-mojibake.md",
+    "id": "docs__workbenches__wb-runa-mojibake",
+    "title": "Workbench: Mojibake",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/workbenches/wb-vasya-frame-grinder.md",
+    "id": "docs__workbenches__wb-vasya-frame-grinder",
+    "title": "Workbench: Frame Grinder",
     "type": "",
     "tags": [],
     "links": []
@@ -2216,17 +2408,17 @@
     "links": []
   },
   {
-    "path": "docs/workbenches/wb-ancy-runa-minds-lorgnette.md",
-    "id": "docs__workbenches__wb-ancy-runa-minds-lorgnette",
-    "title": "Workbench: minds-lorgnette",
+    "path": "docs/workbenches/wb-vova-vstablishment.md",
+    "id": "docs__workbenches__wb-vova-vstablishment",
+    "title": "Workbench: VSTablishment",
     "type": "",
     "tags": [],
     "links": []
   },
   {
-    "path": "docs/workbenches/wb-vova-vstablishment.md",
-    "id": "docs__workbenches__wb-vova-vstablishment",
-    "title": "Workbench: VSTablishment",
+    "path": "docs/workbenches/wb-vova-zucken-drukcken.md",
+    "id": "docs__workbenches__wb-vova-zucken-drukcken",
+    "title": "Workbench: Zucken\u2011Dr\u00fccken",
     "type": "",
     "tags": [],
     "links": []
