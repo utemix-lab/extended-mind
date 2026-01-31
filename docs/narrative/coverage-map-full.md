@@ -235,18 +235,42 @@ Boundaries: не продукт.
 UI: “как устроено внутри”.  
 Risks: абстракция.
 
-Name: **Системный пакет Руны**  
-Type: system / bundle  
+Name: **Mind's Lorgnette**  
+Type: collaborative / applied  
 Slogan:  
-Includes: Mind's Lorgnette, `dream-graph`, `contracts` (без нарративных вариантов).  
-Focus: единый контур системных практик и протоколов.  
+Shared with: Ancy  
+Focus: производный продакшн‑инструмент для самоуправляемых систем.  
 Inputs: карты знаний, протоколы.  
 Outputs: signals / curated_sets / tags.  
 Practices: system-thinking, ecosystem-thinking, research-thinking.  
 Preset Context: domain:knowledge + domain:software + cap:systems.  
 Boundaries: не копия extended‑mind.  
-UI: мастерская системных контуров.  
+UI: мастерская самоуправляемых систем.  
 Risks: размывание границы с extended‑mind.
+
+Name: **Dream Graph**  
+Type: system / infrastructure  
+Slogan:  
+Focus: рендер системы как книги‑карты.  
+Inputs: exports/manifest, сцены, Query Mode.  
+Outputs: read‑only интерфейс.  
+Practices: system-thinking, ecosystem-thinking, research-thinking.  
+Preset Context: domain:software + domain:interactive.  
+Boundaries: не пишет в канон.  
+UI: книга‑карта.  
+Risks: UI начнёт диктовать онтологию.
+
+Name: **Contracts**  
+Type: system / infrastructure  
+Slogan:  
+Focus: контуры данных и экспортов системы.  
+Inputs: signals/curated_sets, registries, manifests.  
+Outputs: exports layer.  
+Practices: system-thinking, ecosystem-thinking, research-thinking.  
+Preset Context: domain:software + domain:knowledge.  
+Boundaries: не UI‑слой, не канон.  
+UI: экспортируемая карта.  
+Risks: превращение в склад данных.
 
 ________________________________________
 
@@ -455,7 +479,7 @@ Workbench’и: Iron Fairy Tales, Appearance Atelier, Mojibake, Ji, Zucken‑Dr�
 Практики: system-thinking, research-thinking, ecosystem-thinking
 
 **Software & Digital Tools**  
-Workbench’и: VSTablishment, Frame Grinder, Mojibake, Solidol, Ji  
+Workbench’и: VSTablishment, Frame Grinder, Mojibake, Dream Graph, Contracts, Solidol, Ji  
 Практики: possibility-navigation, interactive-thinking, system-thinking
 
 **Visual & Media Arts**  
@@ -475,7 +499,7 @@ Workbench’и: Darwin’s Blind Spot, Evoquant, Mojibake, Mind's Lorgnette, Wor
 Практики: reflection-fixation, research-thinking, system-thinking
 
 **Interactive Systems & Game Culture**  
-Workbench’и: Playfield, Frame Grinder  
+Workbench’и: Playfield, Frame Grinder, Dream Graph  
 Практики: interactive-thinking, system-thinking, possibility-navigation
 
 **Architecture & Physical Realization**  

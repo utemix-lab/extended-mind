@@ -4,7 +4,7 @@
 
 ## wb-vova-music-general — Музыка в целом
 - **Owner:** Вова
-- **Type:** —
+- **Type:** domain / cultural radar
 - **Slogan:** —
 - **Purpose:** музыка как культурный феномен
 - **Focus:** сцены, эпохи, стили
@@ -15,11 +15,11 @@
 - **Boundaries:** без энциклопедии
 - **UI Reflection:** story/Query Mode
 - **Risks:** каталогизация
-- **Пропуски:** type, slogan
+- **Пропуски:** slogan
 
 ## wb-vova-vstablishment — VSTablishment
 - **Owner:** Вова
-- **Type:** —
+- **Type:** domain / tool radar
 - **Slogan:** —
 - **Purpose:** навигация по VST‑миру
 - **Focus:** плагины, инструменты
@@ -30,11 +30,11 @@
 - **Boundaries:** не каталог всех VST
 - **UI Reflection:** Query Mode по cap/provider
 - **Risks:** разрастание до магазина
-- **Пропуски:** type, slogan
+- **Пропуски:** slogan
 
 ## wb-vova-zucken-drukcken — Zucken‑Drücken
 - **Owner:** Вова
-- **Type:** —
+- **Type:** cross-domain / experimental
 - **Slogan:** —
 - **Purpose:** AI‑музыка, инструменты, техники
 - **Focus:** модели, сервисы, функции
@@ -45,11 +45,11 @@
 - **Boundaries:** без реализации моделей
 - **UI Reflection:** Query Mode + stub actions
 - **Risks:** устаревание, маркетинг
-- **Пропуски:** type, slogan
+- **Пропуски:** slogan
 
 ## wb-as-if — As if
 - **Owner:** Вова, Вася
-- **Type:** —
+- **Type:** collaborative / in-world production
 - **Slogan:** —
 - **Purpose:** музыка и саунд для системы
 - **Focus:** треки, атмосферы
@@ -60,11 +60,11 @@
 - **Boundaries:** не лейбл
 - **UI Reflection:** сцена группы
 - **Risks:** размывание фокуса
-- **Пропуски:** type, slogan
+- **Пропуски:** slogan
 
 ## wb-petrova-animation-plus — Анимация +
 - **Owner:** Петрова
-- **Type:** —
+- **Type:** domain / art radar
 - **Slogan:** —
 - **Purpose:** анимация как форма мышления
 - **Focus:** авторская/AI анимация
@@ -75,11 +75,11 @@
 - **Boundaries:** не кино‑база
 - **UI Reflection:** визуальная сцена
 - **Risks:** энциклопедичность
-- **Пропуски:** type, slogan
+- **Пропуски:** slogan
 
 ## wb-petrova-brand-direction — Brand Direction
 - **Owner:** Петрова
-- **Type:** —
+- **Type:** system / brand spine
 - **Slogan:** —
 - **Purpose:** бренд‑целостность системы
 - **Focus:** айдентика, тональность, нейминг
@@ -90,11 +90,11 @@
 - **Boundaries:** не маркетинг
 - **UI Reflection:** принципы + примеры
 - **Risks:** перегруз правилами
-- **Пропуски:** type, slogan
+- **Пропуски:** slogan
 
 ## wb-petrova-circus-technology — Circus Technologies
 - **Owner:** Петрова
-- **Type:** —
+- **Type:** system / coordination
 - **Slogan:** —
 - **Purpose:** сборка ценности из сигналов
 - **Focus:** фокус недели, координация ролей
@@ -105,11 +105,11 @@
 - **Boundaries:** не управляет контентом
 - **UI Reflection:** “что сейчас главное”
 - **Risks:** субъективность
-- **Пропуски:** type, slogan
+- **Пропуски:** slogan
 
 ## wb-vasya-frame-grinder — Frame Grinder
 - **Owner:** Вася
-- **Type:** —
+- **Type:** domain / production craft
 - **Slogan:** —
 - **Purpose:** монтаж/моушн как ремесло
 - **Focus:** пайплайны, эффекты
@@ -120,12 +120,12 @@
 - **Boundaries:** не учебный курс
 - **UI Reflection:** грубая сцена
 - **Risks:** хаос, устаревание
-- **Пропуски:** type, slogan
+- **Пропуски:** slogan
 
 ## wb-ney-appearance-atelier — Appearance Atelier
 - **Owner:** Нэй
 - **Type:** domain-spanning / infrastructural
-- **Slogan:** —
+- **Slogan:** Красота — побочный эффект воспроизводимости.
 - **Purpose:** генеративный визуал как технология
 - **Focus:** ComfyUI, модели, пайплайны
 - **Inputs:** релизы, рецепты
@@ -135,12 +135,11 @@
 - **Boundaries:** не про “искусство”
 - **UI Reflection:** “как выглядит и почему так”
 - **Risks:** каталог моделей
-- **Пропуски:** slogan
 
 ## wb-cadrik-solidol — Solidol
 - **Owner:** CADрик
 - **Type:** domain / applied-technical
-- **Slogan:** for smooth operation of reality
+- **Slogan:** Солидно. Solid.
 - **Purpose:** мост цифра → физика
 - **Focus:** CAD, 3D, рендер, материалы
 - **Inputs:** софт, пайплайны
@@ -162,6 +161,36 @@
 - **Boundaries:** не продукт
 - **UI Reflection:** “как устроено внутри”
 - **Risks:** абстракция
+- **Пропуски:** slogan
+
+## wb-runa-dream-graph — Dream Graph
+- **Owner:** Руна
+- **Type:** system / infrastructure
+- **Slogan:** —
+- **Purpose:** рендер системы как книги‑карты
+- **Focus:** граф, сцены, Query Mode
+- **Inputs:** exports/manifest, сцены
+- **Outputs:** read‑only интерфейс
+- **Practices:** practice-system-thinking, practice-ecosystem-thinking, practice-research-thinking (см. `docs/specs/PRACTICES_SPEC.md`)
+- **Preset Context:** domain:software + domain:interactive
+- **Boundaries:** не пишет в канон
+- **UI Reflection:** книга‑карта
+- **Risks:** UI диктует онтологию
+- **Пропуски:** slogan
+
+## wb-runa-contracts — Contracts
+- **Owner:** Руна
+- **Type:** system / infrastructure
+- **Slogan:** —
+- **Purpose:** контуры данных и экспортов
+- **Focus:** JSONL, registries, manifests
+- **Inputs:** signals/curated_sets, registries
+- **Outputs:** exports layer
+- **Practices:** practice-system-thinking, practice-ecosystem-thinking, practice-research-thinking (см. `docs/specs/PRACTICES_SPEC.md`)
+- **Preset Context:** domain:software + domain:knowledge
+- **Boundaries:** не UI‑слой, не канон
+- **UI Reflection:** экспортируемая карта
+- **Risks:** склад данных
 - **Пропуски:** slogan
 
 ## wb-hinto-ji — Ji (ジ)

@@ -15,6 +15,8 @@
 | wb-ney-appearance-atelier | character-ney | Generative Visual Systems | appearance + pipelines |
 | wb-cadrik-solidol | character-cadrik | CAD & 3D; Physical Systems | digital → physical craft |
 | wb-runa-mojibake | character-runa | Code & Research Infrastructure | RAG + research pipeline |
+| wb-runa-dream-graph | character-runa | Software & Digital Tools; Interactive Systems | book-map interface |
+| wb-runa-contracts | character-runa | Software & Digital Tools; Knowledge Infrastructure | exports + contracts |
 | wb-hinto-ji | character-hinto | Dev Culture Observations | observational signals |
 | wb-ancy-darwins-blind-spot | character-ancy | Knowledge & Thought Systems | reflective navigation |
 | wb-ancy-evoquant | character-ancy | Knowledge & Thought Systems | formal meta-research |

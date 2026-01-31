@@ -40,6 +40,8 @@
 | `wb-ney-appearance-atelier` | Appearance Atelier |
 | `wb-cadrik-solidol` | Solidol |
 | `wb-runa-mojibake` | Mojibake |
+| `wb-runa-dream-graph` | Dream Graph |
+| `wb-runa-contracts` | Contracts |
 | `wb-hinto-ji` | Ji (ジ) |
 | `wb-ancy-darwins-blind-spot` | Darwin’s Blind Spot |
 | `wb-ancy-evoquant` | Evoquant |

@@ -25,8 +25,8 @@
 - **Domains:** CAD & 3D; Physical Systems; Design
 
 ### character‑runa (Руна)
-- **Workbenches:** `wb-runa-mojibake`, `wb-ancy-runa-minds-lorgnette`
-- **Domains:** Code & Research Infrastructure; Artificial Intelligence; Software
+- **Workbenches:** `wb-runa-mojibake`, `wb-ancy-runa-minds-lorgnette`, `wb-runa-dream-graph`, `wb-runa-contracts`
+- **Domains:** Code & Research Infrastructure; Artificial Intelligence; Software; Interactive Systems
 
 ### character‑hinto (Hinto)
 - **Workbenches:** `wb-hinto-ji`
@@ -60,7 +60,7 @@
 `wb-ai-iron-fairy-tales`, `wb-ney-appearance-atelier`, `wb-runa-mojibake`, `wb-hinto-ji`, `wb-vova-zucken-drukcken`, `wb-cadrik-solidol`
 
 **Software & Digital Tools**  
-`wb-vova-vstablishment`, `wb-vasya-frame-grinder`, `wb-runa-mojibake`, `wb-cadrik-solidol`, `wb-hinto-ji`
+`wb-vova-vstablishment`, `wb-vasya-frame-grinder`, `wb-runa-mojibake`, `wb-runa-dream-graph`, `wb-runa-contracts`, `wb-cadrik-solidol`, `wb-hinto-ji`
 
 **Visual & Media Arts**  
 `wb-petrova-animation-plus`, `wb-ney-appearance-atelier`, `wb-vasya-frame-grinder`, `wb-dizy-homo-perceptivus`, `wb-as-if`
@@ -75,7 +75,7 @@
 `wb-ancy-darwins-blind-spot`, `wb-ancy-evoquant`, `wb-runa-mojibake`, `wb-gamych-word-machine`, `wb-ancy-runa-minds-lorgnette`
 
 **Interactive Systems & Game Culture**  
-`wb-gamych-playfield`, `wb-vasya-frame-grinder`, `wb-petrova-animation-plus`
+`wb-gamych-playfield`, `wb-vasya-frame-grinder`, `wb-petrova-animation-plus`, `wb-runa-dream-graph`
 
 **Architecture & Physical Realization**  
 `wb-cadrik-solidol`

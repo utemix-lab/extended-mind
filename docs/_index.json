@@ -2422,5 +2422,21 @@
     "type": "",
     "tags": [],
     "links": []
+  },
+  {
+    "path": "docs/workbenches/wb-runa-dream-graph.md",
+    "id": "docs__workbenches__wb-runa-dream-graph",
+    "title": "Workbench: Dream Graph",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/workbenches/wb-runa-contracts.md",
+    "id": "docs__workbenches__wb-runa-contracts",
+    "title": "Workbench: Contracts",
+    "type": "",
+    "tags": [],
+    "links": []
   }
 ]

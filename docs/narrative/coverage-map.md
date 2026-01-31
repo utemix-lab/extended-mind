@@ -39,10 +39,10 @@
   - **Partial:** Design & Aesthetic Systems
 
 ### Руна
-- **Workbench’и:** Mojibake, Mind's Lorgnette
+- **Workbench’и:** Mojibake, Mind's Lorgnette, Dream Graph, Contracts
 - **Домены:**  
   - **Primary:** Artificial Intelligence  
-  - **Partial:** Software & Digital Tools, Knowledge Systems
+  - **Partial:** Software & Digital Tools, Knowledge Systems, Interactive Systems
 
 ### Hinto
 - **Workbench’и:** Ji (ジ)
@@ -57,7 +57,7 @@
   - **Partial:** Formal Systems
 
 ### Геймыч
-- **Workbench’и:** Playfield, Word-machine
+- **Workbench’и:** Playfield, Word Machine
 - **Домены:**  
   - **Primary:** Interactive Systems & Game Culture  
   - **Partial:** Knowledge Systems (формальные машины)
@@ -75,7 +75,7 @@
   - **Cross:** System voice
 
 ### Автор
-- **Workbench’и:** extended-mind
+- **Workbench’и:** Extended Mind
 - **Домены:**  
   - **Primary:** System-level  
   - **Cross:** Physical Realization (через CADрик)
@@ -89,7 +89,7 @@ Workbench’и: Iron Fairy Tales, Appearance Atelier, Mojibake, Ji, Zucken‑Dr�
 Практики: system-thinking, research-thinking, ecosystem-thinking
 
 **Software & Digital Tools**  
-Workbench’и: VSTablishment, Frame Grinder, Mojibake, Solidol, Ji  
+Workbench’и: VSTablishment, Frame Grinder, Mojibake, Dream Graph, Contracts, Solidol, Ji  
 Практики: possibility-navigation, interactive-thinking, system-thinking
 
 **Visual & Media Arts**  
@@ -109,7 +109,7 @@ Workbench’и: Darwin’s Blind Spot, Evoquant, Mojibake, Word Machine, Mind's 
 Практики: reflection-fixation, research-thinking, system-thinking
 
 **Interactive Systems & Game Culture**  
-Workbench’и: Playfield, Frame Grinder  
+Workbench’и: Playfield, Frame Grinder, Dream Graph  
 Практики: interactive-thinking, system-thinking, possibility-navigation
 
 **Architecture & Physical Realization**  
