@@ -1784,6 +1784,14 @@
     "links": []
   },
   {
+    "path": "docs/machine-log/kb/2026-01-31T16-46-51Z-kb-update.md",
+    "id": "docs__machine-log__kb__2026-01-31T16-46-51Z-kb-update",
+    "title": "KB update 2026-01-31T16:46:51Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
     "path": "docs/narrative/NARRATIVE_LAYER.md",
     "id": "docs__narrative__NARRATIVE_LAYER",
     "title": "Narrative Layer",
@@ -2384,6 +2392,22 @@
     "links": []
   },
   {
+    "path": "docs/workbenches/wb-runa-contracts.md",
+    "id": "docs__workbenches__wb-runa-contracts",
+    "title": "Workbench: Contracts",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/workbenches/wb-runa-dream-graph.md",
+    "id": "docs__workbenches__wb-runa-dream-graph",
+    "title": "Workbench: Dream Graph",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
     "path": "docs/workbenches/wb-runa-mojibake.md",
     "id": "docs__workbenches__wb-runa-mojibake",
     "title": "Workbench: Mojibake",
@@ -2419,22 +2443,6 @@
     "path": "docs/workbenches/wb-vova-zucken-drukcken.md",
     "id": "docs__workbenches__wb-vova-zucken-drukcken",
     "title": "Workbench: Zucken\u2011Dr\u00fccken",
-    "type": "",
-    "tags": [],
-    "links": []
-  },
-  {
-    "path": "docs/workbenches/wb-runa-dream-graph.md",
-    "id": "docs__workbenches__wb-runa-dream-graph",
-    "title": "Workbench: Dream Graph",
-    "type": "",
-    "tags": [],
-    "links": []
-  },
-  {
-    "path": "docs/workbenches/wb-runa-contracts.md",
-    "id": "docs__workbenches__wb-runa-contracts",
-    "title": "Workbench: Contracts",
     "type": "",
     "tags": [],
     "links": []
