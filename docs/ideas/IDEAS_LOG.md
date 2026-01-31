@@ -64,6 +64,24 @@
 **Minimal experiment:** 1 приватный сохранённый путь без соц‑слоя  
 **Status:** draft
 
+### IDEA‑007 — Narrative prehistory mystification
+**Type:** narrative / prehistory mystification  
+**Описание:** псевдо‑исторические документы о предыстории системы и персонажей как слой “живой книги”.  
+**Goal link:** [UG-5], [LG-5]  
+**Functions:** Story‑nodes / Characters  
+**Risks:** театр становится каноном; смешение слоёв  
+**Minimal experiment:** 2–3 документа в `docs/narrative/prehistory/` с маркировкой non‑canon  
+**Status:** draft
+
+### IDEA‑008 — Exportable system + minds‑lorgnette derivative
+**Type:** system / exportable service / derivative  
+**Описание:** сделать систему экспортируемой (BYO‑key / self‑host), а minds‑lorgnette — производной, агрегирующей разные форматы структурирования (Obsidian/Notion/майнд‑карты/таблицы/графики) в единый вид с ИИ и архитектурным “самопониманием”.  
+**Goal link:** [UG-5], [LG-2]  
+**Functions:** Catalogs & Exports, RAG hooks, Navigation & Modes  
+**Risks:** сервис съедает архитектуру; проксирование ключей; онтологический дрейф  
+**Minimal experiment:** README‑раздел BYO‑key + self‑host шаблон (docker‑compose) + локальный vault‑import.  
+**Status:** draft
+
 ---
 
 ## См. также
