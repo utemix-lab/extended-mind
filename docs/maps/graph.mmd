@@ -167,10 +167,14 @@ graph TD
   docs__machine_log__kb__2026_01_30T18_52_55Z_kb_update["KB update 2026-01-30T18:52:55Z"]
   docs__machine_log__kb__2026_01_30T20_00_37Z_kb_update["KB update 2026-01-30T20:00:37Z"]
   docs__machine_log__kb__2026_01_31T16_46_51Z_kb_update["KB update 2026-01-31T16:46:51Z"]
+  docs__machine_log__kb__2026_01_31T18_13_54Z_kb_update["KB update 2026-01-31T18:13:54Z"]
   docs__narrative__NARRATIVE_LAYER["Narrative Layer"]
   docs__narrative__character_mirrors["Character Mirrors (Narrative)"]
   docs__narrative__coverage_map_full["Coverage Map v1 — Full Narrative"]
   docs__narrative__coverage_map["Coverage Map v1 (Narrative)"]
+  docs__narrative__prehistory__incident_game_legends["The Incident / Инцидент — легенды"]
+  docs__narrative__prehistory__incident_note_and_lost_log["Вторая ложная версия Инцидента + утерянный лог"]
+  docs__narrative__prehistory__incident_report_false_and_echoes["Ложная версия Инцидента + скрытые пересечения"]
   docs__narrative__story_nodes__story_node_001_practices["story-node-001"]
   docs__narrative__story_nodes__story_node_002_consumer_pattern["story-node-002"]
   docs__narrative__story_nodes__story_node_003_widgets["story-node-003-widgets"]
@@ -195,6 +199,7 @@ graph TD
   docs__narrative__story_nodes__story_node_022_system_language_constitution["story-node-022-system-language-constitution"]
   docs__narrative__story_nodes__story_node_023_living_book_interface_goal["story-node-023-living-book-interface-goal"]
   docs__narrative__story_nodes__story_node_024_coverage_map_as_book["story-node-024-coverage-map-as-book"]
+  docs__narrative__story_nodes__story_node_025_exportable_derivatives["story-node-025-exportable-derivatives"]
   docs__narrative__system_language_layer["System Language Layer — narrative anchor"]
   docs__narrative__templates__story_node["story-node-XXX"]
   docs__narrative__workbench_mirrors["Workbench Mirrors (Narrative)"]
@@ -262,6 +267,9 @@ graph TD
   type__index(["index"])
   type__manifest(["manifest"])
   type__pattern(["pattern"])
+  type__prehistory / narrative game(["prehistory / narrative game"])
+  type__prehistory / pseudo_note(["prehistory / pseudo-note"])
+  type__prehistory / pseudo_report(["prehistory / pseudo-report"])
   type__principles(["principles"])
   type__process(["process"])
   type__project(["project"])
@@ -363,3 +371,6 @@ graph TD
   docs__index --> docs__ROADMAP
   docs__index --> docs__SINGLE_SOURCE_PLAYBOOK
   docs__index --> docs__UNIVERSE_GRAPH_SPEC
+  docs__narrative__prehistory__incident_game_legends -.-> type__prehistory / narrative game
+  docs__narrative__prehistory__incident_note_and_lost_log -.-> type__prehistory / pseudo_note
+  docs__narrative__prehistory__incident_report_false_and_echoes -.-> type__prehistory / pseudo_report

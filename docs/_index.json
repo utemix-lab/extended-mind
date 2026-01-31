@@ -1792,6 +1792,14 @@
     "links": []
   },
   {
+    "path": "docs/machine-log/kb/2026-01-31T18-13-54Z-kb-update.md",
+    "id": "docs__machine-log__kb__2026-01-31T18-13-54Z-kb-update",
+    "title": "KB update 2026-01-31T18:13:54Z",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
     "path": "docs/narrative/NARRATIVE_LAYER.md",
     "id": "docs__narrative__NARRATIVE_LAYER",
     "title": "Narrative Layer",
@@ -1820,6 +1828,30 @@
     "id": "docs__narrative__coverage-map",
     "title": "Coverage Map v1 (Narrative)",
     "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/prehistory/incident-game-legends.md",
+    "id": "docs__narrative__prehistory__incident-game-legends",
+    "title": "The Incident / \u0418\u043d\u0446\u0438\u0434\u0435\u043d\u0442 \u2014 \u043b\u0435\u0433\u0435\u043d\u0434\u044b",
+    "type": "prehistory / narrative game",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/prehistory/incident-note-and-lost-log.md",
+    "id": "docs__narrative__prehistory__incident-note-and-lost-log",
+    "title": "\u0412\u0442\u043e\u0440\u0430\u044f \u043b\u043e\u0436\u043d\u0430\u044f \u0432\u0435\u0440\u0441\u0438\u044f \u0418\u043d\u0446\u0438\u0434\u0435\u043d\u0442\u0430 + \u0443\u0442\u0435\u0440\u044f\u043d\u043d\u044b\u0439 \u043b\u043e\u0433",
+    "type": "prehistory / pseudo-note",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/prehistory/incident-report-false-and-echoes.md",
+    "id": "docs__narrative__prehistory__incident-report-false-and-echoes",
+    "title": "\u041b\u043e\u0436\u043d\u0430\u044f \u0432\u0435\u0440\u0441\u0438\u044f \u0418\u043d\u0446\u0438\u0434\u0435\u043d\u0442\u0430 + \u0441\u043a\u0440\u044b\u0442\u044b\u0435 \u043f\u0435\u0440\u0435\u0441\u0435\u0447\u0435\u043d\u0438\u044f",
+    "type": "prehistory / pseudo-report",
     "tags": [],
     "links": []
   },
@@ -2011,6 +2043,14 @@
     "path": "docs/narrative/story-nodes/story-node-024-coverage-map-as-book.md",
     "id": "docs__narrative__story-nodes__story-node-024-coverage-map-as-book",
     "title": "story-node-024-coverage-map-as-book",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-025-exportable-derivatives.md",
+    "id": "docs__narrative__story-nodes__story-node-025-exportable-derivatives",
+    "title": "story-node-025-exportable-derivatives",
     "type": "",
     "tags": [],
     "links": []
@@ -2443,54 +2483,6 @@
     "path": "docs/workbenches/wb-vova-zucken-drukcken.md",
     "id": "docs__workbenches__wb-vova-zucken-drukcken",
     "title": "Workbench: Zucken\u2011Dr\u00fccken",
-    "type": "",
-    "tags": [],
-    "links": []
-  },
-  {
-    "path": "docs/workbenches/wb-runa-dream-graph.md",
-    "id": "docs__workbenches__wb-runa-dream-graph",
-    "title": "Workbench: Dream Graph",
-    "type": "",
-    "tags": [],
-    "links": []
-  },
-  {
-    "path": "docs/workbenches/wb-runa-contracts.md",
-    "id": "docs__workbenches__wb-runa-contracts",
-    "title": "Workbench: Contracts",
-    "type": "",
-    "tags": [],
-    "links": []
-  },
-  {
-    "path": "docs/narrative/prehistory/incident-game-legends.md",
-    "id": "docs__narrative__prehistory__incident-game-legends",
-    "title": "The Incident / Инцидент — легенды",
-    "type": "",
-    "tags": [],
-    "links": []
-  },
-  {
-    "path": "docs/narrative/prehistory/incident-report-false-and-echoes.md",
-    "id": "docs__narrative__prehistory__incident-report-false-and-echoes",
-    "title": "Ложная версия Инцидента + скрытые пересечения",
-    "type": "",
-    "tags": [],
-    "links": []
-  },
-  {
-    "path": "docs/narrative/prehistory/incident-note-and-lost-log.md",
-    "id": "docs__narrative__prehistory__incident-note-and-lost-log",
-    "title": "Вторая ложная версия Инцидента + утерянный лог",
-    "type": "",
-    "tags": [],
-    "links": []
-  },
-  {
-    "path": "docs/narrative/story-nodes/story-node-025-exportable-derivatives.md",
-    "id": "docs__narrative__story-nodes__story-node-025-exportable-derivatives",
-    "title": "story-node-025-exportable-derivatives",
     "type": "",
     "tags": [],
     "links": []
