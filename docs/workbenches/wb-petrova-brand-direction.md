@@ -1,14 +1,17 @@
 # Workbench: Brand Direction
 
 **ID:** wb-petrova-brand-direction  
-**Character:** Petrova  
+**Character:** Петрова  
 **Domain focus:** Design & Aesthetic Systems
+**Type:** system / brand spine
+**Slogan:** —
 
 ## Purpose
 Формирование визуального и смыслового образа системы как целостного бренда.
 
 ## Focus
 - Айдентика системы и персонажей
+- Нейминг и двуязычие в бренде
 - Визуальные правила витрин
 - Тональность подачи контента
 - Консистентность образов и сцен
@@ -17,6 +20,11 @@
 - Контент персонажей
 - Визуальные эксперименты
 - Референсы из дизайна, искусства, медиа
+
+## Practices
+- `practice-branding` (см. `docs/specs/PRACTICES_SPEC.md`)
+- `practice-direction` (см. `docs/specs/PRACTICES_SPEC.md`)
+- `practice-systems-design` (см. `docs/specs/PRACTICES_SPEC.md`)
 
 ## Outputs
 - Гайды и принципы (docs, не канон)

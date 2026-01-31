@@ -1,8 +1,10 @@
 # Workbench: Музыка в целом
 
 **ID:** wb-vova-music-general  
-**Character:** Vova  
+**Character:** Вова  
 **Domain focus:** Music & Sound Culture
+**Type:** domain / cultural radar
+**Slogan:** —
 
 ## Purpose
 Исследование музыки как культурного и исторического феномена: стили, артисты, сцены, альбомы, студии, эпохи.
@@ -12,6 +14,11 @@
 - Критические статьи и обзоры
 - Плейлисты и подборки
 - Исторические справки и контексты
+
+## Practices
+- `practice-curation` (см. `docs/specs/PRACTICES_SPEC.md`)
+- `practice-sound-thinking` (см. `docs/specs/PRACTICES_SPEC.md`)
+- `practice-research-thinking` (см. `docs/specs/PRACTICES_SPEC.md`)
 
 ## Outputs
 - curated_sets.jsonl (плейлисты, авторские подборки)

@@ -1,8 +1,10 @@
-# Workbench: Zucken-drücken
+# Workbench: Zucken‑Drücken
 
-**ID:** wb-vova-ai-music-signals  
-**Character:** Vova  
+**ID:** wb-vova-zucken-drukcken  
+**Character:** Вова  
 **Domain focus:** Artificial Intelligence & Music
+**Type:** cross-domain / experimental
+**Slogan:** —
 
 ## Purpose
 Отслеживание новых AI-инструментов, моделей и техник, связанных с музыкой и звуком.
@@ -11,6 +13,11 @@
 - AI-сервисы (генерация, трансформация, анализ)
 - Исследовательские статьи
 - Демонстрации и туториалы
+
+## Practices
+- `practice-research-thinking` (см. `docs/specs/PRACTICES_SPEC.md`)
+- `practice-system-thinking` (см. `docs/specs/PRACTICES_SPEC.md`)
+- `practice-sound-thinking` (см. `docs/specs/PRACTICES_SPEC.md`)
 
 ## Outputs
 - signals.jsonl (новые модели, сервисы, функции)

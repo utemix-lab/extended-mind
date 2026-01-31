@@ -1,8 +1,10 @@
-# Workbench: Value Assembly
+# Workbench: Circus Technologies
 
-**ID:** wb-petrova-value-assembly  
-**Character:** Petrova  
+**ID:** wb-petrova-circus-technology  
+**Character:** Петрова  
 **Domain focus:** System-level
+**Type:** system / coordination
+**Slogan:** —
 
 ## Purpose
 Сборка ценности системы из множества разрозненных сигналов и инициатив.
@@ -17,6 +19,11 @@
 - signals.jsonl всех персонажей
 - Meta Goals системы
 - Story-nodes и checkpoints
+
+## Practices
+- `practice-system-thinking` (см. `docs/specs/PRACTICES_SPEC.md`)
+- `practice-ecosystem-thinking` (см. `docs/specs/PRACTICES_SPEC.md`)
+- `practice-reflection-fixation` (см. `docs/specs/PRACTICES_SPEC.md`)
 
 ## Outputs
 - Системные сигналы (о самой системе)

@@ -3,6 +3,8 @@
 workbench_id:
 owner_character_id:
 title:
+slogan:
+type:
 one_liner:
 
 ## Focus & boundaries

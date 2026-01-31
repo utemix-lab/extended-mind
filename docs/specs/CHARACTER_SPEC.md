@@ -73,8 +73,18 @@
 
 | ID | Имя | Связанные домены | Связанные практики |
 |----|-----|------------------|-------------------|
-| `character-vova` | Вова | (архитектура, код) | — |
-| `character-petrova` | Петрова | design | branding |
+| `character-vova` | Вова | music, tools | sound-thinking, curation |
+| `character-petrova` | Петрова | visual, design | direction, branding |
+| `character-vasya` | Вася | visual, interactive | direction, interactive-thinking |
+| `character-ney` | Нэй | visual, ai | research-thinking, system-thinking |
+| `character-cadrik` | CADрик | design, physical | architectural-design, systems-design |
+| `character-runa` | Руна | ai, software | research-thinking, system-thinking |
+| `character-hinto` | Hinto | software, ai | research-thinking, ecosystem-thinking |
+| `character-ancy` | Ancy | knowledge | reflection-fixation, research-thinking |
+| `character-gamych` | Геймыч | games, math | interactive-thinking, system-thinking |
+| `character-dizy` | Дизи | design | visual-thinking, systems-design |
+| `character-ai` | ИИ | ai | system-thinking, research-thinking |
+| `character-author` | Автор | system | reflection-fixation, curation |
 
 ---
 
@@ -106,3 +116,4 @@
 
 ## See also
 - `CHARACTER_WORKBENCH_SPEC.md`
+- `docs/narrative/story-nodes/story-node-020-character-portraits-and-naming.md`

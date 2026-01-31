@@ -1872,6 +1872,14 @@
     "links": []
   },
   {
+    "path": "docs/narrative/system-language-layer.md",
+    "id": "docs__narrative__system-language-layer",
+    "title": "System Language Layer — narrative anchor",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
     "path": "docs/narrative/story-nodes/story-node-012-tags-query-mode.md",
     "id": "docs__narrative__story-nodes__story-node-012-tags-query-mode",
     "title": "story-node-012",
@@ -1931,6 +1939,30 @@
     "path": "docs/narrative/story-nodes/story-node-019-control-room-graph.md",
     "id": "docs__narrative__story-nodes__story-node-019-control-room-graph",
     "title": "story-node-019-control-room-graph",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-023-living-book-interface-goal.md",
+    "id": "docs__narrative__story-nodes__story-node-023-living-book-interface-goal",
+    "title": "story-node-023-living-book-interface-goal",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-024-coverage-map-as-book.md",
+    "id": "docs__narrative__story-nodes__story-node-024-coverage-map-as-book",
+    "title": "story-node-024-coverage-map-as-book",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/narrative/story-nodes/story-node-022-system-language-constitution.md",
+    "id": "docs__narrative__story-nodes__story-node-022-system-language-constitution",
+    "title": "story-node-022-system-language-constitution",
     "type": "",
     "tags": [],
     "links": []
@@ -2120,6 +2152,14 @@
     "links": []
   },
   {
+    "path": "docs/system/SYSTEM_LANGUAGE_LAYER.md",
+    "id": "docs__system__SYSTEM_LANGUAGE_LAYER",
+    "title": "SYSTEM LANGUAGE LAYER v1",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
     "path": "docs/workbenches/WORKBENCH_INDEX.md",
     "id": "docs__workbenches__WORKBENCH_INDEX",
     "title": "WORKBENCH INDEX",
@@ -2138,7 +2178,7 @@
   {
     "path": "docs/workbenches/wb-petrova-animation-plus.md",
     "id": "docs__workbenches__wb-petrova-animation-plus",
-    "title": "Workbench: Animation+",
+    "title": "Workbench: \u0410\u043d\u0438\u043c\u0430\u0446\u0438\u044f +",
     "type": "",
     "tags": [],
     "links": []
@@ -2152,17 +2192,17 @@
     "links": []
   },
   {
-    "path": "docs/workbenches/wb-petrova-value-assembly.md",
-    "id": "docs__workbenches__wb-petrova-value-assembly",
-    "title": "Workbench: Value Assembly",
+    "path": "docs/workbenches/wb-petrova-circus-technology.md",
+    "id": "docs__workbenches__wb-petrova-circus-technology",
+    "title": "Workbench: Circus Technologies",
     "type": "",
     "tags": [],
     "links": []
   },
   {
-    "path": "docs/workbenches/wb-vova-ai-music-signals.md",
-    "id": "docs__workbenches__wb-vova-ai-music-signals",
-    "title": "Workbench: Zucken-dr\u00fccken",
+    "path": "docs/workbenches/wb-vova-zucken-drukcken.md",
+    "id": "docs__workbenches__wb-vova-zucken-drukcken",
+    "title": "Workbench: Zucken-Dr\u00fccken",
     "type": "",
     "tags": [],
     "links": []
@@ -2171,6 +2211,14 @@
     "path": "docs/workbenches/wb-vova-music-general.md",
     "id": "docs__workbenches__wb-vova-music-general",
     "title": "Workbench: \u041c\u0443\u0437\u044b\u043a\u0430 \u0432 \u0446\u0435\u043b\u043e\u043c",
+    "type": "",
+    "tags": [],
+    "links": []
+  },
+  {
+    "path": "docs/workbenches/wb-ancy-runa-minds-lorgnette.md",
+    "id": "docs__workbenches__wb-ancy-runa-minds-lorgnette",
+    "title": "Workbench: minds-lorgnette",
     "type": "",
     "tags": [],
     "links": []

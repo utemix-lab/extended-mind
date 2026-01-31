@@ -1,8 +1,10 @@
 # Workbench: VSTablishment
 
 **ID:** wb-vova-vstablishment  
-**Character:** Vova  
+**Character:** Вова  
 **Domain focus:** Software & Digital Tools / Music
+**Type:** domain / tool radar
+**Slogan:** —
 
 ## Purpose
 Отслеживание и навигация по миру VST-плагинов и музыкального софта.
@@ -12,6 +14,11 @@
 - Обновления производителей
 - Обзоры и тесты
 - Пользовательский опыт
+
+## Practices
+- `practice-curation` (см. `docs/specs/PRACTICES_SPEC.md`)
+- `practice-research-thinking` (см. `docs/specs/PRACTICES_SPEC.md`)
+- `practice-possibility-navigation` (см. `docs/specs/PRACTICES_SPEC.md`)
 
 ## Outputs
 - signals.jsonl (новые плагины, апдейты)

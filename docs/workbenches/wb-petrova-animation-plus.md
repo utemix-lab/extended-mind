@@ -1,8 +1,10 @@
-# Workbench: Animation+
+# Workbench: Анимация +
 
 **ID:** wb-petrova-animation-plus  
-**Character:** Petrova  
+**Character:** Петрова  
 **Domain focus:** Visual & Media Arts
+**Type:** domain / art radar
+**Slogan:** —
 
 ## Purpose
 Исследование анимации и визуального искусства как формы мышления, авторского высказывания и культурного процесса.
@@ -19,6 +21,11 @@
 - Фестивальные программы
 - Интервью с авторами
 - Визуальные эксперименты и новые технологии
+
+## Practices
+- `practice-direction` (см. `docs/specs/PRACTICES_SPEC.md`)
+- `practice-visual-thinking` (см. `docs/specs/PRACTICES_SPEC.md`)
+- `practice-curation` (см. `docs/specs/PRACTICES_SPEC.md`)
 
 ## Outputs
 - signals.jsonl (премьеры, награды, фестивальные события)

@@ -8,6 +8,12 @@
 - large texts are not stored in canon
 - practices as nodes are rare (explicitly justified)
 
+## Role Attribution Rule
+Фича не принадлежит системе напрямую — она проживается через персонажа.  
+Персонаж = точка зрения + стиль + ограничения.
+
+**See:** `SYSTEM_LANGUAGE_LAYER.md`, `CHARACTER_WORKBENCH_SPEC.md`
+
 ## Architecture vs Narrative (hard split)
 - Architecture defines structure and constraints.
 - Narrative interprets experience and can be subjective.
@@ -47,3 +53,5 @@
 - `SYSTEM_CHECKS.md`
 - `VISUAL_GUARDRAILS.md`
 - `META_GOALS_AND_RISKS.md`
+- `NAMING_CANON.md`
+- `SYSTEM_LANGUAGE_LAYER.md`

@@ -12,6 +12,7 @@
 | SD‑004 | Signatures exist as separate layer | `docs/adr/005-signature-decisions.md` | — | Stable narrative of decisions |
 | SD‑005 | Architecture is law; narrative is life within law | — | — | Prevents canon drift |
 | SD‑006 | Architecture changes must leave narrative trace | `docs/adr/011-self-description-and-practices-v1.md` | `docs/narrative/story-nodes/story-node-014-self-description-and-practices.md` | Self‑description continuity |
+| SD‑007 | System Language Layer defines rules of self‑description | — | `docs/narrative/system-language-layer.md` | Shared semantics for agents |
 
 ## Records mapping
 - Step → что сделали и зачем
