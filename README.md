@@ -248,6 +248,10 @@ dream-graph и godot-sandbox только читают канон.
 
 ---
 
-## Лицензия
+## Лицензирование
 
-MIT © utemix-lab
+Этот репозиторий относится к core-слою экосистемы.
+Правила и структура лицензирования описаны в:
+
+- `LICENSE`
+- `docs/system/LICENSING_AND_ATTRIBUTION_LAYER.md`
