@@ -38,7 +38,7 @@ domain:tools
 ## UI Reflection (Visitor)
 - **Story:** Авторские подборки инструментов.
 - **Service:** Query Mode по cap: / provider: / type:.
-- **System:** Связи с AI Music Signals.
+- **System:** Связи с Zucken‑Drücken Signals.
 
 ## Risks
 - Разрастание до “магазина плагинов”.

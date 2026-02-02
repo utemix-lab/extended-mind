@@ -25,6 +25,7 @@
 - [ ] Step Record создан/обновлён для ключевых изменений
 - [ ] Создать `checkpoints/YYYY-MM-DD-system-fix.md`
 - [ ] Commit + push
+- [ ] Проверить лицензионный слой (`LICENSE_LAYER_MAINTENANCE.md`)
 
 ## 3) Checkpoint review (для человека)
 - [ ] Не вырос ли канон без явного решения?

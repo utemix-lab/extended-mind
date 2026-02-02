@@ -57,6 +57,15 @@ Constitution & Semantics Phase: определение границ, ролей 
 
 **Где живёт:** `VISUAL_GUARDRAILS.md`, `NAMING_CANON.md`
 
+## Actors / Instruments / Matter (ядро языка)
+Базовый язык роли для проектирования UI и режимов:
+- **Actors** — “на что смотрим” (канон/узлы).
+- **Instruments** — “что делаем” (режимы/действия/пресеты).
+- **Matter** — “что отвечает мир” (каталоги/выдача).
+
+**См.** `SYSTEM_LANGUAGE_ACTORS_INSTRUMENTS_MATTER.md`  
+**См.** `docs/specs/SYSTEM_ORCHESTRA_CONSOLE.md`
+
 ## Архитектура vs нарратив
 
 Это **семантическая архитектура, выраженная через нарративные формы**.  
@@ -75,3 +84,6 @@ Constitution & Semantics Phase: определение границ, ролей 
 - `PRACTICES_SPEC.md`
 - `NAMING_CANON.md`
 - `docs/narrative/system-language-layer.md`
+- `docs/system/SYSTEM_ATLAS.md`
+- `docs/specs/SYSTEM_ORCHESTRA_CONSOLE.md`
+- `docs/system/SYSTEM_PRACTICES_MATRIX.md`
